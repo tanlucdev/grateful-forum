@@ -39,7 +39,7 @@ export function BottomTabs() {
 
           return (
             <Link
-              className={`flex flex-col items-center justify-center rounded-2xl py-2 ${
+              className={`flex flex-col items-center justify-center rounded-lg py-2 ${
                 active ? "text-[var(--text)]" : "text-[var(--muted)]"
               }`}
               href={tab.href}

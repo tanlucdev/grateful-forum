@@ -58,7 +58,7 @@ export function AuthPanel({ configured }: Readonly<{ configured: boolean }>) {
 
   if (!configured) {
     return (
-      <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 text-sm text-[var(--muted)]">
+      <div className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4 text-sm text-[var(--muted)]">
         Add Supabase values to `.env.local` to enable authentication.
       </div>
     );
@@ -66,7 +66,7 @@ export function AuthPanel({ configured }: Readonly<{ configured: boolean }>) {
 
   if (user) {
     return (
-      <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4">
+      <div className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
         <p className="text-sm font-medium text-[var(--text)]">
           Signed in as {user.email}
         </p>
@@ -79,7 +79,7 @@ export function AuthPanel({ configured }: Readonly<{ configured: boolean }>) {
   }
 
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4">
+    <div className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
       <label className="text-sm font-medium text-[var(--text)]" htmlFor="email">
         Email
       </label>

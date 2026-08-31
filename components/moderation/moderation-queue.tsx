@@ -31,9 +31,9 @@ export function ModerationQueue({
 
   return (
     <section className="grid gap-3">
-      {reports.map((report) => (
+      {reports.length ? reports.map((report) => (
         <article
-          className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4"
+          className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4"
           key={report.id}
         >
           <div className="flex items-start justify-between gap-3">
@@ -50,7 +50,7 @@ export function ModerationQueue({
             </span>
           </div>
           {report.entry ? (
-            <p className="mt-4 whitespace-pre-wrap rounded-2xl bg-[var(--bg)] p-3 text-sm leading-6 text-[var(--text)]">
+            <p className="mt-4 whitespace-pre-wrap rounded-lg bg-[var(--bg)] p-3 text-sm leading-6 text-[var(--text)]">
               {report.entry.content}
             </p>
           ) : null}
@@ -71,7 +71,11 @@ export function ModerationQueue({
             })}
           </div>
         </article>
-      ))}
+      )) : (
+        <p className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4 text-sm text-[var(--muted)]">
+          No reports need review.
+        </p>
+      )}
     </section>
   );
 }

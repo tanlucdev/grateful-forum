@@ -73,7 +73,7 @@ export function EntryComposer() {
           What are you grateful for today?
         </label>
         <textarea
-          className="mt-3 min-h-64 w-full resize-none rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 text-base leading-7 outline-none focus:border-[var(--trust)]"
+          className="mt-3 min-h-48 w-full resize-none rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4 text-base leading-7 outline-none focus:border-[var(--trust)] sm:min-h-64"
           id="entry"
           maxLength={ENTRY_LIMIT}
           onChange={(event) => setContent(event.target.value)}
@@ -81,10 +81,10 @@ export function EntryComposer() {
           value={content}
         />
 
-        <div className="mt-3 flex flex-wrap gap-2">
+        <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
           {starterPrompts.map((prompt) => (
             <button
-              className="rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-medium text-[var(--muted)]"
+              className="shrink-0 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-medium text-[var(--muted)]"
               key={prompt}
               onClick={() => setContent(prompt)}
               type="button"

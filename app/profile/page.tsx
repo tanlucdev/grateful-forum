@@ -11,10 +11,7 @@ export default async function ProfilePage() {
     return (
       <main className="mx-auto flex w-full max-w-xl flex-1 flex-col gap-5 px-4 py-6 sm:px-6">
         <div>
-          <p className="text-xs font-medium uppercase tracking-[0.18em] text-[var(--muted)]">
-            Profile
-          </p>
-          <h1 className="mt-2 text-2xl font-semibold tracking-tight">Your journal.</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Your journal.</h1>
           <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
             Sign in to edit your profile, keep your streak, and claim guest entries.
           </p>
@@ -28,10 +25,7 @@ export default async function ProfilePage() {
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-5 px-4 py-6 sm:px-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-xs font-medium uppercase tracking-[0.18em] text-[var(--muted)]">
-            Profile
-          </p>
-          <h1 className="mt-2 text-2xl font-semibold tracking-tight">
+          <h1 className="text-2xl font-semibold tracking-tight">
             {dashboard.profile.displayName}
           </h1>
           <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
@@ -59,9 +53,9 @@ export default async function ProfilePage() {
           My Journal
         </h2>
         <div className="grid gap-3">
-          {dashboard.entries.map((entry) => (
+          {dashboard.entries.length ? dashboard.entries.map((entry) => (
             <article
-              className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4"
+              className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4"
               key={entry.id}
             >
               <div className="flex items-center justify-between gap-3">
@@ -74,7 +68,11 @@ export default async function ProfilePage() {
                 {entry.content}
               </p>
             </article>
-          ))}
+          )) : (
+            <p className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4 text-sm text-[var(--muted)]">
+              Your saved entries will appear here.
+            </p>
+          )}
         </div>
       </section>
     </main>
@@ -83,7 +81,7 @@ export default async function ProfilePage() {
 
 function Metric({ label, value }: Readonly<{ label: string; value: string }>) {
   return (
-    <article className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4">
+    <article className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
       <p className="text-xs font-medium uppercase tracking-[0.18em] text-[var(--muted)]">
         {label}
       </p>

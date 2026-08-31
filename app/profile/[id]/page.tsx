@@ -19,7 +19,7 @@ export default async function PublicProfilePage({
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-5 px-4 py-6 sm:px-6">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg)]">
+          <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg)]">
             {profile.profile.avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img alt="" className="h-full w-full object-cover" src={profile.profile.avatarUrl} />
@@ -30,10 +30,7 @@ export default async function PublicProfilePage({
             )}
           </div>
           <div>
-            <p className="text-xs font-medium uppercase tracking-[0.18em] text-[var(--muted)]">
-              Public profile
-            </p>
-            <h1 className="mt-1 text-2xl font-semibold tracking-tight">
+            <h1 className="text-2xl font-semibold tracking-tight">
               {profile.profile.displayName}
             </h1>
             {profile.profile.username ? (
@@ -65,9 +62,9 @@ export default async function PublicProfilePage({
           Public journal
         </h2>
         <div className="grid gap-3">
-          {profile.entries.map((entry) => (
+          {profile.entries.length ? profile.entries.map((entry) => (
             <article
-              className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4"
+              className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4"
               key={entry.id}
             >
               <div className="flex items-center justify-between gap-3">
@@ -81,7 +78,11 @@ export default async function PublicProfilePage({
               </p>
               <ReportEntryButton entryId={entry.id} />
             </article>
-          ))}
+          )) : (
+            <p className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4 text-sm text-[var(--muted)]">
+              This profile has no public entries yet.
+            </p>
+          )}
         </div>
       </section>
     </main>
@@ -90,7 +91,7 @@ export default async function PublicProfilePage({
 
 function Metric({ label, value }: Readonly<{ label: string; value: string }>) {
   return (
-    <article className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4">
+    <article className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
       <p className="text-xs font-medium uppercase tracking-[0.18em] text-[var(--muted)]">
         {label}
       </p>

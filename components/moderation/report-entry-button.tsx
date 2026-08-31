@@ -43,12 +43,12 @@ export function ReportEntryButton({ entryId }: Readonly<{ entryId: string }>) {
         Report
       </button>
       {open ? (
-        <div className="mt-3 rounded-2xl border border-[var(--border)] bg-[var(--bg)] p-3">
+        <div className="mt-3 rounded-lg border border-[var(--border)] bg-[var(--bg)] p-3">
           <label className="text-sm font-medium text-[var(--text)]" htmlFor={`reason-${entryId}`}>
             Reason
           </label>
           <textarea
-            className="mt-2 min-h-24 w-full resize-none rounded-2xl border border-[var(--border)] bg-white p-3 text-sm outline-none focus:border-[var(--trust)]"
+            className="mt-2 min-h-24 w-full resize-none rounded-lg border border-[var(--border)] bg-white p-3 text-sm outline-none focus:border-[var(--trust)]"
             id={`reason-${entryId}`}
             onChange={(event) => setReason(event.target.value)}
             placeholder="Spam, unsafe content, private information..."
