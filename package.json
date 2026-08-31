@@ -2,11 +2,13 @@
   "name": "begrateful",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:logic": "node --experimental-strip-types tests/streak.test.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.5",
