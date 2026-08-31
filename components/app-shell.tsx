@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 
+import { BottomTabs } from "@/components/navigation/bottom-tabs";
+
 export function AppShell({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
@@ -16,7 +18,8 @@ export function AppShell({ children }: Readonly<{ children: ReactNode }>) {
           </span>
         </div>
       </header>
-      {children}
+      <div className="pb-28">{children}</div>
+      <BottomTabs />
     </div>
   );
 }
