@@ -23,3 +23,11 @@ npm run build
 ## Supabase
 
 Database migrations live in `supabase/migrations`.
+
+Apply them with your Supabase workflow, for example:
+
+```bash
+supabase db push
+```
+
+Admins are granted by inserting the user id into `public.admin_roles`.
