@@ -27,13 +27,13 @@ export async function loadAdminQueue() {
     return { admin: false, reports: [] as ModerationReport[] };
   }
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("is_admin")
-    .eq("id", auth.user.id)
+  const { data: adminRole } = await supabase
+    .from("admin_roles")
+    .select("user_id")
+    .eq("user_id", auth.user.id)
     .single();
 
-  if (!profile?.is_admin) {
+  if (!adminRole) {
     return { admin: false, reports: [] as ModerationReport[] };
   }
 
