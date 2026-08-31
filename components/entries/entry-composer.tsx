@@ -110,7 +110,7 @@ export function EntryComposer() {
         </div>
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 border-t border-[var(--border)] bg-[var(--bg)]/95 px-4 pb-[calc(env(safe-area-inset-bottom)+16px)] pt-3 backdrop-blur">
+      <div className="fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+82px)] border-t border-[var(--border)] bg-[var(--bg)]/95 px-4 pb-4 pt-3 backdrop-blur">
         <div className="mx-auto flex w-full max-w-2xl items-center gap-3">
           <p className="min-w-0 flex-1 text-sm text-[var(--muted)]" role="status">
             {status || `${remaining} characters left`}
