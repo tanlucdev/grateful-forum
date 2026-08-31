@@ -19,13 +19,13 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: "Not signed in." }, { status: 401 });
   }
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("is_admin")
-    .eq("id", auth.user.id)
+  const { data: adminRole } = await supabase
+    .from("admin_roles")
+    .select("user_id")
+    .eq("user_id", auth.user.id)
     .single();
 
-  if (!profile?.is_admin) {
+  if (!adminRole) {
     return NextResponse.json({ error: "Admin only." }, { status: 403 });
   }
 
