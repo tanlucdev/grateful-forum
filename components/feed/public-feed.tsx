@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Globe, UserRound } from "lucide-react";
 import type { FeedItem, FeedPage } from "@/lib/feed/types";
+import { ReportEntryButton } from "@/components/moderation/report-entry-button";
 
 export function PublicFeed({ initialPage }: Readonly<{ initialPage: FeedPage }>) {
   const [items, setItems] = useState(initialPage.items);
@@ -92,6 +93,7 @@ function FeedCard({ item }: Readonly<{ item: FeedItem }>) {
       <p className="mt-4 whitespace-pre-wrap text-sm leading-6 text-[var(--text)]">
         {item.content}
       </p>
+      <ReportEntryButton entryId={item.id} />
     </article>
   );
 }

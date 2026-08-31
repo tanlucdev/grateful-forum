@@ -1,0 +1,30 @@
+import { ModerationQueue } from "@/components/moderation/moderation-queue";
+import { loadAdminQueue } from "@/lib/moderation/load-admin-queue";
+
+export default async function ModerationPage() {
+  const queue = await loadAdminQueue();
+
+  return (
+    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-5 px-4 py-6 sm:px-6">
+      <div>
+        <p className="text-xs font-medium uppercase tracking-[0.18em] text-[var(--muted)]">
+          Admin
+        </p>
+        <h1 className="mt-2 text-2xl font-semibold tracking-tight">
+          Moderation queue
+        </h1>
+        <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
+          Review reports, dismiss noise, hide entries, or delete severe content.
+        </p>
+      </div>
+
+      {queue.admin ? (
+        <ModerationQueue reports={queue.reports} />
+      ) : (
+        <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 text-sm text-[var(--muted)]">
+          Admin access required.
+        </section>
+      )}
+    </main>
+  );
+}

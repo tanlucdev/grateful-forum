@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ReportEntryButton } from "@/components/moderation/report-entry-button";
 import { loadPublicProfile } from "@/lib/profile/load-public-profile";
 
 export default async function PublicProfilePage({
@@ -78,6 +79,7 @@ export default async function PublicProfilePage({
               <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-[var(--text)]">
                 {entry.content}
               </p>
+              <ReportEntryButton entryId={entry.id} />
             </article>
           ))}
         </div>
