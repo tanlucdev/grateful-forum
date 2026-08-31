@@ -1,4 +1,5 @@
 import { ArrowRight, FileText, ShieldCheck, Sparkles } from "lucide-react";
+import Link from "next/link";
 
 const items = [
   {
@@ -34,6 +35,21 @@ export default function HomePage() {
               A calm mobile web shell for gratitude writing, public sharing, and
               account-backed persistence.
             </p>
+            <div className="flex flex-wrap gap-2 pt-2">
+              <Link
+                className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[var(--accent)] px-4 text-sm font-semibold text-white"
+                href="/write"
+              >
+                Write now
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                className="inline-flex min-h-11 items-center rounded-full border border-[var(--border)] px-4 text-sm font-medium text-[var(--text)]"
+                href="/auth"
+              >
+                Account
+              </Link>
+            </div>
           </div>
           <ArrowRight className="mt-1 h-5 w-5 shrink-0 text-[var(--accent)]" />
         </div>
