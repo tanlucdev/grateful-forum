@@ -45,6 +45,12 @@ export default function HomePage() {
               </Link>
               <Link
                 className="inline-flex min-h-11 items-center rounded-full border border-[var(--border)] px-4 text-sm font-medium text-[var(--text)]"
+                href="/feed"
+              >
+                Feed
+              </Link>
+              <Link
+                className="inline-flex min-h-11 items-center rounded-full border border-[var(--border)] px-4 text-sm font-medium text-[var(--text)]"
                 href="/auth"
               >
                 Account
