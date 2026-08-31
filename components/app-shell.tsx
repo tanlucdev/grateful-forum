@@ -10,11 +10,11 @@ export function AppShell({ children }: Readonly<{ children: ReactNode }>) {
           <div>
             <p className="text-sm font-semibold tracking-tight">BeGrateful</p>
             <p className="text-xs text-[var(--muted)]">
-              Gratitude journal foundation
+              Daily gratitude journal
             </p>
           </div>
           <span className="rounded-full border border-[var(--border)] px-3 py-1 text-xs text-[var(--muted)]">
-            web
+            MVP
           </span>
         </div>
       </header>

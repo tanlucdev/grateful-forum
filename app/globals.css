@@ -8,6 +8,7 @@
   --muted: #6b7280;
   --accent: #9a5f2e;
   --trust: #245b6a;
+  --focus: #c47a34;
 }
 
 * {
@@ -31,6 +32,16 @@ body {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+::selection {
+  background: #ead0b4;
+  color: var(--text);
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
 }
 
 button,

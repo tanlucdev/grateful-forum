@@ -22,18 +22,15 @@ const items = [
 export default function HomePage() {
   return (
     <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
-      <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-[0_1px_0_rgba(15,23,42,0.04)]">
-        <p className="text-xs font-medium uppercase tracking-[0.18em] text-[var(--muted)]">
-          Foundation ready
-        </p>
+      <section className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-5 shadow-[0_1px_0_rgba(15,23,42,0.04)]">
         <div className="mt-3 flex items-start justify-between gap-4">
           <div className="space-y-2">
             <h1 className="text-2xl font-semibold tracking-tight text-[var(--text)]">
               BeGrateful
             </h1>
             <p className="max-w-xl text-sm leading-6 text-[var(--muted)]">
-              A calm mobile web shell for gratitude writing, public sharing, and
-              account-backed persistence.
+              Write one grateful thing, choose how visible it should be, and
+              keep the habit tied to your profile when you sign in.
             </p>
             <div className="flex flex-wrap gap-2 pt-2">
               <Link
@@ -67,7 +64,7 @@ export default function HomePage() {
           return (
             <article
               key={item.title}
-              className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4"
+              className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4"
             >
               <Icon className="h-5 w-5 text-[var(--accent)]" />
               <h2 className="mt-3 text-sm font-semibold text-[var(--text)]">

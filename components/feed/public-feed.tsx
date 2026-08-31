@@ -46,9 +46,13 @@ export function PublicFeed({ initialPage }: Readonly<{ initialPage: FeedPage }>)
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-3 px-4 pb-10 pt-4 sm:px-6">
-      {items.map((item) => (
-        <FeedCard key={item.id} item={item} />
-      ))}
+      {items.length ? (
+        items.map((item) => <FeedCard key={item.id} item={item} />)
+      ) : (
+        <p className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4 text-sm text-[var(--muted)]">
+          Public entries will appear here after people choose to share them.
+        </p>
+      )}
       <div ref={sentinelRef} className="h-10" />
       <p className="pb-6 text-center text-sm text-[var(--muted)]">
         {loading ? "Loading more..." : done ? "You reached the end." : ""}
@@ -63,7 +67,7 @@ function FeedCard({ item }: Readonly<{ item: FeedItem }>) {
   const profileHref = author ? `/profile/${author.id}` : null;
 
   return (
-    <article className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4">
+    <article className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2">

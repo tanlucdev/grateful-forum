@@ -7,10 +7,7 @@ export default async function ModerationPage() {
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-5 px-4 py-6 sm:px-6">
       <div>
-        <p className="text-xs font-medium uppercase tracking-[0.18em] text-[var(--muted)]">
-          Admin
-        </p>
-        <h1 className="mt-2 text-2xl font-semibold tracking-tight">
+        <h1 className="text-2xl font-semibold tracking-tight">
           Moderation queue
         </h1>
         <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
@@ -21,7 +18,7 @@ export default async function ModerationPage() {
       {queue.admin ? (
         <ModerationQueue reports={queue.reports} />
       ) : (
-        <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 text-sm text-[var(--muted)]">
+        <section className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4 text-sm text-[var(--muted)]">
           Admin access required.
         </section>
       )}

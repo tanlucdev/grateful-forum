@@ -53,9 +53,9 @@ export function ProfileEditor({ profile }: Readonly<{ profile: ProfileRecord }>)
     .toUpperCase();
 
   return (
-    <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4">
+    <section className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
       <div className="flex items-start gap-4">
-        <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg)]">
+        <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg)]">
           {draft.avatarUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img alt="" className="h-full w-full object-cover" src={draft.avatarUrl} />
@@ -109,7 +109,7 @@ export function ProfileEditor({ profile }: Readonly<{ profile: ProfileRecord }>)
         Bio
       </label>
       <textarea
-        className="mt-2 min-h-28 w-full resize-none rounded-2xl border border-[var(--border)] bg-white p-4 text-sm outline-none focus:border-[var(--trust)]"
+        className="mt-2 min-h-28 w-full resize-none rounded-lg border border-[var(--border)] bg-white p-4 text-sm outline-none focus:border-[var(--trust)]"
         id="bio"
         onChange={(event) => setDraft((current) => ({ ...current, bio: event.target.value }))}
         placeholder="A few words about what keeps you grateful."
