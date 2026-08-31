@@ -122,7 +122,11 @@ using (auth.uid() = user_id);
 
 create policy "Users insert their own entries"
 on public.entries for insert
-with check (auth.uid() = user_id);
+with check (auth.uid() = user_id and guest_id is null);
+
+create policy "Guests insert guest entries"
+on public.entries for insert
+with check (auth.uid() is null and user_id is null and guest_id is not null);
 
 create policy "Users update their own entries"
 on public.entries for update
@@ -141,7 +145,12 @@ with check (public.is_admin());
 create policy "Anyone can report visible entries"
 on public.reports for insert
 with check (
-  exists (
+  (
+    (auth.uid() is not null and reporter_id = auth.uid() and guest_id is null)
+    or
+    (auth.uid() is null and reporter_id is null and guest_id is not null)
+  )
+  and exists (
     select 1 from public.entries
     where entries.id = entry_id
       and entries.hidden_at is null
