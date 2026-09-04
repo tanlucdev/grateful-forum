@@ -17,7 +17,7 @@ export default async function PublicProfilePage({
 
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-5 px-4 py-6 sm:px-6">
-      <div className="flex items-start justify-between gap-4">
+      <section className="soft-surface flex items-start justify-between gap-4 rounded-lg border border-[var(--border)] bg-[var(--surface-raised)] p-5">
         <div className="flex items-center gap-4">
           <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg)]">
             {profile.profile.avatarUrl ? (
@@ -39,12 +39,12 @@ export default async function PublicProfilePage({
           </div>
         </div>
         <Link
-          className="inline-flex min-h-11 items-center rounded-full border border-[var(--border)] px-4 text-sm font-medium text-[var(--text)]"
+          className="inline-flex min-h-11 items-center rounded-full border border-[var(--border)] bg-[var(--surface)] px-4 text-sm font-medium text-[var(--text)]"
           href="/feed"
         >
           Back
         </Link>
-      </div>
+      </section>
 
       {profile.profile.bio ? (
         <p className="max-w-2xl text-sm leading-6 text-[var(--muted)]">
@@ -64,7 +64,7 @@ export default async function PublicProfilePage({
         <div className="grid gap-3">
           {profile.entries.length ? profile.entries.map((entry) => (
             <article
-              className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4"
+              className="soft-surface rounded-lg border border-[var(--border)] bg-[var(--surface-raised)] p-4"
               key={entry.id}
             >
               <div className="flex items-center justify-between gap-3">
@@ -91,7 +91,7 @@ export default async function PublicProfilePage({
 
 function Metric({ label, value }: Readonly<{ label: string; value: string }>) {
   return (
-    <article className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
+    <article className="soft-surface rounded-lg border border-[var(--border)] bg-[var(--surface-raised)] p-4">
       <p className="text-xs font-medium uppercase tracking-[0.18em] text-[var(--muted)]">
         {label}
       </p>
