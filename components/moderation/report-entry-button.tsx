@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Flag } from "lucide-react";
+import { reportEntry } from "@/lib/api";
 
 export function ReportEntryButton({ entryId }: Readonly<{ entryId: string }>) {
   const [open, setOpen] = useState(false);
@@ -13,29 +14,23 @@ export function ReportEntryButton({ entryId }: Readonly<{ entryId: string }>) {
     setSaving(true);
     setStatus("");
 
-    const response = await fetch("/api/reports", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ entryId, reason }),
-    });
-    const result = (await response.json()) as { error?: string };
-
-    setSaving(false);
-
-    if (!response.ok) {
-      setStatus(result.error ?? "Could not report entry.");
-      return;
+    try {
+      await reportEntry(entryId, reason);
+      setReason("");
+      setStatus("Reported.");
+      setOpen(false);
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : "Could not report entry.");
+    } finally {
+      setSaving(false);
     }
-
-    setReason("");
-    setStatus("Reported.");
-    setOpen(false);
   }
 
   return (
     <div className="mt-4">
       <button
-        className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--border)] px-3 text-xs font-medium text-[var(--muted)]"
+        aria-expanded={open}
+        className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 text-xs font-medium text-[var(--muted)]"
         onClick={() => setOpen((value) => !value)}
         type="button"
       >
@@ -43,7 +38,7 @@ export function ReportEntryButton({ entryId }: Readonly<{ entryId: string }>) {
         Report
       </button>
       {open ? (
-        <div className="mt-3 rounded-lg border border-[var(--border)] bg-[var(--bg)] p-3">
+        <div className="mt-3 rounded-lg border border-[var(--border)] bg-[var(--surface-raised)] p-3 shadow-[0_12px_28px_rgba(50,39,26,0.08)]">
           <label className="text-sm font-medium text-[var(--text)]" htmlFor={`reason-${entryId}`}>
             Reason
           </label>
@@ -62,6 +57,13 @@ export function ReportEntryButton({ entryId }: Readonly<{ entryId: string }>) {
               type="button"
             >
               Submit
+            </button>
+            <button
+              className="inline-flex min-h-11 items-center rounded-full border border-[var(--border)] bg-[var(--surface)] px-4 text-sm font-medium text-[var(--text)]"
+              onClick={() => setOpen(false)}
+              type="button"
+            >
+              Cancel
             </button>
             <p className="text-sm text-[var(--muted)]" role="status">
               {status}
