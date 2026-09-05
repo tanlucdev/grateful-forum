@@ -3,6 +3,7 @@ import { Manrope, Quicksand } from "next/font/google";
 import type { ReactNode } from "react";
 import "./globals.css";
 import { AppShell } from "@/components/app-shell";
+import { loadOwnProfileDashboard } from "@/lib/profile/load-own-profile";
 
 const manrope = Manrope({
   subsets: ["latin", "vietnamese"],
@@ -20,11 +21,20 @@ export const metadata: Metadata = {
   description: "A mobile-first gratitude journal.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: ReactNode;
 }>) {
+  const dashboard = await loadOwnProfileDashboard();
+  const displayName = dashboard?.profile.displayName || "Minh Trần";
+  const slug = displayName
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
   return (
     <html lang="vi">
       <head>
@@ -35,7 +45,16 @@ export default function RootLayout({
         />
       </head>
       <body className={`${manrope.className} ${quicksand.variable}`}>
-        <AppShell>{children}</AppShell>
+        <AppShell
+          profile={{
+            avatarUrl: dashboard?.profile.avatarUrl || "/stitch/profile/avatar-desktop.jpg",
+            displayName,
+            email: `${slug.replace(/-/g, ".")}@example.com`,
+            streak: dashboard?.streak || 3,
+          }}
+        >
+          {children}
+        </AppShell>
       </body>
     </html>
   );

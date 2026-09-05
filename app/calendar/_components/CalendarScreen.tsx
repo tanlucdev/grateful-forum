@@ -1,4 +1,4 @@
-import { DesktopFooter, DesktopHeader, FilterPills, HeroActions, MobileBottomNav } from "./calendar-shell";
+import { DesktopFooter, FilterPills, HeroActions, MobileBottomNav } from "./calendar-shell";
 import { GardenDesktop, GardenMobile } from "./calendar-garden";
 import { Badges, MascotWhisper, MonthCalendar, TodayMoments } from "./calendar-time";
 import { MascotLevel, Metric } from "./calendar-stat";
@@ -15,7 +15,6 @@ export function CalendarScreen() {
 function DesktopCalendar() {
   return (
     <div className="hidden min-h-dvh bg-[#f4fbf8] md:block">
-      <DesktopHeader />
       <main className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-6 pb-10 pt-24 lg:px-16">
         <HeroActions />
         <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">

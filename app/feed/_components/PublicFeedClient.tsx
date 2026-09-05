@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { FeedPage } from "@/lib/feed/types";
 import { loadMoreFeed } from "@/lib/api";
-import { DesktopAside, DesktopFooter, DesktopHeader, MobileHeader, WritePrompt } from "./feed-shell";
+import { DesktopAside, DesktopFooter, MobileHeader, WritePrompt } from "./feed-shell";
 import { DesktopFeedCard, FeedSentinel, MobileFeedCard } from "./feed-cards";
 import { sampleItems, toDisplayItem, type DisplayItem } from "./feed-data";
 
@@ -55,7 +55,6 @@ export function PublicFeedClient({ initialPage }: Readonly<{ initialPage: FeedPa
 
   return (
     <div className="min-h-svh bg-[#eefcf9] text-[#111e1c] md:bg-[#f4fbf8] md:font-[family-name:var(--font-quicksand)]">
-      <DesktopHeader />
       <MobileHeader />
       <main className="min-h-svh pt-16 md:mx-auto md:max-w-[1200px] md:px-6">
         <section className="mx-auto flex w-full max-w-md flex-col gap-4 px-6 pb-[100px] pt-4 md:hidden">

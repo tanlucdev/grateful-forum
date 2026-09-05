@@ -2,66 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
 
-export function DesktopHeader() {
-  return (
-    <header className="fixed inset-x-0 top-0 z-50 hidden bg-[#f4fbf8]/85 shadow-[0_1px_8px_rgba(0,0,0,0.04)] backdrop-blur-xl md:block">
-      <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between gap-4 px-6">
-        <div className="flex items-center gap-3">
-          <Link className="flex items-center gap-2" href="/feed">
-            <Image
-              alt="Mầm"
-              className="h-8 w-8 rounded-full object-cover"
-              height={32}
-              src="/stitch/feed/sprout-logo.jpg"
-              width={32}
-            />
-            <span className="text-xl font-semibold tracking-tight text-[#006d43]">
-              BeGrateful
-            </span>
-          </Link>
-          <span className="rounded-full bg-[#e8efec] px-2.5 py-1 text-[11px] font-medium leading-[14px] text-[#3d4a41] shadow-[0_1px_4px_rgba(26,47,43,0.04)]">
-            Mầm
-          </span>
-        </div>
-        <nav className="flex items-center gap-1.5 rounded-xl bg-[#eef5f2] p-1">
-          <Link
-            aria-current="page"
-            className="inline-flex h-10 items-center rounded-lg bg-[#4ca374] px-3.5 text-sm font-semibold leading-5 text-[#00331d]"
-            href="/feed"
-          >
-            Feed
-          </Link>
-          <Link className="inline-flex h-10 items-center rounded-lg px-3.5 text-sm font-semibold leading-5 text-[#3d4a41]" href="/write">
-            Viết nhật ký
-          </Link>
-          <Link className="inline-flex h-10 items-center rounded-lg px-3.5 text-sm font-semibold leading-5 text-[#3d4a41]" href="/profile">
-            Cá nhân
-          </Link>
-        </nav>
-        <div className="flex items-center gap-3">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#ffdad8]/60 px-3 py-1.5 text-xs font-medium leading-4 text-[#852229]">
-            <MaterialSymbol className="text-lg text-[#a5393e]" fill name="local_fire_department" />
-            3 ngày liên tiếp
-          </span>
-          <Link
-            aria-label="Cá nhân"
-            className="rounded-full p-0.5 ring-2 ring-[#006d43]/20"
-            href="/profile"
-          >
-            <Image
-              alt=""
-              className="h-8 w-8 rounded-full object-cover"
-              height={32}
-              src="/stitch/feed/mascot.jpg"
-              width={32}
-            />
-          </Link>
-        </div>
-      </div>
-    </header>
-  );
-}
-
 export function MobileHeader() {
   return (
     <header className="fixed inset-x-0 top-0 z-40 bg-[#eefcf9]/80 pt-[env(safe-area-inset-top)] shadow-[0_1px_8px_rgba(0,0,0,0.02)] backdrop-blur-xl md:hidden">
@@ -207,7 +147,7 @@ export function DesktopFooter() {
           </span>
         </div>
         <p className="text-xs font-medium leading-4 text-[#3d4a41]">
-          © 2024 BeGrateful. Lan tỏa lòng biết ơn mỗi ngày.
+          © 2026 BeGrateful. Lan tỏa lòng biết ơn mỗi ngày.
         </p>
       </div>
     </footer>

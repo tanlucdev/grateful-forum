@@ -7,7 +7,6 @@ import { ENTRY_LIMIT, type EntryVisibility } from "@/lib/entries/types";
 import { addLocalEntry, markLocalEntrySynced } from "@/lib/entries/local-store";
 import {
   DesktopComposerFooter,
-  DesktopComposerHeader,
   MascotHint,
   MobileComposerHeader,
   MoodPicker,
@@ -69,7 +68,6 @@ export function EntryComposerClient() {
   return (
     <main className="min-h-svh bg-[#f4fbf8] text-[#161d1b] [font-family:var(--font-quicksand)] md:flex md:min-h-screen md:flex-col">
       <MobileComposerHeader />
-      <DesktopComposerHeader />
 
       <section className="relative flex min-h-svh flex-col overflow-hidden px-10 pb-[env(safe-area-inset-bottom)] pt-16 md:mx-auto md:min-h-0 md:w-full md:max-w-[1200px] md:flex-1 md:px-6">
         <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden md:hidden">
