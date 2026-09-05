@@ -10,13 +10,14 @@ const tabs = [
   { href: "/profile", label: "Cá nhân", icon: UserCircle2, center: false },
 ] as const;
 
-export function BottomTabs() {
+export function BottomTabs({ authenticated }: Readonly<{ authenticated: boolean }>) {
   const pathname = usePathname();
+  const visibleTabs = authenticated ? tabs : tabs.filter((tab) => tab.href !== "/profile");
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-[var(--border)] bg-[var(--bg)]/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden">
-      <div className="mx-auto grid h-[72px] w-full max-w-md grid-cols-[1fr_auto_1fr] items-center px-5">
-        {tabs.map((tab) => {
+      <div className={`mx-auto grid h-[72px] w-full max-w-md items-center px-5 ${authenticated ? "grid-cols-[1fr_auto_1fr]" : "grid-cols-[1fr_auto]"}`}>
+        {visibleTabs.map((tab) => {
           const Icon = tab.icon;
           const active = pathname.startsWith(tab.href);
 

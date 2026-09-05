@@ -46,6 +46,7 @@ export default async function RootLayout({
       </head>
       <body className={`${manrope.className} ${quicksand.variable}`}>
         <AppShell
+          authenticated={Boolean(dashboard)}
           profile={{
             avatarUrl: dashboard?.profile.avatarUrl || "/stitch/profile/avatar-desktop.jpg",
             displayName,
