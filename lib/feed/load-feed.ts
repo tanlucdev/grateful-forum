@@ -26,6 +26,10 @@ export async function loadFeedPage(cursor?: string | null): Promise<FeedPage> {
   const { data, error } = await query;
 
   if (error) {
+    if (error.message.includes("'public.entries'") && error.message.includes("schema cache")) {
+      return { items: [], nextCursor: null };
+    }
+
     throw new Error(error.message);
   }
 
