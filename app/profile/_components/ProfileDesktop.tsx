@@ -1,75 +1,29 @@
-import Link from "next/link";
-import type { JournalEntry } from "@/lib/profile/types";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
-import { ProfileAvatarMenu } from "./ProfileAvatarMenuClient";
 import { ProfileEditModalButton } from "./ProfileModalsClient";
 import {
   Avatar,
-  DesktopTab,
-  EntryActions,
-  EntryImage,
   MilestoneCard,
-  MilestoneMini,
   Pill,
-  Tag,
 } from "./ProfileDesktopCards";
-import { formatRelative, profileAssets, type ProfileView } from "./profile-view";
+import { ProfileDesktopTabs } from "./ProfileDesktopTabsClient";
+import type { ProfileView } from "./profile-view";
 
-export function DesktopProfile({ view }: Readonly<{ view: ProfileView }>) {
+export function DesktopProfile({
+  initialTab,
+  view,
+}: Readonly<{ initialTab: "all" | "public" | "moments"; view: ProfileView }>) {
   return (
     <div className="hidden min-h-svh flex-col bg-[#f4fbf8] md:flex">
-      <DesktopHeader view={view} />
       <main className="mx-auto w-full max-w-[1200px] flex-1 px-6 pt-16">
         <div className="flex w-full flex-col space-y-8 py-8">
           <DesktopHero view={view} />
-          <DesktopJournal view={view} />
+          <ProfileDesktopTabs initialTab={initialTab} />
           <MilestoneCard view={view} />
           <RhythmCard />
         </div>
       </main>
+      <DesktopFooter />
     </div>
-  );
-}
-
-function DesktopHeader({ view }: Readonly<{ view: ProfileView }>) {
-  return (
-    <header className="fixed inset-x-0 top-0 z-50 bg-[#f4fbf8]/85 shadow-[0_1px_8px_rgba(0,0,0,0.04)] backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between gap-4 px-6">
-        <div className="flex items-center gap-3">
-          <Link className="flex items-center gap-2" href="/feed">
-            <MaterialSymbol className="text-2xl text-[#006d43]" name="eco" />
-            <span className="text-xl font-semibold leading-7 tracking-tight text-[#006d43]">
-              BeGrateful
-            </span>
-          </Link>
-          <span className="rounded-full bg-[#e8efec] px-2.5 py-1 text-[11px] font-medium leading-[14px] text-[#3d4a41] shadow-[0_1px_4px_rgba(26,47,43,0.04)]">
-            Mầm
-          </span>
-        </div>
-        <nav className="flex items-center gap-1.5 rounded-xl bg-[#eef5f2] p-1">
-          <Link className="inline-flex h-10 items-center rounded-lg px-3.5 text-sm font-semibold leading-5 text-[#3d4a41]" href="/feed">
-            Feed
-          </Link>
-          <Link className="inline-flex h-10 items-center rounded-lg px-3.5 text-sm font-semibold leading-5 text-[#3d4a41]" href="/write">
-            Viết nhật ký
-          </Link>
-          <Link
-            aria-current="page"
-            className="inline-flex h-10 items-center rounded-lg bg-[#4ca374] px-3.5 text-sm font-semibold leading-5 text-[#00331d]"
-            href="/profile"
-          >
-            Cá nhân
-          </Link>
-        </nav>
-        <div className="flex items-center gap-3">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#ffdad8]/60 px-3 py-1.5 text-xs font-medium leading-4 text-[#852229]">
-            <MaterialSymbol className="text-lg text-[#a5393e]" fill name="local_fire_department" />
-            {view.streak} ngày liên tiếp
-          </span>
-          <ProfileAvatarMenu view={view} />
-        </div>
-      </div>
-    </header>
   );
 }
 
@@ -113,77 +67,6 @@ function DesktopHero({ view }: Readonly<{ view: ProfileView }>) {
   );
 }
 
-function DesktopJournal({ view }: Readonly<{ view: ProfileView }>) {
-  return (
-    <section className="flex flex-col space-y-6">
-      <div className="flex items-center justify-between pb-2">
-        <div className="flex items-center gap-6">
-          <DesktopTab active count={view.entryCount} label="Tất cả nhật ký" />
-          <DesktopTab count={view.publicCount} label="Công khai" />
-          <DesktopTab count={4} label="Bộ sưu tập khoảnh khắc" />
-        </div>
-        <div className="flex items-center gap-2 rounded-xl bg-[#eef5f2] p-1">
-          <button className="rounded-lg bg-white p-1.5 text-[#006d43] shadow-sm" title="Dạng lưới">
-            <MaterialSymbol className="text-xl" name="grid_view" />
-          </button>
-          <button className="rounded-lg p-1.5 text-[#3d4a41]" title="Dạng danh sách">
-            <MaterialSymbol className="text-xl" name="format_list_bulleted" />
-          </button>
-        </div>
-      </div>
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {view.entries.slice(0, 3).map((entry, index) => (
-          <DesktopEntryCard entry={entry} index={index} key={entry.id} />
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function DesktopEntryCard({
-  entry,
-  index,
-}: Readonly<{ entry: JournalEntry; index: number }>) {
-  const media =
-    index === 0
-      ? { image: profileAssets.coffeeDesktop, label: "Gia đình", labelAt: "top" }
-      : index === 2
-        ? { image: profileAssets.park, label: "Lofi Autumn", labelAt: "bottom" }
-        : null;
-
-  return (
-    <article className="group flex flex-col justify-between rounded-xl bg-white p-6 shadow-sm transition-all duration-300 hover:shadow-md">
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className={`h-2.5 w-2.5 rounded-full ${index === 1 ? "bg-[#80d99e]" : index === 2 ? "bg-[#bccabe]" : "bg-[#006d43]"}`} />
-            <span className="text-xs font-medium leading-4 tracking-[0.04em] text-[#3d4a41]">
-              {formatRelative(entry.createdAt)}
-            </span>
-          </div>
-          <div className="flex items-center gap-1">
-            <MaterialSymbol className={`text-lg ${index === 1 ? "text-indigo-400" : index === 2 ? "text-teal-600" : "text-amber-500"}`} fill name={index === 1 ? "bedtime" : index === 2 ? "air" : "wb_sunny"} />
-            <button className="rounded-full p-1 text-[#3d4a41] transition-colors hover:text-[#161d1b]" title="Thêm tùy chọn">
-              <MaterialSymbol className="text-base" name="more_horiz" />
-            </button>
-          </div>
-        </div>
-        {media ? <EntryImage {...media} /> : <MilestoneMini />}
-        <p className="[display:-webkit-box] overflow-hidden text-base leading-6 text-[#161d1b] [-webkit-box-orient:vertical] [-webkit-line-clamp:3]">
-          {entry.content}
-        </p>
-        {index === 1 ? (
-          <div className="flex flex-wrap gap-1.5 pt-2">
-            <Tag text="#congviec" />
-            <Tag text="#nỗlực" />
-          </div>
-        ) : null}
-      </div>
-      <EntryActions comments={index === 0 ? 2 : index === 2 ? 5 : 0} likes={index === 0 ? 14 : index === 2 ? 23 : 9} visibility={entry.visibility} />
-    </article>
-  );
-}
-
 function RhythmCard() {
   return (
     <section className="flex items-center justify-between gap-4 rounded-xl bg-white p-6 shadow-sm">
@@ -209,5 +92,24 @@ function RhythmCard() {
         ))}
       </div>
     </section>
+  );
+}
+
+function DesktopFooter() {
+  return (
+    <footer className="mt-auto w-full bg-[#eef5f2] py-8 shadow-[0_-1px_6px_rgba(0,0,0,0.02)]">
+      <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-4 px-6">
+        <div className="flex items-center gap-2">
+          <MaterialSymbol className="text-xl text-[#006d43]" name="eco" />
+          <span className="text-xl font-semibold leading-7 text-[#006d43]">BeGrateful</span>
+          <span className="ml-2 text-[11px] font-medium leading-[14px] text-[#3d4a41]">
+            Nuôi dưỡng tâm hồn an yên
+          </span>
+        </div>
+        <div className="text-xs font-medium leading-4 text-[#3d4a41]">
+          © 2026 BeGrateful. Lan tỏa lòng biết ơn mỗi ngày.
+        </div>
+      </div>
+    </footer>
   );
 }

@@ -1,16 +1,43 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
 import type { ProfileView } from "./profile-view";
 
 export function ProfileAvatarMenu({ view }: Readonly<{ view: ProfileView }>) {
   const [open, setOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    function closeOnOutside(event: PointerEvent) {
+      if (!menuRef.current?.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    }
+
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setOpen(false);
+      }
+    }
+
+    document.addEventListener("pointerdown", closeOnOutside);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("pointerdown", closeOnOutside);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [open]);
 
   return (
-    <div className="relative">
+    <div className="relative" ref={menuRef}>
       <button
         aria-expanded={open}
+        aria-haspopup="menu"
         aria-label="Menu tài khoản"
         className="flex items-center justify-center rounded-full p-0.5 ring-2 ring-[#006d43]/20 transition-all hover:ring-[#006d43]/40"
         onClick={() => setOpen((current) => !current)}

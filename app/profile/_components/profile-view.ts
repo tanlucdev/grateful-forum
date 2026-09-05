@@ -7,6 +7,7 @@ export const profileAssets = {
   coffeeMobile: "/stitch/profile/coffee-mobile.jpg",
   mascot: "/stitch/profile/mascot.jpg",
   park: "/stitch/profile/park.jpg",
+  sprout: "/stitch/profile/sprout.jpg",
 };
 
 export type ProfileView = {
