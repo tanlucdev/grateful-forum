@@ -9,6 +9,7 @@ export async function GET(request: Request) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
   const next = url.searchParams.get("next") ?? "/";
+  const safeNext = next.startsWith("/") && !next.startsWith("//") ? next : "/";
 
   if (!code) {
     return NextResponse.redirect(new URL("/?auth=missing-code", url.origin));
@@ -23,13 +24,19 @@ export async function GET(request: Request) {
 
   const guestId = await getGuestId();
   if (guestId) {
-    await migrateGuestData(createSupabaseAdminClient(), {
-      guestId,
-      userId: data.user.id,
-    });
+    try {
+      await migrateGuestData(createSupabaseAdminClient(), {
+        guestId,
+        userId: data.user.id,
+      });
+    } catch {
+      return NextResponse.redirect(
+        new URL("/?auth=migration-failed", url.origin),
+      );
+    }
   }
 
-  const response = NextResponse.redirect(new URL(next, url.origin));
+  const response = NextResponse.redirect(new URL(safeNext, url.origin));
   response.cookies.delete(GUEST_SESSION_COOKIE);
   return response;
 }

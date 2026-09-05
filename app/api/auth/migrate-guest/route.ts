@@ -1,0 +1,59 @@
+import { NextResponse } from "next/server";
+import { GUEST_SESSION_COOKIE } from "@/lib/auth/constants";
+import { getGuestId } from "@/lib/auth/guest-session";
+import { migrateGuestData } from "@/lib/auth/migrate-guest-data";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { hasSupabaseEnv } from "@/lib/supabase/env";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+
+export async function POST() {
+  if (!hasSupabaseEnv()) {
+    return NextResponse.json(
+      { error: "Supabase chưa được cấu hình." },
+      { status: 503 },
+    );
+  }
+
+  const serverSupabase = await createSupabaseServerClient();
+  const { data: auth, error: authError } = await serverSupabase.auth.getUser();
+
+  if (authError || !auth.user) {
+    return NextResponse.json(
+      { error: "Phiên đăng nhập không hợp lệ." },
+      { status: 401 },
+    );
+  }
+
+  let supabase: ReturnType<typeof createSupabaseAdminClient>;
+
+  try {
+    supabase = createSupabaseAdminClient();
+  } catch {
+    return NextResponse.json(
+      { error: "Supabase service role chưa được cấu hình." },
+      { status: 503 },
+    );
+  }
+
+  const guestId = await getGuestId();
+
+  if (!guestId) {
+    return NextResponse.json({ migrated: false });
+  }
+
+  try {
+    await migrateGuestData(supabase, {
+      guestId,
+      userId: auth.user.id,
+    });
+  } catch {
+    return NextResponse.json(
+      { error: "Không thể chuyển dữ liệu khách." },
+      { status: 500 },
+    );
+  }
+
+  const response = NextResponse.json({ migrated: true });
+  response.cookies.delete(GUEST_SESSION_COOKIE);
+  return response;
+}

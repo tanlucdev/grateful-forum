@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { Toaster } from "sonner";
 
 import { BottomTabs } from "@/components/navigation/bottom-tabs";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
@@ -26,8 +27,9 @@ const desktopNav = [
 
 export function AppShell({
   children,
+  authenticated,
   profile,
-}: Readonly<{ children: ReactNode; profile: AppShellProfile }>) {
+}: Readonly<{ children: ReactNode; authenticated: boolean; profile: AppShellProfile }>) {
   const pathname = usePathname();
   const isAuthSurface = pathname.startsWith("/auth");
   const isLandingSurface = pathname === "/";
@@ -46,24 +48,30 @@ export function AppShell({
       className={`min-h-screen bg-[var(--bg)] text-[var(--text)] ${
         isStitchSurface ? "journal-write-theme" : ""
       }`}
-    >
+      >
       {isAuthSurface || isLandingSurface ? null : (
-        <AppHeader pathname={pathname} profile={profile} />
+        <AppHeader pathname={pathname} authenticated={authenticated} profile={profile} />
       )}
       <div className={contentPadding}>
         {children}
       </div>
       {hidesGlobalBottomTabs ? null : (
-        <BottomTabs />
+        <BottomTabs authenticated={authenticated} />
       )}
+      <Toaster richColors position="top-center" />
     </div>
   );
 }
 
 function AppHeader({
+  authenticated,
   pathname,
   profile,
-}: Readonly<{ pathname: string; profile: AppShellProfile }>) {
+}: Readonly<{ authenticated: boolean; pathname: string; profile: AppShellProfile }>) {
+  const visibleNav = authenticated
+    ? desktopNav
+    : desktopNav.filter((item) => item.href === "/feed" || item.href === "/write");
+
   return (
     <header className="fixed inset-x-0 top-0 z-[80] hidden bg-[#f4fbf8]/90 shadow-[0_1px_8px_rgba(0,0,0,0.04)] backdrop-blur-xl md:block">
       <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between gap-4 px-6">
@@ -85,7 +93,7 @@ function AppHeader({
           </span>
         </div>
         <nav className="flex items-center gap-1.5 rounded-xl bg-[#eef5f2] p-1">
-          {desktopNav.map((item) => {
+          {visibleNav.map((item) => {
             const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
             return (
               <Link
@@ -103,13 +111,22 @@ function AppHeader({
             );
           })}
         </nav>
-        <div className="flex items-center gap-3">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#ffdad8]/60 px-3 py-1.5 text-xs font-medium leading-4 text-[#852229]">
-            <MaterialSymbol className="text-lg text-[#a5393e]" fill name="local_fire_department" />
-            {profile.streak} ngày liên tiếp
-          </span>
-          <AvatarMenu profile={profile} />
-        </div>
+        {authenticated ? (
+          <div className="flex items-center gap-3">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#ffdad8]/60 px-3 py-1.5 text-xs font-medium leading-4 text-[#852229]">
+              <MaterialSymbol className="text-lg text-[#a5393e]" fill name="local_fire_department" />
+              {profile.streak} ngày liên tiếp
+            </span>
+            <AvatarMenu profile={profile} />
+          </div>
+        ) : (
+          <Link
+            className="inline-flex h-10 items-center rounded-xl bg-[#006d43] px-4 text-sm font-semibold text-white shadow-[0_8px_16px_rgba(0,109,67,0.15)]"
+            href="/auth"
+          >
+            Đăng nhập
+          </Link>
+        )}
       </div>
     </header>
   );

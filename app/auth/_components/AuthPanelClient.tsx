@@ -1,86 +1,178 @@
 "use client";
 
-import type { User } from "@supabase/supabase-js";
-import { ArrowLeft, ArrowRight, Eye, EyeOff, Heart, Info, Leaf, Loader2, LogOut, Mail, X } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Eye,
+  EyeOff,
+  Heart,
+  Info,
+  Leaf,
+  Loader2,
+  Mail,
+  X,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
+import { normalizeAuthErrorMessage } from "@/lib/auth/errors";
+import {
+  type AuthFieldErrors,
+  hasAuthErrors,
+  validateAuthInput,
+} from "@/lib/auth/validation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 type View = "signin" | "signup" | "forgot";
 type Banner = { tone: "error" | "success"; title: string; body: string };
 
 export function AuthPanelClient({ configured }: Readonly<{ configured: boolean }>) {
+  const router = useRouter();
   const [view, setView] = useState<View>("signin");
   const [email, setEmail] = useState("");
   const [displayName, setDisplayName] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<AuthFieldErrors>({});
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [resetSent, setResetSent] = useState(false);
   const [banner, setBanner] = useState<Banner | null>(null);
-  const [user, setUser] = useState<User | null>(null);
   const supabase = useMemo(() => (configured ? createSupabaseBrowserClient() : null), [configured]);
 
   useEffect(() => {
     if (!supabase) return;
-    supabase.auth.getUser().then(({ data }) => setUser(data.user ?? null));
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) router.replace("/feed");
     });
-    return () => subscription.unsubscribe();
-  }, [supabase]);
+  }, [router, supabase]);
+
+  function clearFieldError(field: keyof AuthFieldErrors) {
+    setFieldErrors((current) => ({ ...current, [field]: undefined }));
+  }
 
   function changeView(next: View) {
     setView(next);
     setBanner(null);
+    setFieldErrors({});
     setResetSent(false);
+  }
+
+  async function createAccount(cleanEmail: string) {
+    const response = await fetch("/api/auth/register", {
+      method: "POST",
+      body: JSON.stringify({
+        displayName: displayName.trim(),
+        email: cleanEmail,
+        password,
+      }),
+      headers: { "content-type": "application/json" },
+      credentials: "same-origin",
+    });
+
+    if (response.ok) return null;
+
+    const body = (await response.json().catch(() => null)) as { error?: string } | null;
+    return normalizeAuthErrorMessage(body?.error ?? "Không thể tạo tài khoản.");
+  }
+
+  async function migrateGuestDataAfterLogin() {
+    const response = await fetch("/api/auth/migrate-guest", {
+      method: "POST",
+      credentials: "same-origin",
+    });
+
+    if (response.ok) return;
+
+    const body = (await response.json().catch(() => null)) as { error?: string } | null;
+    throw new Error(body?.error ?? "Đăng nhập thành công, nhưng chưa thể chuyển dữ liệu khách.");
   }
 
   async function submitAuth() {
     if (!supabase) return;
+
+    if (view !== "forgot") {
+      const errors = validateAuthInput({
+        displayName,
+        email,
+        password,
+        signingUp: view === "signup",
+      });
+      setFieldErrors(errors);
+      setBanner(null);
+      if (hasAuthErrors(errors)) return;
+    }
+
     setLoading(true);
     setBanner(null);
-    const redirect = `${window.location.origin}/auth/callback`;
 
-    if (view === "forgot") {
-      if (!email) return void setLoading(false);
-      const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: redirect });
-      setLoading(false);
-      if (error) return void setBanner({ tone: "error", title: "Không gửi được liên kết", body: error.message });
-      setResetSent(true);
-      return;
-    }
+    try {
+      const cleanEmail = email.trim();
+      const redirect = `${window.location.origin}/auth/callback`;
 
-    if (!email || !password || (view === "signup" && !displayName.trim())) return void setLoading(false);
-    const { error } = view === "signup"
-      ? await supabase.auth.signUp({
-          email,
-          password,
-          options: { data: { display_name: displayName.trim() }, emailRedirectTo: redirect },
-        })
-      : await supabase.auth.signInWithPassword({ email, password });
-    setLoading(false);
-    if (error) {
+      if (view === "forgot") {
+        if (!cleanEmail) return;
+        const { error } = await supabase.auth.resetPasswordForEmail(cleanEmail, { redirectTo: redirect });
+        if (error) {
+          setBanner({
+            tone: "error",
+            title: "Không gửi được liên kết",
+            body: normalizeAuthErrorMessage(error.message),
+          });
+          return;
+        }
+        setResetSent(true);
+        return;
+      }
+
+      if (view === "signup") {
+        const createError = await createAccount(cleanEmail);
+        if (createError) {
+          setBanner({ tone: "error", title: "Không thể tạo tài khoản", body: createError });
+          return;
+        }
+      }
+
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: cleanEmail,
+        password,
+      });
+
+      if (error) {
+        setBanner({
+          tone: "error",
+          title: view === "signin" ? "Tài khoản hoặc mật khẩu chưa khớp" : "Không thể tạo tài khoản",
+          body: normalizeAuthErrorMessage(error.message),
+        });
+        return;
+      }
+
+      if (!data.session) {
+        setBanner({
+          tone: "error",
+          title: "Không thể đồng bộ phiên",
+          body: "Đăng nhập xong nhưng chưa lấy được phiên để chuyển dữ liệu khách.",
+        });
+        return;
+      }
+
+      await migrateGuestDataAfterLogin();
+      toast.success(view === "signup" ? "Tạo tài khoản thành công." : "Đăng nhập thành công.");
+      router.replace("/feed");
+      router.refresh();
+    } catch (error) {
       setBanner({
         tone: "error",
-        title: view === "signin" ? "Tài khoản hoặc mật khẩu chưa khớp" : "Không thể tạo tài khoản",
-        body: view === "signin" ? "Bạn kiểm tra lại email hoặc dùng “Quên mật khẩu” bên dưới nhé." : error.message,
+        title: "Không thể xử lý đăng nhập",
+        body:
+          error instanceof Error
+            ? error.message
+            : "Đăng nhập thành công, nhưng chưa thể chuyển dữ liệu khách.",
       });
-      return;
+    } finally {
+      setLoading(false);
     }
-    setBanner({
-      tone: "success",
-      title: view === "signup" ? "Tài khoản đã sẵn sàng" : "Đăng nhập thành công",
-      body: view === "signup" ? "Kiểm tra email để xác nhận tài khoản." : "Bạn đang ở trong BeGrateful.",
-    });
   }
 
-  async function signOut() {
-    if (!supabase) return;
-    await supabase.auth.signOut();
-    setUser(null);
-  }
-
-  if (user) return <UserCard email={user.email ?? null} onSignOut={signOut} />;
   if (view === "forgot") {
     return (
       <ForgotView
@@ -91,10 +183,14 @@ export function AuthPanelClient({ configured }: Readonly<{ configured: boolean }
         loading={loading}
         onSubmit={() => void submitAuth()}
         resetSent={resetSent}
-        setEmail={setEmail}
+        setEmail={(value) => {
+          setEmail(value);
+          clearFieldError("email");
+        }}
       />
     );
   }
+
   return (
     <LoginView
       banner={banner}
@@ -102,7 +198,9 @@ export function AuthPanelClient({ configured }: Readonly<{ configured: boolean }
       configured={configured}
       displayName={displayName}
       email={email}
+      fieldErrors={fieldErrors}
       loading={loading}
+      onClearFieldError={clearFieldError}
       onSubmit={() => void submitAuth()}
       password={password}
       setBanner={setBanner}
@@ -113,17 +211,6 @@ export function AuthPanelClient({ configured }: Readonly<{ configured: boolean }
       showPassword={showPassword}
       view={view}
     />
-  );
-}
-
-function UserCard({ email, onSignOut }: Readonly<{ email: string | null; onSignOut: () => Promise<void> }>) {
-  return (
-    <div className="w-full max-w-[400px] rounded-xl bg-white p-5 shadow-[0_8px_30px_rgba(26,47,43,0.05)]">
-      <p className="text-sm font-semibold text-[var(--text)]">Đã đăng nhập bằng {email}</p>
-      <button className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-xl bg-[var(--trust)] px-4 text-sm font-semibold text-white shadow-[0_8px_16px_rgba(0,109,67,0.15)]" onClick={onSignOut} type="button">
-        <LogOut className="h-4 w-4" /> Đăng xuất
-      </button>
-    </div>
   );
 }
 
@@ -166,13 +253,13 @@ function ForgotView({
             </div>
             <div className="absolute top-0 right-2 flex h-5 w-5 items-center justify-center rounded-full bg-[#9af6b8] text-[#006d43] shadow-sm">
               <Info className="h-3 w-3" />
+            </div>
           </div>
-        </div>
           <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[#1a2f2b]">BeGrateful</p>
           <h1 className="mt-1 text-[24px] leading-8 font-bold text-[#1a2f2b]">Quên mật khẩu?</h1>
           <p className="mt-2 text-[16px] leading-6 text-[#3d4a41]">Đừng lo lắng, hãy nhập email đã đăng ký. BeGrateful sẽ gửi đến bạn liên kết an toàn để đặt lại mật khẩu mới nhé.</p>
         </div>
-        <form className="mt-6 flex flex-col gap-4" onSubmit={(event) => { event.preventDefault(); onSubmit(); }}>
+        <form className="mt-6 flex flex-col gap-4" noValidate onSubmit={(event) => { event.preventDefault(); onSubmit(); }}>
           <AuthField id="recovery-email" inputMode="email" label="Địa chỉ Email của bạn" onChange={setEmail} placeholder="tam.an.yen@email.com" type="email" value={email} disabled={!configured || loading} />
           <div className="rounded-xl bg-[#d1e9e0]/30 p-3"><p className="text-[11px] leading-4 font-medium text-[#3d4a41]">Liên kết chỉ có hiệu lực trong vòng 15 phút và BeGrateful không bao giờ yêu cầu mã OTP qua điện thoại.</p></div>
           <button className="mt-1 flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-linear-to-r from-[#006d43] to-[#006d3d] px-6 py-3.5 text-sm leading-5 font-semibold text-white shadow-[0_8px_16px_rgba(0,109,67,0.15)] disabled:opacity-50 disabled:shadow-none" disabled={!configured || loading || !email} type="submit">
@@ -202,7 +289,9 @@ function LoginView({
   configured,
   displayName,
   email,
+  fieldErrors,
   loading,
+  onClearFieldError,
   onSubmit,
   password,
   setBanner,
@@ -218,7 +307,9 @@ function LoginView({
   configured: boolean;
   displayName: string;
   email: string;
+  fieldErrors: AuthFieldErrors;
   loading: boolean;
+  onClearFieldError: (field: keyof AuthFieldErrors) => void;
   onSubmit: () => void;
   password: string;
   setBanner: (value: Banner | null) => void;
@@ -237,8 +328,8 @@ function LoginView({
         <p className="text-base leading-6 text-[#3d4a41]">Nhật ký biết ơn hằng ngày</p>
       </div>
       <div className="rounded-[24px] bg-white p-6 shadow-[0_8px_30px_rgba(26,47,43,0.06)]">
-        <form className="flex w-full flex-col gap-5" onSubmit={(event) => { event.preventDefault(); onSubmit(); }}>
-          {banner?.tone === "error" && view === "signin" ? (
+        <form className="flex w-full flex-col gap-5" noValidate onSubmit={(event) => { event.preventDefault(); onSubmit(); }}>
+          {banner?.tone === "error" ? (
             <div className="relative flex items-start gap-3 rounded-2xl border border-[#fbdcd0] bg-[#fff8f5] p-3.5 shadow-[0_4px_16px_rgba(217,119,87,0.06)]">
               <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#fde9df] text-[#d97757]"><Info className="h-[17px] w-[17px]" /></div>
               <div className="pr-5"><p className="text-[13px] font-semibold leading-5 text-[#8a422d]">{banner.title}</p><p className="mt-0.5 text-[12px] leading-[17px] text-[#9c5946]">{banner.body}</p></div>
@@ -246,22 +337,61 @@ function LoginView({
             </div>
           ) : null}
           {view === "signup" ? <div className="rounded-2xl bg-[#d1e9e0]/30 p-4"><p className="text-sm leading-5 font-semibold text-[#1a2f2b]">Các điều biết ơn bạn đã viết sẽ được lưu vào tài khoản mới</p></div> : null}
-          {view === "signup" ? <AuthField id="display-name" label="Tên hiển thị" onChange={setDisplayName} placeholder="Tên bạn muốn mọi người thấy" value={displayName} disabled={!configured || loading} /> : null}
-          <AuthField id="email" inputMode="email" label="Email" onChange={setEmail} placeholder="nhap@email.com" type="email" value={email} disabled={!configured || loading} />
+          {view === "signup" ? (
+            <AuthField
+              id="display-name"
+              label="Tên hiển thị"
+              onChange={(value) => {
+                setDisplayName(value);
+                onClearFieldError("displayName");
+              }}
+              placeholder="Tên bạn muốn mọi người thấy"
+              value={displayName}
+              disabled={!configured || loading}
+              error={fieldErrors.displayName}
+            />
+          ) : null}
+          <AuthField
+            id="email"
+            inputMode="email"
+            label="Email"
+            onChange={(value) => {
+              setEmail(value);
+              onClearFieldError("email");
+            }}
+            placeholder="nhap@email.com"
+            type="email"
+            value={email}
+            disabled={!configured || loading}
+            error={fieldErrors.email}
+          />
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between gap-3">
               <label className="ml-1 text-xs leading-4 font-medium text-[#3d4a41]" htmlFor="password">Mật khẩu</label>
               {view === "signin" ? <button className="text-[13px] font-medium text-[#006d43] hover:underline" onClick={() => changeView("forgot")} type="button">Quên mật khẩu?</button> : null}
             </div>
             <div className="relative">
-              <input className="min-h-12 w-full rounded-xl bg-[#dde4e1]/50 px-4 py-3 pr-12 text-base leading-6 text-[#1a2f2b] shadow-inner outline-none placeholder:text-[#bccabe] focus:bg-white focus:ring-2 focus:ring-[#006d43]/50 disabled:cursor-not-allowed disabled:opacity-60" id="password" minLength={8} onChange={(event) => setPassword(event.target.value)} placeholder="••••••••" type={showPassword ? "text" : "password"} value={password} disabled={!configured || loading} />
+              <input
+                aria-describedby={fieldErrors.password ? "password-help password-error" : "password-help"}
+                aria-invalid={Boolean(fieldErrors.password)}
+                className="min-h-12 w-full rounded-xl bg-[#dde4e1]/50 px-4 py-3 pr-12 text-base leading-6 text-[#1a2f2b] shadow-inner outline-none placeholder:text-[#bccabe] focus:bg-white focus:ring-2 focus:ring-[#006d43]/50 disabled:cursor-not-allowed disabled:opacity-60"
+                id="password"
+                onChange={(event) => {
+                  setPassword(event.target.value);
+                  onClearFieldError("password");
+                }}
+                placeholder="••••••••"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                disabled={!configured || loading}
+              />
               <button aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"} className="absolute top-1/2 right-3 flex min-h-11 w-11 -translate-y-1/2 items-center justify-center text-[#6d7a70] hover:text-[#006d43]" onClick={() => setShowPassword((current) => !current)} type="button">{showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}</button>
             </div>
-            <p className="ml-1 text-[11px] leading-4 font-medium text-[#6d7a70]">Tối thiểu 8 ký tự</p>
+            <p className="ml-1 text-[11px] leading-4 font-medium text-[#6d7a70]" id="password-help">Tối thiểu 8 ký tự</p>
+            {fieldErrors.password ? <p className="ml-1 text-sm leading-5 font-semibold text-[#ba1a1a]" id="password-error" role="alert">{fieldErrors.password}</p> : null}
           </div>
-          <button className="mt-1 flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-linear-to-r from-[#006d43] to-[#006d3d] px-6 py-3.5 text-sm leading-5 font-semibold text-white shadow-[0_8px_16px_rgba(0,109,67,0.15)] hover:shadow-[0_12px_24px_rgba(0,109,67,0.2)] disabled:opacity-50 disabled:shadow-none" disabled={!configured || loading || !email || !password || (view === "signup" && !displayName.trim())} type="submit"><span>{loading ? "Đang xử lý..." : view === "signup" ? "Tạo tài khoản" : "Đăng nhập"}</span>{loading ? <Loader2 className="h-[18px] w-[18px] animate-spin" /> : <ArrowRight className="h-[18px] w-[18px]" />}</button>
+          <button className="mt-1 flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-linear-to-r from-[#006d43] to-[#006d3d] px-6 py-3.5 text-sm leading-5 font-semibold text-white shadow-[0_8px_16px_rgba(0,109,67,0.15)] hover:shadow-[0_12px_24px_rgba(0,109,67,0.2)] disabled:opacity-50 disabled:shadow-none" disabled={!configured || loading} type="submit"><span>{loading ? "Đang xử lý..." : view === "signup" ? "Tạo tài khoản" : "Đăng nhập"}</span>{loading ? <Loader2 className="h-[18px] w-[18px] animate-spin" /> : <ArrowRight className="h-[18px] w-[18px]" />}</button>
         </form>
-        {banner?.tone === "success" && view === "signup" ? <p className="mt-4 break-words text-sm leading-6 text-[#3d4a41]" role="status">{banner.body}</p> : null}
         <button className="mx-auto mt-8 flex min-h-11 items-center justify-center gap-1 text-base leading-6 text-[#6d7a70] hover:text-[#006d43]" onClick={() => changeView(view === "signup" ? "signin" : "signup")} type="button">{view === "signup" ? "Đã có tài khoản?" : "Chưa có tài khoản?"}<span className="font-semibold text-[#006d43] underline-offset-4 hover:underline">{view === "signup" ? "Đăng nhập" : "Đăng ký"}</span></button>
       </div>
     </section>
@@ -276,6 +406,7 @@ function AuthField({
   placeholder,
   type = "text",
   disabled,
+  error,
   value,
 }: Readonly<{
   id: string;
@@ -285,12 +416,27 @@ function AuthField({
   placeholder: string;
   type?: "email" | "text";
   disabled?: boolean;
+  error?: string;
   value: string;
 }>) {
+  const errorId = `${id}-error`;
+
   return (
     <div className="flex flex-col gap-2">
       <label className="ml-1 text-xs leading-4 font-medium text-[#3d4a41]" htmlFor={id}>{label}</label>
-      <input className="min-h-12 w-full rounded-xl bg-[#dde4e1]/50 px-4 py-3 text-base leading-6 text-[#1a2f2b] shadow-inner outline-none placeholder:text-[#bccabe] focus:bg-white focus:ring-2 focus:ring-[#006d43]/50 disabled:cursor-not-allowed disabled:opacity-60" id={id} inputMode={inputMode} onChange={(event) => onChange(event.target.value)} placeholder={placeholder} type={type} disabled={disabled} value={value} />
+      <input
+        aria-describedby={error ? errorId : undefined}
+        aria-invalid={Boolean(error)}
+        className="min-h-12 w-full rounded-xl bg-[#dde4e1]/50 px-4 py-3 text-base leading-6 text-[#1a2f2b] shadow-inner outline-none placeholder:text-[#bccabe] focus:bg-white focus:ring-2 focus:ring-[#006d43]/50 disabled:cursor-not-allowed disabled:opacity-60"
+        id={id}
+        inputMode={inputMode}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder={placeholder}
+        type={type}
+        disabled={disabled}
+        value={value}
+      />
+      {error ? <p className="ml-1 text-sm leading-5 font-semibold text-[#ba1a1a]" id={errorId} role="alert">{error}</p> : null}
     </div>
   );
 }
