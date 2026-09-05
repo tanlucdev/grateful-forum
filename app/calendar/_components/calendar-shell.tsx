@@ -1,38 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
-import { avatar } from "./calendar-data";
-
-export function DesktopHeader() {
-  return (
-    <header className="fixed inset-x-0 top-0 z-50 bg-[#f4fbf8]/85 shadow-[0_1px_8px_rgba(26,47,43,0.04)] backdrop-blur-xl">
-      <div className="flex h-20 w-full items-center justify-between px-6 lg:px-16">
-        <div className="flex items-center gap-4">
-          <Link className="flex items-center gap-2" href="/feed">
-            <MaterialSymbol className="text-2xl text-[#006d43]" name="potted_plant" />
-            <span className="text-xl font-bold leading-7 text-[#006d43]">BeGrateful</span>
-          </Link>
-          <span className="h-5 w-px bg-[#bccabe]/40" />
-          <span className="text-xs font-medium tracking-[0.04em] text-[#3d4a41]">Bé Mầm</span>
-        </div>
-        <nav className="flex items-center gap-2 rounded-full bg-[#eef5f2] px-2 py-1.5">
-          {["Feed", "Viết nhật ký", "Lịch biết ơn", "Cá nhân"].map((item) => (
-            <Link className={`rounded-full px-4 py-2 text-sm font-semibold ${item === "Lịch biết ơn" ? "bg-[#99f3b6] text-[#0b7141]" : "text-[#3d4a41]"}`} href="#" key={item}>
-              {item}
-            </Link>
-          ))}
-        </nav>
-        <div className="flex items-center gap-4">
-          <span className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-bold text-[#161d1b] shadow-[0_1px_4px_rgba(26,47,43,0.06)]">
-            <MaterialSymbol className="text-base text-[#a5393e]" name="local_fire_department" />
-            3 ngày liên tiếp
-          </span>
-          <Image alt="Profile" className="h-8 w-8 rounded-full object-cover ring-2 ring-[#D1E9E0]/60" height={32} unoptimized width={32} src={avatar} />
-        </div>
-      </div>
-    </header>
-  );
-}
 
 export function HeroActions() {
   return (
@@ -49,10 +16,10 @@ export function HeroActions() {
       </div>
       <div className="flex flex-wrap items-center gap-3">
         <FilterPills />
-        <button className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#006d43] to-[#006d3d] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(0,109,67,0.18)]">
+        <Link className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#006d43] to-[#006d3d] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(0,109,67,0.18)]" href="/write">
           <MaterialSymbol className="text-lg" name="edit_note" />
           Viết nhật ký hôm nay
-        </button>
+        </Link>
       </div>
     </section>
   );
@@ -84,19 +51,19 @@ export function DesktopFooter() {
 export function MobileBottomNav() {
   return (
     <nav className="fixed bottom-0 z-50 flex w-full max-w-[420px] items-center justify-between border-t border-[#E3EFE9] bg-white/95 px-6 py-2.5 shadow-lg backdrop-blur-md">
-      <BottomItem label="Bảng tin" name="article" />
-      <button aria-label="Viết nhật ký ngay" className="-mt-7 flex h-12 w-12 items-center justify-center rounded-full border-4 border-white bg-gradient-to-tr from-[#145C34] to-[#00a86b] text-2xl text-white shadow-[0_10px_30px_rgba(0,168,107,0.28)]">+</button>
-      <BottomItem active label="Lịch biết ơn" name="calendar_today" />
-      <BottomItem label="Cá nhân" name="person" />
+      <BottomItem href="/feed" label="Bảng tin" name="article" />
+      <Link aria-label="Viết nhật ký ngay" className="-mt-7 flex h-12 w-12 items-center justify-center rounded-full border-4 border-white bg-gradient-to-tr from-[#145C34] to-[#00a86b] text-2xl text-white shadow-[0_10px_30px_rgba(0,168,107,0.28)]" href="/write">+</Link>
+      <BottomItem active href="/calendar" label="Lịch biết ơn" name="calendar_today" />
+      <BottomItem href="/profile" label="Cá nhân" name="person" />
     </nav>
   );
 }
 
-function BottomItem({ label, name, active }: Readonly<{ label: string; name: string; active?: boolean }>) {
+function BottomItem({ href, label, name, active }: Readonly<{ href: string; label: string; name: string; active?: boolean }>) {
   return (
-    <button className={`flex w-16 flex-col items-center justify-center text-[10px] font-semibold ${active ? "font-bold text-[#145C34]" : "text-[#6C8377]"}`}>
+    <Link className={`flex w-16 flex-col items-center justify-center text-[10px] font-semibold ${active ? "font-bold text-[#145C34]" : "text-[#6C8377]"}`} href={href}>
       <MaterialSymbol className="mb-0.5 text-xl" name={name} />
       <span>{label}</span>
-    </button>
+    </Link>
   );
 }
