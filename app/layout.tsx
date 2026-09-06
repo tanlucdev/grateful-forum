@@ -17,7 +17,7 @@ const quicksand = Quicksand({
 });
 
 export const metadata: Metadata = {
-  title: "BeGrateful",
+  title: "Grateful Forum",
   description: "A mobile-first gratitude journal.",
 };
 
@@ -27,31 +27,18 @@ export default async function RootLayout({
   children: ReactNode;
 }>) {
   const dashboard = await loadOwnProfileDashboard();
-  const displayName = dashboard?.profile.displayName || "Minh Trần";
-  const slug = displayName
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-
+  const authenticated = Boolean(dashboard);
   return (
     <html lang="vi">
-      <head>
-        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
-        <link
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-          rel="stylesheet"
-        />
-      </head>
       <body className={`${manrope.className} ${quicksand.variable}`}>
         <AppShell
-          authenticated={Boolean(dashboard)}
+          authenticated={authenticated}
           profile={{
             avatarUrl: dashboard?.profile.avatarUrl || "/stitch/profile/avatar-desktop.jpg",
-            displayName,
-            email: `${slug.replace(/-/g, ".")}@example.com`,
-            streak: dashboard?.streak || 3,
+            displayName: dashboard?.profile.displayName || "Tài khoản",
+            email: dashboard?.profile.email || "",
+            signedIn: authenticated,
+            streak: dashboard?.streak || 0,
           }}
         >
           {children}

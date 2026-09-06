@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { loadMoreFeed } from "@/lib/api/feed";
 import type { FeedPage } from "@/lib/feed/types";
-import { loadMoreFeed } from "@/lib/api";
 import { DesktopAside, DesktopFooter, MobileHeader, WritePrompt } from "./feed-shell";
 import { DesktopFeedCard, FeedSentinel, MobileFeedCard } from "./feed-cards";
 import { sampleItems, toDisplayItem, type DisplayItem } from "./feed-data";

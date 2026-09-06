@@ -1,13 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { Suspense, useEffect, useRef, useState, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Toaster } from "sonner";
 
 import { BottomTabs } from "@/components/navigation/bottom-tabs";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
+import { loginHref } from "@/lib/auth/redirects";
+import type { ProfileDashboard } from "@/lib/profile/types";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 
@@ -15,15 +17,24 @@ export type AppShellProfile = {
   avatarUrl: string;
   displayName: string;
   email: string;
+  signedIn: boolean;
   streak: number;
 };
 
 const desktopNav = [
-  { href: "/feed", label: "Feed" },
-  { href: "/write", label: "Viết nhật ký" },
-  { href: "/calendar", label: "Lịch biết ơn" },
-  { href: "/profile", label: "Cá nhân" },
+  { href: "/feed", label: "Feed", protected: false },
+  { href: "/write", label: "Viết nhật ký", protected: false },
+  { href: "/calendar", label: "Lịch biết ơn", protected: true },
+  { href: "/profile", label: "Cá nhân", protected: true },
 ] as const;
+
+const signedOutProfile: AppShellProfile = {
+  avatarUrl: "",
+  displayName: "Tài khoản",
+  email: "",
+  signedIn: false,
+  streak: 0,
+};
 
 export function AppShell({
   children,
@@ -31,32 +42,74 @@ export function AppShell({
   profile,
 }: Readonly<{ children: ReactNode; authenticated: boolean; profile: AppShellProfile }>) {
   const pathname = usePathname();
+  const [currentProfile, setCurrentProfile] = useState({ ...profile, signedIn: authenticated || profile.signedIn });
   const isAuthSurface = pathname.startsWith("/auth");
   const isLandingSurface = pathname === "/";
+  const isRewardSurface = pathname.startsWith("/reward");
   const isWriteSurface = pathname.startsWith("/write");
-  const isOwnProfileSurface = pathname === "/profile";
-  const isCalendarSurface = pathname === "/calendar";
   const hidesGlobalBottomTabs =
-    isAuthSurface || isLandingSurface || isWriteSurface || isOwnProfileSurface || isCalendarSurface;
-  const isStitchSurface =
-    hidesGlobalBottomTabs || pathname.startsWith("/feed") || pathname.startsWith("/profile");
+    isAuthSurface ||
+    isLandingSurface ||
+    isRewardSurface ||
+    pathname.startsWith("/moderation") ||
+    isWriteSurface;
+  const isStitchSurface = !isAuthSurface && !isLandingSurface && !isRewardSurface;
   const contentPadding =
-    isStitchSurface && !hidesGlobalBottomTabs ? "pb-24 md:pb-0" : hidesGlobalBottomTabs ? "" : "pb-36";
+    !hidesGlobalBottomTabs ? "pb-28 md:pb-0" : "";
+
+  useEffect(() => {
+    let ignored = false;
+
+    async function hydrateProfile() {
+      if (isAuthSurface || isLandingSurface || isRewardSurface) {
+        return;
+      }
+
+      try {
+        const response = await fetch("/api/profile/me", {
+          cache: "no-store",
+          credentials: "same-origin",
+        });
+
+        if (!response.ok) {
+          if (!ignored && response.status === 401) {
+            setCurrentProfile(signedOutProfile);
+          }
+          return;
+        }
+
+        const dashboard = (await response.json()) as ProfileDashboard;
+        if (!ignored) {
+          setCurrentProfile(toShellProfile(dashboard));
+        }
+      } catch {
+        // Keep first paint shell usable when profile bootstrap is slow/offline.
+      }
+    }
+
+    void hydrateProfile();
+
+    return () => {
+      ignored = true;
+    };
+  }, [isAuthSurface, isLandingSurface, isRewardSurface, pathname]);
 
   return (
     <div
       className={`min-h-screen bg-[var(--bg)] text-[var(--text)] ${
         isStitchSurface ? "journal-write-theme" : ""
       }`}
-      >
-      {isAuthSurface || isLandingSurface ? null : (
-        <AppHeader pathname={pathname} authenticated={authenticated} profile={profile} />
+    >
+      {isAuthSurface || isLandingSurface || isRewardSurface || isWriteSurface ? null : (
+        <AppHeader pathname={pathname} profile={currentProfile} setProfile={setCurrentProfile} />
       )}
       <div className={contentPadding}>
         {children}
       </div>
       {hidesGlobalBottomTabs ? null : (
-        <BottomTabs authenticated={authenticated} />
+        <Suspense fallback={null}>
+          <BottomTabs signedIn={currentProfile.signedIn} />
+        </Suspense>
       )}
       <Toaster richColors position="top-center" />
     </div>
@@ -64,37 +117,39 @@ export function AppShell({
 }
 
 function AppHeader({
-  authenticated,
   pathname,
   profile,
-}: Readonly<{ authenticated: boolean; pathname: string; profile: AppShellProfile }>) {
-  const visibleNav = authenticated
-    ? desktopNav
-    : desktopNav.filter((item) => item.href === "/feed" || item.href === "/write");
-
+  setProfile,
+}: Readonly<{
+  pathname: string;
+  profile: AppShellProfile;
+  setProfile: (profile: AppShellProfile) => void;
+}>) {
   return (
-    <header className="fixed inset-x-0 top-0 z-[80] hidden bg-[#f4fbf8]/90 shadow-[0_1px_8px_rgba(0,0,0,0.04)] backdrop-blur-xl md:block">
-      <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between gap-4 px-6">
-        <div className="flex items-center gap-3">
-          <Link className="flex items-center gap-2" href="/feed">
+    <header className="fixed inset-x-0 top-0 z-[80] bg-[#f4fbf8]/90 pt-[env(safe-area-inset-top)] shadow-[0_1px_8px_rgba(26,47,43,0.03)] backdrop-blur-xl">
+      <div className="mx-auto grid h-16 max-w-[1200px] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 px-5 md:px-6">
+        <div className="col-start-1 flex min-w-0 items-center justify-start gap-3">
+          <Link aria-label="Grateful Forum" className="flex min-w-0 items-center gap-2" href="/feed">
             <Image
-              alt="Mầm"
+              alt=""
               className="h-8 w-8 rounded-full object-cover"
               height={32}
               src="/stitch/feed/sprout-logo.jpg"
               width={32}
             />
-            <span className="text-xl font-semibold tracking-tight text-[#006d43]">
-              BeGrateful
+            <span className="hidden truncate text-xl font-semibold tracking-tight text-[#006d43] sm:inline">
+              Grateful Forum
             </span>
           </Link>
-          <span className="rounded-full bg-[#e8efec] px-2.5 py-1 text-[11px] font-medium leading-[14px] text-[#3d4a41] shadow-[0_1px_4px_rgba(26,47,43,0.04)]">
-            Mầm
+          <span className="hidden items-center gap-1.5 rounded-full bg-[#ffdad8]/60 px-3 py-1.5 text-xs font-medium leading-4 text-[#852229] md:inline-flex">
+            <MaterialSymbol className="h-4 w-4 text-lg text-[#a5393e]" fill name="local_fire_department" />
+            <span className="whitespace-nowrap">{profile.streak} ngày liên tiếp</span>
           </span>
         </div>
-        <nav className="flex items-center gap-1.5 rounded-xl bg-[#eef5f2] p-1">
-          {visibleNav.map((item) => {
+        <nav className="col-start-2 hidden items-center gap-1.5 rounded-xl bg-[#eef5f2] p-1 md:flex">
+          {desktopNav.map((item) => {
             const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+            const href = item.protected && !profile.signedIn ? loginHref(item.href) : item.href;
             return (
               <Link
                 aria-current={active ? "page" : undefined}
@@ -103,7 +158,7 @@ function AppHeader({
                     ? "bg-[#4ca374] text-[#00331d]"
                     : "text-[#3d4a41] hover:text-[#161d1b]"
                 }`}
-                href={item.href}
+                href={href}
                 key={item.href}
               >
                 {item.label}
@@ -111,30 +166,44 @@ function AppHeader({
             );
           })}
         </nav>
-        {authenticated ? (
-          <div className="flex items-center gap-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#ffdad8]/60 px-3 py-1.5 text-xs font-medium leading-4 text-[#852229]">
-              <MaterialSymbol className="text-lg text-[#a5393e]" fill name="local_fire_department" />
-              {profile.streak} ngày liên tiếp
-            </span>
-            <AvatarMenu profile={profile} />
-          </div>
-        ) : (
-          <Link
-            className="inline-flex h-10 items-center rounded-xl bg-[#006d43] px-4 text-sm font-semibold text-white shadow-[0_8px_16px_rgba(0,109,67,0.15)]"
-            href="/auth"
-          >
-            Đăng nhập
-          </Link>
-        )}
+        <div className="col-start-3 flex min-w-0 items-center justify-end">
+          <HeaderAction profile={profile} setProfile={setProfile} />
+        </div>
       </div>
     </header>
   );
 }
 
-function AvatarMenu({ profile }: Readonly<{ profile: AppShellProfile }>) {
+function HeaderAction({
+  profile,
+  setProfile,
+}: Readonly<{
+  profile: AppShellProfile;
+  setProfile: (profile: AppShellProfile) => void;
+}>) {
+  return profile.signedIn ? <AvatarMenu profile={profile} setProfile={setProfile} /> : <LoginButton />;
+}
+
+function LoginButton() {
+  return (
+    <Link
+      className="inline-flex h-10 items-center gap-2 rounded-xl bg-[#006d43] px-4 text-sm font-semibold text-white shadow-[0_8px_16px_rgba(0,109,67,0.15)]"
+      href={loginHref("/profile")}
+    >
+      <MaterialSymbol className="h-4 w-4 text-lg" name="login" />
+      <span>Đăng nhập</span>
+    </Link>
+  );
+}
+
+function AvatarMenu({
+  profile,
+  setProfile,
+}: Readonly<{
+  profile: AppShellProfile;
+  setProfile: (profile: AppShellProfile) => void;
+}>) {
   const supabaseConfigured = hasSupabaseEnv();
-  const router = useRouter();
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -165,12 +234,18 @@ function AvatarMenu({ profile }: Readonly<{ profile: AppShellProfile }>) {
 
   async function signOut() {
     if (!supabaseConfigured) {
-      router.push("/auth");
+      setProfile(signedOutProfile);
+      setOpen(false);
       return;
     }
 
-    await createSupabaseBrowserClient().auth.signOut();
-    router.push("/auth");
+    const { error } = await createSupabaseBrowserClient().auth.signOut();
+    if (error) {
+      return;
+    }
+
+    setProfile(signedOutProfile);
+    setOpen(false);
   }
 
   return (
@@ -183,52 +258,55 @@ function AvatarMenu({ profile }: Readonly<{ profile: AppShellProfile }>) {
         onClick={() => setOpen((current) => !current)}
         type="button"
       >
-        <Image
-          alt=""
-          className="h-8 w-8 rounded-full object-cover"
-          height={32}
-          src={profile.avatarUrl}
-          width={32}
-        />
+        <AvatarImage className="h-8 w-8" profile={profile} />
       </button>
       {open ? (
-      <div className="absolute right-0 top-full z-[90] mt-2 w-72 rounded-2xl border border-[#e3eae7]/60 bg-white p-3 text-[#161d1b] shadow-xl">
-        <div className="mb-2 flex items-center gap-3 rounded-xl bg-[#eef5f2] p-2.5">
-          <Image
-            alt=""
-            className="h-10 w-10 rounded-full object-cover ring-2 ring-[#006d43]/20"
-            height={40}
-            src={profile.avatarUrl}
-            width={40}
-          />
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-1.5">
-              <span className="truncate text-sm font-bold leading-5">{profile.displayName}</span>
-              <span className="rounded-full bg-[#99f3b6] px-1.5 py-0.5 text-[10px] font-medium leading-none text-[#0b7141]">
-                Tâm Hồn An Yên
-              </span>
+        <div className="absolute right-0 top-full z-[90] mt-2 w-72 rounded-2xl border border-[#e3eae7]/60 bg-white p-3 text-[#161d1b] shadow-xl">
+          <div className="mb-2 flex items-center gap-3 rounded-xl bg-[#eef5f2] p-2.5">
+            <AvatarImage className="h-10 w-10 ring-2 ring-[#006d43]/20" profile={profile} />
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-1.5">
+                <span className="truncate text-sm font-bold leading-5">{profile.displayName}</span>
+              </div>
+              {profile.email ? <p className="mt-0.5 truncate text-xs text-[#3d4a41]">{profile.email}</p> : null}
             </div>
-            <p className="mt-0.5 truncate text-xs text-[#3d4a41]">{profile.email}</p>
           </div>
+          <div className="space-y-0.5 text-sm">
+            <MenuLink active href="/profile" icon="person" label="Hồ sơ của tôi" />
+            <MenuLink href="/calendar" icon="potted_plant" label="Vườn ươm Bé Mầm" />
+            <MenuLink href="/profile?tab=moments" icon="military_tech" label="Bộ sưu tập huy hiệu & cột mốc" />
+            <MenuLink href="/profile?tab=all" icon="settings" label="Cài đặt & Quyền riêng tư" />
+          </div>
+          <div className="my-2 border-t border-[#e8efec]" />
+          <button
+            className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-sm font-medium text-[#ba1a1a] transition-colors hover:bg-[#ffdad6]/30"
+            onClick={signOut}
+            type="button"
+          >
+            <MaterialSymbol className="h-4 w-4 text-lg" name="logout" />
+            <span>Đăng xuất</span>
+          </button>
         </div>
-        <div className="space-y-0.5 text-sm">
-          <MenuLink active href="/profile" icon="person" label="Hồ sơ của tôi" />
-          <MenuLink badge="Cấp 2" href="/calendar" icon="potted_plant" label="Vườn ươm Bé Mầm" />
-          <MenuLink href="/profile?tab=moments" icon="military_tech" label="Bộ sưu tập huy hiệu & cột mốc" />
-          <MenuLink href="/profile?tab=all" icon="settings" label="Cài đặt & Quyền riêng tư" />
-        </div>
-        <div className="my-2 border-t border-[#e8efec]" />
-        <button
-          className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-sm font-medium text-[#ba1a1a] transition-colors hover:bg-[#ffdad6]/30"
-          onClick={signOut}
-          type="button"
-        >
-          <MaterialSymbol className="text-lg" name="logout" />
-          <span>Đăng xuất</span>
-        </button>
-      </div>
       ) : null}
     </div>
+  );
+}
+
+function AvatarImage({ className, profile }: Readonly<{ className: string; profile: AppShellProfile }>) {
+  if (profile.avatarUrl) {
+    return (
+      <span
+        aria-hidden="true"
+        className={`${className} block rounded-full bg-[#d1e9e0] bg-cover bg-center`}
+        style={{ backgroundImage: `url(${profile.avatarUrl})` }}
+      />
+    );
+  }
+
+  return (
+    <span className={`${className} flex items-center justify-center rounded-full bg-[#d1e9e0] text-xs font-bold text-[#006d43]`}>
+      {profile.displayName.slice(0, 1).toUpperCase()}
+    </span>
   );
 }
 
@@ -246,7 +324,7 @@ function MenuLink({
       }`}
       href={href}
     >
-      <MaterialSymbol className="text-lg" fill={active && icon === "person"} name={icon} />
+      <MaterialSymbol className="h-4 w-4 text-lg" fill={active && icon === "person"} name={icon} />
       <span>{label}</span>
       {badge ? (
         <span className="ml-auto rounded-full bg-[#99f3b6] px-2 py-0.5 text-[10px] font-semibold leading-none text-[#00522d]">
@@ -255,4 +333,14 @@ function MenuLink({
       ) : null}
     </Link>
   );
+}
+
+function toShellProfile(dashboard: ProfileDashboard): AppShellProfile {
+  return {
+    avatarUrl: dashboard.profile.avatarUrl || "",
+    displayName: dashboard.profile.displayName || "Tài khoản",
+    email: dashboard.profile.email || "",
+    signedIn: true,
+    streak: dashboard.streak || 0,
+  };
 }

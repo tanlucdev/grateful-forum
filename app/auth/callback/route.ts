@@ -3,13 +3,13 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getGuestId } from "@/lib/auth/guest-session";
 import { migrateGuestData } from "@/lib/auth/migrate-guest-data";
 import { GUEST_SESSION_COOKIE } from "@/lib/auth/constants";
+import { safeAuthRedirect } from "@/lib/auth/redirects";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
-  const next = url.searchParams.get("next") ?? "/";
-  const safeNext = next.startsWith("/") && !next.startsWith("//") ? next : "/";
+  const safeNext = safeAuthRedirect(url.searchParams.get("next"));
 
   if (!code) {
     return NextResponse.redirect(new URL("/?auth=missing-code", url.origin));

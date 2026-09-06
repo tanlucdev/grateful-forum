@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
-import { createEntry } from "@/lib/api";
+import { createEntry } from "@/lib/api/entries";
 import { ENTRY_LIMIT, type EntryVisibility } from "@/lib/entries/types";
 import { addLocalEntry, markLocalEntrySynced } from "@/lib/entries/local-store";
 import {
