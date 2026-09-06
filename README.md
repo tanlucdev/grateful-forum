@@ -1,4 +1,4 @@
-# BeGrateful
+# Grateful Forum
 
 Mobile-first gratitude journal MVP built with Next.js App Router and Supabase.
 

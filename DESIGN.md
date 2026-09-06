@@ -1,5 +1,5 @@
 ---
-name: BeGrateful
+name: Grateful Forum
 description: A calm Vietnamese gratitude journal built around daily reflection, sharing, and streak care.
 colors:
   leaf: "#006d43"
@@ -105,13 +105,13 @@ components:
     height: "48px"
 ---
 
-# Design System: BeGrateful
+# Design System: Grateful Forum
 
 ## Overview
 
 **Creative North Star: "The Living Journal Garden"**
 
-BeGrateful is an Operate-mode journaling app. The UI should feel like a quiet daily companion: soft enough for reflection, structured enough for repeated use, and warm without becoming decorative.
+Grateful Forum is an Operate-mode journaling app. The UI should feel like a quiet daily companion: soft enough for reflection, structured enough for repeated use, and warm without becoming decorative.
 
 The current visual world is plant-led, mint-green, rounded, mobile-first, and Vietnamese-first. Agents should preserve the feeling of "gieo mầm": entries are seeds, streaks are gentle momentum, calendar history is a garden, and the mascot can guide without taking over the task.
 

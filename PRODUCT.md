@@ -36,7 +36,7 @@ Mobile web first. Users write short entries, choose visibility, browse a feed, e
 
 ## Brand Commitments
 
-Product name: BeGrateful.
+Product name: Grateful Forum.
 
 ## Evidence on Hand
 

@@ -12,6 +12,13 @@ export type LocalEntry = {
   synced: boolean;
 };
 
+export type LocalDraft = {
+  id: string;
+  content: string;
+  createdAt: string;
+  mood: string;
+};
+
 export function isEntryVisibility(value: string): value is EntryVisibility {
   return entryVisibilities.includes(value as EntryVisibility);
 }
