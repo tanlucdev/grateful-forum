@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { updateOwnProfile } from "@/lib/profile/mutations";
 
 export async function PUT(request: Request) {
   const supabase = await createSupabaseServerClient();
@@ -28,16 +29,10 @@ export async function PUT(request: Request) {
     );
   }
 
-  const { error } = await supabase.from("profiles").upsert({
-    id: auth.user.id,
-    display_name: displayName,
-    username,
-    avatar_url: avatarUrl,
-    bio,
-  });
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  try {
+    await updateOwnProfile(supabase, auth.user.id, { displayName, username: username ?? "", avatarUrl: avatarUrl ?? "", bio: bio ?? "" });
+  } catch (error) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Could not save profile." }, { status: 500 });
   }
 
   return NextResponse.json({ saved: true });

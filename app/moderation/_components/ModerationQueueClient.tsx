@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { EyeOff, Trash2, Check, X } from "lucide-react";
 import { updateModerationReport } from "@/lib/api/moderation";
-import type { ModerationReport } from "@/lib/moderation/load-admin-queue";
+import type { ModerationReport } from "@/lib/moderation/dto";
 
 const actions = [
   { action: "review", label: "Review", icon: Check },
