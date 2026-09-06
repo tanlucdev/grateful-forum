@@ -26,7 +26,10 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 type View = "signin" | "signup" | "forgot";
 type Banner = { tone: "error" | "success"; title: string; body: string };
 
-export function AuthPanelClient({ configured }: Readonly<{ configured: boolean }>) {
+export function AuthPanelClient({
+  configured,
+  returnTo,
+}: Readonly<{ configured: boolean; returnTo: string }>) {
   const router = useRouter();
   const [view, setView] = useState<View>("signin");
   const [email, setEmail] = useState("");
@@ -42,9 +45,9 @@ export function AuthPanelClient({ configured }: Readonly<{ configured: boolean }
   useEffect(() => {
     if (!supabase) return;
     supabase.auth.getUser().then(({ data }) => {
-      if (data.user) router.replace("/feed");
+      if (data.user) router.replace(returnTo);
     });
-  }, [router, supabase]);
+  }, [returnTo, router, supabase]);
 
   function clearFieldError(field: keyof AuthFieldErrors) {
     setFieldErrors((current) => ({ ...current, [field]: undefined }));
@@ -107,11 +110,12 @@ export function AuthPanelClient({ configured }: Readonly<{ configured: boolean }
 
     try {
       const cleanEmail = email.trim();
-      const redirect = `${window.location.origin}/auth/callback`;
+      const redirect = new URL("/auth/callback", window.location.origin);
+      redirect.searchParams.set("next", returnTo);
 
       if (view === "forgot") {
         if (!cleanEmail) return;
-        const { error } = await supabase.auth.resetPasswordForEmail(cleanEmail, { redirectTo: redirect });
+        const { error } = await supabase.auth.resetPasswordForEmail(cleanEmail, { redirectTo: redirect.toString() });
         if (error) {
           setBanner({
             tone: "error",
@@ -157,7 +161,7 @@ export function AuthPanelClient({ configured }: Readonly<{ configured: boolean }
 
       await migrateGuestDataAfterLogin();
       toast.success(view === "signup" ? "Tạo tài khoản thành công." : "Đăng nhập thành công.");
-      router.replace("/feed");
+      router.replace(returnTo);
       router.refresh();
     } catch (error) {
       setBanner({
