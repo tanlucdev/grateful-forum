@@ -7,82 +7,25 @@ export type DisplayItem = {
   category: string;
   content: string;
   detail: string;
-  imageSrc?: string;
+  initial?: string;
   isAnonymous: boolean;
-  isSample?: boolean;
   profileHref?: string;
   time: string;
   tone: "primary" | "tertiary" | "mint";
 };
 
-export const sampleItems: DisplayItem[] = [
-  {
-    id: "stitch-sample-1",
-    authorName: "Nguyễn An",
-    avatarUrl: "/stitch/landing/avatar-1.jpg",
-    category: "Tĩnh lặng",
-    content:
-      "Biết ơn vì một buổi sáng nắng ấm. Không khí trong lành làm tinh thần sảng khoái hẳn lên.",
-    detail: "Góc ban công quen thuộc",
-    isAnonymous: false,
-    isSample: true,
-    time: "5 phút trước",
-    tone: "primary",
-  },
-  {
-    id: "stitch-sample-2",
-    authorName: "Ẩn danh",
-    category: "Kết nối",
-    content:
-      "Cảm ơn vì cốc cà phê ngon hôm nay. Một khởi đầu hoàn hảo cho ngày mới.",
-    detail: "Tình bạn vô điều kiện",
-    isAnonymous: true,
-    isSample: true,
-    time: "2 giờ trước",
-    tone: "tertiary",
-  },
-  {
-    id: "stitch-sample-3",
-    authorName: "Ẩn danh",
-    category: "Sự sống",
-    content:
-      "Rất biết ơn đồng nghiệp đã giúp đỡ hoàn thành dự án đúng hạn. Cảm giác thật nhẹ nhõm!",
-    detail: "Gieo mầm xanh hy vọng",
-    imageSrc: "/stitch/feed/succulent.jpg",
-    isAnonymous: true,
-    isSample: true,
-    time: "Hôm qua",
-    tone: "mint",
-  },
-  {
-    id: "stitch-sample-4",
-    authorName: "Ẩn danh",
-    category: "Dịu dàng",
-    content:
-      "Vừa được một người lạ nhường chỗ trên xe buýt. Những điều nhỏ bé dễ thương trong cuộc sống.",
-    detail: "Một cử chỉ tử tế",
-    isAnonymous: true,
-    isSample: true,
-    time: "Hôm qua",
-    tone: "primary",
-  },
-];
-
 export function toDisplayItem(item: FeedItem, index: number): DisplayItem {
   const author = item.visibility !== "anonymous" ? item.author : null;
   const tone = (["primary", "tertiary", "mint"] as const)[index % 3];
-  const category = ["Tĩnh lặng", "Kết nối", "Sự sống"][index % 3];
-  const detail = ["Góc bình yên trong ngày", "Một kết nối ấm áp", "Điều nhỏ đang nở hoa"][
-    index % 3
-  ];
 
   return {
     id: item.id,
-    authorName: author ? author.displayName ?? "BeGrateful" : "Ẩn danh",
+    authorName: author ? author.displayName ?? "Grateful Forum" : "Ẩn danh",
     avatarUrl: author?.avatarUrl,
-    category,
+    category: item.visibility === "anonymous" ? "Ẩn danh" : "Công khai",
     content: item.content,
-    detail,
+    detail: item.visibility === "anonymous" ? "Chia sẻ ẩn danh" : "Chia sẻ công khai",
+    initial: author?.displayName?.trim().charAt(0).toUpperCase(),
     isAnonymous: !author,
     profileHref: author ? `/profile/${author.id}` : undefined,
     time: formatRelative(item.createdAt),

@@ -3,11 +3,20 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { loadMoreFeed } from "@/lib/api/feed";
 import type { FeedPage } from "@/lib/feed/types";
-import { DesktopAside, DesktopFooter, MobileHeader, WritePrompt } from "./feed-shell";
-import { DesktopFeedCard, FeedSentinel, MobileFeedCard } from "./feed-cards";
-import { sampleItems, toDisplayItem, type DisplayItem } from "./feed-data";
+import {
+  DesktopAside,
+  DesktopFooter,
+  MobileFeedEnd,
+  MobileReflectionBanner,
+  MobileWritePrompt,
+  WritePrompt,
+} from "./feed-shell";
+import { DesktopFeedCard, FeedEmptyState, FeedSentinel, MobileFeedCard } from "./feed-cards";
+import { toDisplayItem, type DisplayItem } from "./feed-data";
 
-export function PublicFeedClient({ initialPage }: Readonly<{ initialPage: FeedPage }>) {
+export function PublicFeedClient({
+  initialPage,
+}: Readonly<{ initialPage: FeedPage }>) {
   const [items, setItems] = useState(initialPage.items);
   const [cursor, setCursor] = useState(initialPage.nextCursor);
   const [loading, setLoading] = useState(false);
@@ -50,18 +59,24 @@ export function PublicFeedClient({ initialPage }: Readonly<{ initialPage: FeedPa
     return () => observer.disconnect();
   }, [cursor, done, loadMore, loading]);
 
-  const feedItems: DisplayItem[] = items.length ? items.map(toDisplayItem) : sampleItems;
+  const feedItems: DisplayItem[] = items.map(toDisplayItem);
   const status = error || (loading ? "Đang tải thêm..." : done && items.length ? "Bạn đã xem hết." : "");
+  const showMobileEnd = !loading && !error && done && items.length > 0;
+  const sentinelStatus = showMobileEnd ? "" : status;
 
   return (
-    <div className="min-h-svh bg-[#eefcf9] text-[#111e1c] md:bg-[#f4fbf8] md:font-[family-name:var(--font-quicksand)]">
-      <MobileHeader />
-      <main className="min-h-svh pt-16 md:mx-auto md:max-w-[1200px] md:px-6">
-        <section className="mx-auto flex w-full max-w-md flex-col gap-4 px-6 pb-[100px] pt-4 md:hidden">
-          {feedItems.map((item) => (
-            <MobileFeedCard item={item} key={item.id} />
-          ))}
-          <FeedSentinel refEl={sentinelRef} status={status} />
+    <div className="min-h-svh overflow-x-hidden bg-[#f4fbf8] font-[family-name:var(--font-quicksand)] text-[#161d1b]">
+      <main className="min-h-svh overflow-x-hidden pt-16 md:mx-auto md:max-w-[1200px] md:px-6">
+        <section className="flex w-full min-w-0 flex-col gap-5 overflow-hidden px-5 pb-24 pt-4 md:hidden">
+          <MobileReflectionBanner />
+          <MobileWritePrompt />
+          <div className="flex flex-col gap-4">
+            {feedItems.length ? feedItems.map((item) => (
+              <MobileFeedCard item={item} key={item.id} />
+            )) : <FeedEmptyState />}
+          </div>
+          <FeedSentinel refEl={sentinelRef} status={sentinelStatus} />
+          {showMobileEnd ? <MobileFeedEnd status={items.length ? "" : "Chưa có chia sẻ công khai."} /> : null}
         </section>
 
         <section className="hidden w-full py-8 md:block">
@@ -80,9 +95,9 @@ export function PublicFeedClient({ initialPage }: Readonly<{ initialPage: FeedPa
               </div>
               <WritePrompt />
               <div className="flex flex-col gap-5">
-                {feedItems.map((item) => (
+                {feedItems.length ? feedItems.map((item) => (
                   <DesktopFeedCard item={item} key={item.id} />
-                ))}
+                )) : <FeedEmptyState />}
                 <FeedSentinel refEl={sentinelRef} status={status} />
               </div>
             </div>
