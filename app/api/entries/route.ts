@@ -1,19 +1,16 @@
 import { NextResponse } from "next/server";
-import { ensureGuestId } from "@/lib/auth/guest-session";
-import { ENTRY_LIMIT, isEntryVisibility } from "@/lib/entries/types";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createEntry, validateCreateEntry } from "@/lib/entries/mutations";
 
 export async function POST(request: Request) {
-  const body = (await request.json()) as {
-    content?: string;
-    visibility?: string;
-  };
-  const content = body.content?.trim() ?? "";
-  const visibility = body.visibility ?? "private";
+  const body = (await request.json()) as { content?: string; visibility?: string };
+  let input;
 
-  if (!content || content.length > ENTRY_LIMIT || !isEntryVisibility(visibility)) {
-    return NextResponse.json({ error: "Invalid entry." }, { status: 400 });
+  try {
+    input = validateCreateEntry(body);
+  } catch (error) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Invalid entry." }, { status: 400 });
   }
 
   if (!hasSupabaseEnv()) {
@@ -22,24 +19,12 @@ export async function POST(request: Request) {
 
   const supabase = await createSupabaseServerClient();
   const { data } = await supabase.auth.getUser();
-  const insertResult = data.user
-    ? await supabase
-        .from("entries")
-        .insert({ content, visibility, user_id: data.user.id })
-        .select("id, created_at")
-        .single()
-    : await supabase
-        .from("entries")
-        .insert({ content, visibility, guest_id: await ensureGuestId() })
-        .select("id, created_at")
-        .single();
 
-  if (insertResult.error) {
-    return NextResponse.json(
-      { error: insertResult.error.message },
-      { status: 500 },
-    );
+  try {
+    const entry = await createEntry(supabase, input, data.user?.id ?? null);
+    return NextResponse.json({ saved: true, entry });
+  } catch (error) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Could not save entry." }, { status: 500 });
   }
 
-  return NextResponse.json({ saved: true, entry: insertResult.data });
 }

@@ -1,15 +1,21 @@
 import { NextResponse } from "next/server";
+import { loadAdminQueue } from "@/lib/moderation/queries";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { validateModerationUpdate, updateModerationReport } from "@/lib/moderation/mutations";
+
+export async function GET() {
+  const queue = await loadAdminQueue();
+  return NextResponse.json(queue, { status: queue.admin ? 200 : 403 });
+}
 
 export async function PATCH(request: Request) {
-  const body = (await request.json()) as {
-    reportId?: string;
-    entryId?: string;
-    action?: "review" | "dismiss" | "hide" | "delete";
-  };
+  const body = (await request.json()) as { reportId?: string; entryId?: string; action?: "review" | "dismiss" | "hide" | "delete" };
+  let input;
 
-  if (!body.reportId || !body.action) {
-    return NextResponse.json({ error: "Invalid moderation action." }, { status: 400 });
+  try {
+    input = validateModerationUpdate(body);
+  } catch (error) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Invalid moderation action." }, { status: 400 });
   }
 
   const supabase = await createSupabaseServerClient();
@@ -19,43 +25,12 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: "Not signed in." }, { status: 401 });
   }
 
-  const { data: adminRole } = await supabase
-    .from("admin_roles")
-    .select("user_id")
-    .eq("user_id", auth.user.id)
-    .single();
-
-  if (!adminRole) {
-    return NextResponse.json({ error: "Admin only." }, { status: 403 });
-  }
-
-  if ((body.action === "hide" || body.action === "delete") && body.entryId) {
-    await supabase
-      .from("entries")
-      .update({ hidden_at: new Date().toISOString() })
-      .eq("id", body.entryId);
-  }
-
-  const status =
-    body.action === "dismiss"
-      ? "dismissed"
-      : body.action === "hide"
-        ? "hidden"
-        : body.action === "delete"
-          ? "deleted"
-          : "reviewed";
-
-  const { error } = await supabase
-    .from("reports")
-    .update({
-      status,
-      moderator_id: auth.user.id,
-      reviewed_at: new Date().toISOString(),
-    })
-    .eq("id", body.reportId);
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  try {
+    await updateModerationReport(supabase, auth.user.id, input);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Could not update moderation report.";
+    const status = message === "Admin only." ? 403 : 500;
+    return NextResponse.json({ error: message }, { status });
   }
 
   return NextResponse.json({ saved: true });
