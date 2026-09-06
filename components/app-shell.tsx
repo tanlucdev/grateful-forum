@@ -4,6 +4,7 @@ import { Suspense, useEffect, useRef, useState, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Toaster } from "sonner";
 
 import { BottomTabs } from "@/components/navigation/bottom-tabs";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
@@ -37,10 +38,11 @@ const signedOutProfile: AppShellProfile = {
 
 export function AppShell({
   children,
+  authenticated,
   profile,
-}: Readonly<{ children: ReactNode; profile: AppShellProfile }>) {
+}: Readonly<{ children: ReactNode; authenticated: boolean; profile: AppShellProfile }>) {
   const pathname = usePathname();
-  const [currentProfile, setCurrentProfile] = useState(profile);
+  const [currentProfile, setCurrentProfile] = useState({ ...profile, signedIn: authenticated || profile.signedIn });
   const isAuthSurface = pathname.startsWith("/auth");
   const isLandingSurface = pathname === "/";
   const isRewardSurface = pathname.startsWith("/reward");
@@ -109,6 +111,7 @@ export function AppShell({
           <BottomTabs signedIn={currentProfile.signedIn} />
         </Suspense>
       )}
+      <Toaster richColors position="top-center" />
     </div>
   );
 }

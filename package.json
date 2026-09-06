@@ -8,7 +8,7 @@
     "build": "next build",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test:logic": "node --experimental-strip-types tests/streak.test.ts"
+    "test:logic": "node --experimental-strip-types tests/streak.test.ts && node --experimental-strip-types tests/auth-validation.test.ts && node --experimental-strip-types tests/auth-error-messages.test.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.5",
@@ -16,7 +16,9 @@
     "lucide-react": "^1.38.0",
     "next": "^16.3.3",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "react-dom": "^19.2.8",
+    "sonner": "^2.0.8",
+    "zod": "^4.5.4"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",

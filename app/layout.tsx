@@ -3,6 +3,7 @@ import { Manrope, Quicksand } from "next/font/google";
 import type { ReactNode } from "react";
 import "./globals.css";
 import { AppShell } from "@/components/app-shell";
+import { loadOwnProfileDashboard } from "@/lib/profile/load-own-profile";
 
 const manrope = Manrope({
   subsets: ["latin", "vietnamese"],
@@ -20,21 +21,24 @@ export const metadata: Metadata = {
   description: "A mobile-first gratitude journal.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: ReactNode;
 }>) {
+  const dashboard = await loadOwnProfileDashboard();
+  const authenticated = Boolean(dashboard);
   return (
     <html lang="vi">
       <body className={`${manrope.className} ${quicksand.variable}`}>
         <AppShell
+          authenticated={authenticated}
           profile={{
-            avatarUrl: "",
-            displayName: "Tài khoản",
-            email: "",
-            signedIn: false,
-            streak: 0,
+            avatarUrl: dashboard?.profile.avatarUrl || "/stitch/profile/avatar-desktop.jpg",
+            displayName: dashboard?.profile.displayName || "Tài khoản",
+            email: dashboard?.profile.email || "",
+            signedIn: authenticated,
+            streak: dashboard?.streak || 0,
           }}
         >
           {children}

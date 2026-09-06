@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Flag } from "lucide-react";
-import { reportEntry } from "@/lib/api";
+import { reportEntry } from "@/lib/api/reports";
 
 export function ReportEntryButton({ entryId }: Readonly<{ entryId: string }>) {
   const [open, setOpen] = useState(false);

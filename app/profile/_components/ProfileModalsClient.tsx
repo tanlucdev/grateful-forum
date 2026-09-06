@@ -4,7 +4,7 @@ import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
-import { updateProfile } from "@/lib/api";
+import { updateProfile } from "@/lib/api/profile";
 import type { ProfileView } from "./profile-view";
 
 type Draft = {
