@@ -1,4 +1,4 @@
-import type { EntryVisibility } from "@/lib/entries/types";
+import type { EntryMetadata, EntryVisibility } from "@/lib/entries/types";
 
 export type ProfileRecord = {
   id: string;
@@ -14,6 +14,7 @@ export type JournalEntry = {
   content: string;
   visibility: EntryVisibility;
   createdAt: string;
+  metadata: EntryMetadata;
 };
 
 export type ProfileDashboard = {

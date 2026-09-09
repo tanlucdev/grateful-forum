@@ -1,14 +1,15 @@
 import { NextResponse } from "next/server";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { createEntry, validateCreateEntry } from "@/lib/entries/mutations";
+import { createEntry } from "@/lib/entries/mutations";
+import { createEntryRequestSchema } from "@/lib/entries/schema";
 
 export async function POST(request: Request) {
-  const body = (await request.json()) as { content?: string; visibility?: string };
   let input;
 
   try {
-    input = validateCreateEntry(body);
+    const body = await request.json();
+    input = createEntryRequestSchema.parse(body);
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : "Invalid entry." }, { status: 400 });
   }
