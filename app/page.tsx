@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
+import { LandingClient } from "./_components/landing/LandingClient";
 
 export default function HomePage() {
-  redirect("/feed");
+  return <LandingClient />;
 }
