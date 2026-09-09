@@ -66,7 +66,7 @@ export function PublicFeedClient({
 
   return (
     <div className="min-h-svh overflow-x-hidden bg-[#f4fbf8] font-[family-name:var(--font-quicksand)] text-[#161d1b]">
-      <main className="min-h-svh overflow-x-hidden pt-16 md:mx-auto md:max-w-[1200px] md:px-6">
+      <main className="min-h-svh overflow-x-hidden pt-16 md:mx-auto md:max-w-[1200px] md:px-6 md:pt-20">
         <section className="flex w-full min-w-0 flex-col gap-5 overflow-hidden px-5 pb-24 pt-4 md:hidden">
           <MobileReflectionBanner />
           <MobileWritePrompt />

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
+import type { CalendarEntry } from "@/lib/calendar/dto";
 import { badges, coffee, monthDays } from "./calendar-data";
 
 export function MonthCalendar({ desktop = false }: Readonly<{ desktop?: boolean }>) {
@@ -30,7 +31,30 @@ export function MonthCalendar({ desktop = false }: Readonly<{ desktop?: boolean 
   );
 }
 
-export function TodayMoments({ desktop = false }: Readonly<{ desktop?: boolean }>) {
+export function TodayMoments({ desktop = false, entries = [] }: Readonly<{ desktop?: boolean; entries?: CalendarEntry[] }>) {
+  const displayEntries = entries.length
+    ? entries.map((entry, index) => ({
+        time: index === 0 ? "Hôm nay" : "Gần đây",
+        tag: entry.metadata.sticker ?? (entry.visibility === "private" ? "Riêng tư" : "Chia sẻ"),
+        text: entry.metadata.quote ?? entry.content,
+        night: index === 1,
+        image: entry.metadata.imageUrl ?? undefined,
+      }))
+    : [
+        {
+          time: "08:30 • Buổi sáng",
+          tag: "#giadinh",
+          text: "“Biết ơn ly cà phê sáng mẹ pha thơm lừng và luồng ánh nắng ấm áp chiếu qua bậu cửa sổ phòng làm việc...”",
+          image: true,
+        },
+        {
+          time: "21:15 • Buổi tối",
+          tag: "#suckhoe",
+          text: "“Hoàn thành buổi chạy bộ 5km nhẹ nhàng quanh công viên và hít thở bầu không khí mùa thu se se lạnh đầy tươi mới.”",
+          night: true,
+        },
+      ];
+
   return (
     <section className={`${desktop ? "rounded-xl p-6" : "rounded-3xl p-4"} space-y-3 border border-[#E3EFE9] bg-white shadow-[0_4px_16px_rgba(22,60,42,0.05)]`}>
       <div className="flex items-center justify-between border-b border-[#E3EFE9]/70 pb-2">
@@ -38,10 +62,9 @@ export function TodayMoments({ desktop = false }: Readonly<{ desktop?: boolean }
           <span className="text-[11px] font-medium text-[#6C8377]">Thứ Năm, 24 Tháng 10, 2024</span>
           <h3 className={`${desktop ? "text-xl" : "text-base"} font-bold text-[#1C3127]`}>Khoảnh khắc hôm nay</h3>
         </div>
-        <span className="rounded-full border border-[#bbf7d1] bg-[#dcfce8]/70 px-2.5 py-1 text-xs font-bold text-[#145C34]">2 điều đã gieo</span>
+        <span className="rounded-full border border-[#bbf7d1] bg-[#dcfce8]/70 px-2.5 py-1 text-xs font-bold text-[#145C34]">{displayEntries.length} điều đã gieo</span>
       </div>
-      <Moment time="08:30 • Buổi sáng" tag="#giadinh" text="“Biết ơn ly cà phê sáng mẹ pha thơm lừng và luồng ánh nắng ấm áp chiếu qua bậu cửa sổ phòng làm việc...”" image={desktop} />
-      <Moment time="21:15 • Buổi tối" tag="#suckhoe" text="“Hoàn thành buổi chạy bộ 5km nhẹ nhàng quanh công viên và hít thở bầu không khí mùa thu se se lạnh đầy tươi mới.”" night />
+      {displayEntries.map((entry) => <Moment image={typeof entry.image === "string" ? entry.image : entry.image ? desktop : undefined} key={`${entry.time}-${entry.tag}-${entry.text}`} night={entry.night} tag={entry.tag} text={entry.text} time={entry.time} />)}
       <button className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-[#86efac] bg-[#f5faf7] px-3 py-2.5 text-xs font-semibold text-[#0f7652]">⊕ Ghi thêm điều biết ơn cho hôm nay</button>
     </section>
   );
@@ -102,7 +125,7 @@ function MonthCell({ day, index, desktop }: Readonly<{ day: number; index: numbe
   );
 }
 
-function Moment({ time, tag, text, night, image }: Readonly<{ time: string; tag: string; text: string; night?: boolean; image?: boolean }>) {
+function Moment({ time, tag, text, night, image }: Readonly<{ time: string; tag: string; text: string; night?: boolean; image?: boolean | string }>) {
   return (
     <article className={`space-y-2 rounded-2xl border p-3.5 ${night ? "border-teal-100/70 bg-teal-50/30" : "border-[#dcfce8]/70 bg-[#f0fdf6]/40"}`}>
       <div className="flex items-center justify-between text-xs">
@@ -111,7 +134,10 @@ function Moment({ time, tag, text, night, image }: Readonly<{ time: string; tag:
       </div>
       <p className="text-xs leading-relaxed text-[#1C3127]">{text}</p>
       <div className="flex items-center gap-2 pt-1 text-[11px] font-medium text-[#6C8377]">
-        {image ? <Image alt="Cà phê buổi sáng" className="h-12 w-12 rounded-lg object-cover shadow-sm" height={48} unoptimized width={48} src={coffee} /> : <MaterialSymbol className="text-xs" name="lock" />}
+        {typeof image === "string" ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img alt="" className="h-12 w-12 rounded-lg object-cover shadow-sm" src={image} />
+        ) : image ? <Image alt="Cà phê buổi sáng" className="h-12 w-12 rounded-lg object-cover shadow-sm" height={48} unoptimized width={48} src={coffee} /> : <MaterialSymbol className="text-xs" name="lock" />}
         <span>{image ? "Ảnh lưu khoảnh khắc bình yên" : "Riêng tư • Tâm trạng: Bình an, phấn chấn"}</span>
       </div>
     </article>

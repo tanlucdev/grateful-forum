@@ -106,7 +106,7 @@ export function ProfileEditModalButton({ view }: Readonly<{ view: ProfileView }>
                         </button>
                       </div>
                       <p className="text-[11px] font-medium leading-[14px] text-[#3d4a41]">
-                        Định dạng PNG, JPG hoặc Mascot BeGrateful
+                        Định dạng PNG, JPG hoặc Mascot Grateful Forum
                       </p>
                     </div>
                   </div>

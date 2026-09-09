@@ -2,19 +2,23 @@
 
 import { useMemo, useState } from "react";
 import { createEntry } from "@/lib/api/entries";
+import { uploadEntryMedia } from "@/lib/api/entry-media";
 import type { EntryVisibility } from "@/lib/entries/types";
 import { addLocalEntry, markLocalEntrySynced } from "@/lib/entries/local-store";
 import {
   defaultGratitudes,
   defaultReflection,
   writeMoods,
+  writeQuotes,
+  writeStickers,
   writeWashiOptions,
   type WriteMood,
+  type WriteQuote,
+  type WriteSticker,
   type WriteWashi,
 } from "./composer-data";
 import {
   NotebookControls,
-  WriteHeader,
   WriteIntro,
   WritingPanel,
 } from "./composer-ui";
@@ -27,6 +31,11 @@ export function EntryComposerClient() {
   const [space, setSpace] = useState("Ban công góc nhỏ");
   const [gratitudes, setGratitudes] = useState([...defaultGratitudes]);
   const [reflection, setReflection] = useState(defaultReflection);
+  const [quote, setQuote] = useState<WriteQuote>(writeQuotes[0]);
+  const [sticker, setSticker] = useState<WriteSticker>(writeStickers[0].label);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState("");
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState("");
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -45,6 +54,9 @@ export function EntryComposerClient() {
         `Washi: ${washi}`,
         `Tâm trạng: ${mood}`,
         `Không gian: ${space}`,
+        `Sticker: ${sticker}`,
+        `Câu trích dẫn: ${quote}`,
+        imageUrl ? `Ảnh: ${imageUrl}` : "",
         ...gratitudes
           .filter((item) => item.trim())
           .map((item, index) => `${index + 1}. ${item.trim()}`),
@@ -53,9 +65,16 @@ export function EntryComposerClient() {
       ]
         .filter(Boolean)
         .join("\n"),
-    [gratitudes, mood, reflection, space, visibility, washi],
+    [gratitudes, imageUrl, mood, quote, reflection, space, sticker, visibility, washi],
   );
-  const canSubmit = entryText.trim().length > 0 && !saving;
+  const canSubmit =
+    gratitudes.every((item) => item.trim()) &&
+    reflection.trim().length > 0 &&
+    space.trim().length > 0 &&
+    quote.trim().length > 0 &&
+    sticker.trim().length > 0 &&
+    !saving &&
+    !uploading;
 
   function resetDraft() {
     setVisibility("private");
@@ -64,7 +83,30 @@ export function EntryComposerClient() {
     setSpace("Ban công góc nhỏ");
     setGratitudes([...defaultGratitudes]);
     setReflection(defaultReflection);
+    setQuote(writeQuotes[0]);
+    setSticker(writeStickers[0].label);
+    setImageUrl(null);
+    setUploadStatus("");
     setStatus("Khôi phục bản nháp hôm qua.");
+  }
+
+  async function uploadImage(file: File) {
+    setUploading(true);
+    setUploadStatus("");
+
+    try {
+      const result = await uploadEntryMedia(file);
+      if (result.uploaded) {
+        setImageUrl(result.url);
+        setUploadStatus("Đã tải ảnh.");
+      } else {
+        setUploadStatus("Chưa cấu hình Supabase; ảnh chỉ giữ trên bản nháp.");
+      }
+    } catch (error) {
+      setUploadStatus(error instanceof Error ? error.message : "Không tải được ảnh.");
+    } finally {
+      setUploading(false);
+    }
   }
 
   async function submit() {
@@ -75,7 +117,17 @@ export function EntryComposerClient() {
     const local = addLocalEntry(entryText.trim(), visibility);
 
     try {
-      const result = await createEntry(entryText.trim(), visibility);
+      const result = await createEntry({
+        visibility,
+        gratitudes: gratitudes.map((item) => item.trim()),
+        reflection: reflection.trim(),
+        mood,
+        washi,
+        space: space.trim(),
+        quote,
+        sticker,
+        imageUrl,
+      });
       if (result.saved) markLocalEntrySynced(local.id);
       resetDraft();
       setStatus(result.saved ? "Đã lưu!" : "Đã lưu trên thiết bị này.");
@@ -90,7 +142,6 @@ export function EntryComposerClient() {
 
   return (
     <div className="min-h-dvh bg-[#f4fbf8] text-[#161d1b] [font-family:var(--font-quicksand)]">
-      <WriteHeader />
       <section className="mx-auto min-h-dvh max-w-[1200px] px-5 pb-32 pt-20 md:px-6 md:pt-24">
         <div className="flex flex-col gap-6">
           <WriteIntro
@@ -121,9 +172,17 @@ export function EntryComposerClient() {
               />
             </div>
             <SideRail
+              imageUrl={imageUrl}
+              quote={quote}
               resetDraft={resetDraft}
               setReflection={setReflection}
+              setQuote={setQuote}
+              setSticker={setSticker}
               setVisibility={setVisibility}
+              sticker={sticker}
+              uploadImage={uploadImage}
+              uploading={uploading}
+              uploadStatus={uploadStatus}
               visibility={visibility}
             />
           </section>
@@ -134,8 +193,11 @@ export function EntryComposerClient() {
         <PreviewModal
           close={() => setPreviewOpen(false)}
           gratitudes={gratitudes}
+          imageUrl={imageUrl}
           mood={mood}
+          quote={quote}
           reflection={reflection}
+          sticker={sticker}
           submit={submit}
           today={today}
         />

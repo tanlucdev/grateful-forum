@@ -41,8 +41,8 @@ export function DesktopFooter() {
   return (
     <footer className="w-full bg-[#eef5f2]/60 py-8 shadow-[0_-1px_8px_rgba(26,47,43,0.02)]">
       <div className="flex w-full flex-col items-center justify-between gap-4 px-6 text-center text-[#3d4a41] sm:flex-row sm:text-left lg:px-16">
-        <div><p className="text-xl font-semibold text-[#006d43]">BeGrateful</p><p>Nuôi dưỡng tâm hồn an yên qua từng điều giản dị mỗi ngày.</p></div>
-        <div className="text-xs">© 2025 BeGrateful. Cùng Bé Mầm gieo mầm hạnh phúc.</div>
+        <div><p className="text-xl font-semibold text-[#006d43]">Grateful Forum</p><p>Nuôi dưỡng tâm hồn an yên qua từng điều giản dị mỗi ngày.</p></div>
+        <div className="text-xs">© 2025 Grateful Forum. Cùng Bé Mầm gieo mầm hạnh phúc.</div>
       </div>
     </footer>
   );

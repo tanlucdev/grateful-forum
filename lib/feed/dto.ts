@@ -1,4 +1,4 @@
-import type { EntryVisibility } from "@/lib/entries/types";
+import type { EntryMetadata, EntryVisibility } from "@/lib/entries/types";
 
 export type FeedAuthor = {
   id: string;
@@ -13,6 +13,7 @@ export type FeedItem = {
   visibility: EntryVisibility;
   createdAt: string;
   author: FeedAuthor | null;
+  metadata: EntryMetadata;
 };
 
 export type FeedPage = {

@@ -23,9 +23,7 @@ export function MobileFeedCard({ item }: Readonly<{ item: DisplayItem }>) {
           </div>
         </div>
       </div>
-      <p className="whitespace-pre-wrap text-[15px] leading-[22px] text-[#161d1b]">
-        {item.content}
-      </p>
+      <EntryBody item={item} mobile />
       <div className="mt-3 flex flex-col items-start gap-2 rounded-b-xl bg-[#eef5f2]/40 pt-3 text-[#3d4a41] min-[420px]:flex-row min-[420px]:items-center min-[420px]:justify-between">
         <div className="flex min-w-0 items-center gap-1.5">
           <MaterialSymbol className="text-base text-[#006d43]" name="public" />
@@ -52,15 +50,45 @@ export function DesktopFeedCard({ item }: Readonly<{ item: DisplayItem }>) {
           {item.time}
         </span>
       </div>
-      <p className="whitespace-pre-wrap text-lg leading-7 text-[#161d1b]">
-        {item.content}
-      </p>
+      <EntryBody item={item} />
       <div className="flex items-center gap-2 text-[#3d4a41]">
         <MaterialSymbol className={`text-base ${tone.text}`} name="public" />
         <span className="text-[11px] font-medium leading-[14px]">{item.detail}</span>
       </div>
       <ReportEntryButton entryId={item.id} />
     </article>
+  );
+}
+
+function EntryBody({ item, mobile = false }: Readonly<{ item: DisplayItem; mobile?: boolean }>) {
+  const hasMetadata = item.metadata.gratitudes.length || item.metadata.reflection || item.metadata.quote || item.metadata.imageUrl;
+
+  if (!hasMetadata) {
+    return <p className={`${mobile ? "text-[15px] leading-[22px]" : "text-lg leading-7"} whitespace-pre-wrap text-[#161d1b]`}>{item.content}</p>;
+  }
+
+  return (
+    <div className={`${mobile ? "gap-3" : "gap-4"} flex flex-col`}>
+      {item.metadata.quote ? <p className={`${mobile ? "text-sm leading-5" : "text-base leading-6"} whitespace-pre-wrap italic text-[#3d4a41]`}>“{item.metadata.quote}”</p> : null}
+      {item.metadata.imageUrl ? (
+        <div className="h-48 overflow-hidden rounded-xl bg-[#e8efec] bg-cover bg-center" style={{ backgroundImage: `url(${item.metadata.imageUrl})` }} />
+      ) : null}
+      {item.metadata.gratitudes.length ? (
+        <ul className="space-y-1.5">
+          {item.metadata.gratitudes.map((text, index) => (
+            <li className={`${mobile ? "text-[15px] leading-[22px]" : "text-lg leading-7"} whitespace-pre-wrap text-[#161d1b]`} key={`${index}-${text}`}>
+              {index + 1}. {text}
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      {item.metadata.reflection ? <p className={`${mobile ? "text-[15px] leading-[22px]" : "text-lg leading-7"} whitespace-pre-wrap text-[#161d1b]`}>{item.metadata.reflection}</p> : null}
+      <div className="flex flex-wrap gap-1.5">
+        {[item.metadata.mood, item.metadata.sticker, item.metadata.space].filter(Boolean).map((label) => (
+          <span className="rounded-full bg-[#eef5f2] px-2.5 py-1 text-[11px] font-medium leading-4 text-[#3d4a41]" key={label}>{label}</span>
+        ))}
+      </div>
+    </div>
   );
 }
 

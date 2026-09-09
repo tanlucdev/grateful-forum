@@ -14,10 +14,10 @@ export function DesktopProfile({
 }: Readonly<{ initialTab: "all" | "public" | "moments"; view: ProfileView }>) {
   return (
     <div className="hidden min-h-svh flex-col bg-[#f4fbf8] md:flex">
-      <main className="mx-auto w-full max-w-[1200px] flex-1 px-6 pt-16">
+      <main className="mx-auto w-full max-w-[1200px] flex-1 px-6 pt-20">
         <div className="flex w-full flex-col space-y-8 py-8">
           <DesktopHero view={view} />
-          <ProfileDesktopTabs initialTab={initialTab} />
+          <ProfileDesktopTabs initialTab={initialTab} view={view} />
           <MilestoneCard view={view} />
           <RhythmCard />
         </div>
@@ -101,13 +101,13 @@ function DesktopFooter() {
       <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-4 px-6">
         <div className="flex items-center gap-2">
           <MaterialSymbol className="text-xl text-[#006d43]" name="eco" />
-          <span className="text-xl font-semibold leading-7 text-[#006d43]">BeGrateful</span>
+          <span className="text-xl font-semibold leading-7 text-[#006d43]">Grateful Forum</span>
           <span className="ml-2 text-[11px] font-medium leading-[14px] text-[#3d4a41]">
             Nuôi dưỡng tâm hồn an yên
           </span>
         </div>
         <div className="text-xs font-medium leading-4 text-[#3d4a41]">
-          © 2026 BeGrateful. Lan tỏa lòng biết ơn mỗi ngày.
+          © 2026 Grateful Forum. Lan tỏa lòng biết ơn mỗi ngày.
         </div>
       </div>
     </footer>

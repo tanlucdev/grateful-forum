@@ -1,5 +1,6 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
+import { entrySelect, toEntryMetadata } from "@/lib/entries/records";
 import { getStreak } from "./streak";
 import type { ProfileDashboard } from "./types";
 
@@ -23,7 +24,7 @@ export async function loadOwnProfileDashboard(): Promise<ProfileDashboard | null
       .single(),
     supabase
       .from("entries")
-      .select("id, content, visibility, created_at")
+      .select(entrySelect)
       .eq("user_id", auth.user.id)
       .order("created_at", { ascending: false })
       .order("id", { ascending: false }),
@@ -31,7 +32,7 @@ export async function loadOwnProfileDashboard(): Promise<ProfileDashboard | null
 
   const profile = profileRow ?? {
     id: auth.user.id,
-    display_name: auth.user.user_metadata?.display_name ?? "Grateful human",
+    display_name: auth.user.user_metadata?.display_name ?? auth.user.email?.split("@")[0] ?? "",
     username: null,
     avatar_url: null,
     bio: null,
@@ -46,6 +47,7 @@ export async function loadOwnProfileDashboard(): Promise<ProfileDashboard | null
       username: profile.username,
       avatarUrl: profile.avatar_url,
       bio: profile.bio,
+      email: auth.user.email ?? null,
     },
     entryCount: journal.length,
     streak: getStreak(journal.map((entry) => entry.created_at)),
@@ -54,6 +56,7 @@ export async function loadOwnProfileDashboard(): Promise<ProfileDashboard | null
       content: entry.content,
       visibility: entry.visibility,
       createdAt: entry.created_at,
+      metadata: toEntryMetadata(entry),
     })),
   };
 }

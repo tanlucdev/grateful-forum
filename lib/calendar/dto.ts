@@ -1,10 +1,11 @@
-import type { EntryVisibility } from "@/lib/entries/types";
+import type { EntryMetadata, EntryVisibility } from "@/lib/entries/types";
 
 export type CalendarEntry = {
   id: string;
   content: string;
   createdAt: string;
   visibility: EntryVisibility;
+  metadata: EntryMetadata;
 };
 
 export type CalendarDay = {

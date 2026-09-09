@@ -1,4 +1,5 @@
 import type { FeedItem } from "@/lib/feed/types";
+import type { EntryMetadata } from "@/lib/entries/types";
 
 export type DisplayItem = {
   id: string;
@@ -7,6 +8,7 @@ export type DisplayItem = {
   category: string;
   content: string;
   detail: string;
+  metadata: EntryMetadata;
   initial?: string;
   isAnonymous: boolean;
   profileHref?: string;
@@ -27,6 +29,7 @@ export function toDisplayItem(item: FeedItem, index: number): DisplayItem {
     detail: item.visibility === "anonymous" ? "Chia sẻ ẩn danh" : "Chia sẻ công khai",
     initial: author?.displayName?.trim().charAt(0).toUpperCase(),
     isAnonymous: !author,
+    metadata: item.metadata,
     profileHref: author ? `/profile/${author.id}` : undefined,
     time: formatRelative(item.createdAt),
     tone,

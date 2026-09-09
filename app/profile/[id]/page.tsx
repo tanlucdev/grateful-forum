@@ -73,9 +73,29 @@ export default async function PublicProfilePage({
                 </span>
                 <span className="text-xs text-[var(--muted)]">{formatDate(entry.createdAt)}</span>
               </div>
-              <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-[var(--text)]">
-                {entry.content}
-              </p>
+              {entry.metadata.gratitudes.length || entry.metadata.reflection || entry.metadata.quote || entry.metadata.imageUrl ? (
+                <>
+                  {entry.metadata.quote ? <p className="mt-3 whitespace-pre-wrap text-sm italic leading-6 text-[var(--muted)]">“{entry.metadata.quote}”</p> : null}
+                  {entry.metadata.imageUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img alt="" className="mt-3 h-44 w-full rounded-lg object-cover" src={entry.metadata.imageUrl} />
+                  ) : null}
+                  {entry.metadata.gratitudes.length ? (
+                    <ul className="mt-3 space-y-1 text-sm leading-6 text-[var(--text)]">
+                      {entry.metadata.gratitudes.map((item, index) => (
+                        <li className="whitespace-pre-wrap" key={`${index}-${item}`}>
+                          {index + 1}. {item}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+                  {entry.metadata.reflection ? <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-[var(--text)]">{entry.metadata.reflection}</p> : null}
+                </>
+              ) : (
+                <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-[var(--text)]">
+                  {entry.content}
+                </p>
+              )}
               <ReportEntryButton entryId={entry.id} />
             </article>
           )) : (
