@@ -9,3 +9,8 @@ dist
 .vercel
 .DS_Store
 supabase/.temp/
+.impeccable/
+.stitch/
+stitch-downloads/
+test-results/
+LANDING_UI_HANDOFF.md

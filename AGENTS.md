@@ -4,3 +4,5 @@
 - When a task asks for Stitch MCP exactness, read `./.agents/skills/stitch-exact/SKILL.md` before editing. If you meant `stitch-exect`, the intended skill is `stitch-exact`.
 - When a task edits the `/write` gratitude journal surface, read `./.agents/skills/journal-write-native/SKILL.md` before editing.
 - Do not read these skills on unrelated turns.
+
+- After creating or updating a branch and commit, push it to `https://github.com/tanlucdev/begrateful.git`.
