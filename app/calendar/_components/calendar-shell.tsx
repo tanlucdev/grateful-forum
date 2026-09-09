@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
+import type { CalendarOverview } from "@/lib/calendar/dto";
 
-export function HeroActions() {
+export function HeroActions({ overview }: Readonly<{ overview: CalendarOverview }>) {
   return (
     <section className="flex flex-col justify-between gap-4 pt-4 lg:flex-row lg:items-end">
       <div>
@@ -15,7 +16,7 @@ export function HeroActions() {
         <p className="mt-1 max-w-2xl text-base leading-6 text-[#3d4a41]">Mỗi ngày ghi lại một điều nhỏ bé để nuôi dưỡng tâm hồn bình an. Dõi theo hành trình gieo hạt cùng Bé Mầm.</p>
       </div>
       <div className="flex flex-wrap items-center gap-3">
-        <FilterPills />
+        <FilterPills filters={overview.filters} />
         <Link className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#006d43] to-[#006d3d] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(0,109,67,0.18)]" href="/write">
           <MaterialSymbol className="text-lg" name="edit_note" />
           Viết nhật ký hôm nay
@@ -25,13 +26,13 @@ export function HeroActions() {
   );
 }
 
-export function FilterPills({ compact = false }: Readonly<{ compact?: boolean }>) {
+export function FilterPills({ compact = false, filters }: Readonly<{ compact?: boolean; filters: CalendarOverview["filters"] }>) {
   return (
     <div className={`${compact ? "mt-4 text-xs" : "text-sm"} flex items-center rounded-full bg-[#e8efec] p-1 font-semibold text-[#3d4a41]`}>
-      {["Năm 2024", "6 tháng qua", "Tháng này", "Tuần này"].map((item, index) => (
-        <button className={`${compact ? "flex-1 rounded-xl py-1.5" : "rounded-full px-3.5 py-1.5"} ${index === 0 ? "bg-white text-[#006d43] shadow-sm" : ""}`} key={item}>
-          {item}
-        </button>
+      {filters.map((item) => (
+        <Link className={`${compact ? "flex-1 rounded-xl py-1.5" : "rounded-full px-3.5 py-1.5"} ${item.active ? "bg-white text-[#006d43] shadow-sm" : ""}`} href={item.href} key={item.key}>
+          {item.label}
+        </Link>
       ))}
     </div>
   );

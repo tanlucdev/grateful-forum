@@ -1,0 +1,2 @@
+export const coffee =
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuBUVXHd4gCYf7XuKImfMkZBDsVpu2ujk90NLk-v0AiI90f3n3Ii-0-PiUNqAa9Iz-F-K3XhzJ-7NKQrqT5h7BXS97XgOikD6mQhtA0vIwLrbiIv94BlE3aQ0eAK_7q2OQdQN4dWh6RcrKshK7nlhJqbcbGHp_EcmPbMFMWH8Tk1KzF9iW-B68_u_C06X";
