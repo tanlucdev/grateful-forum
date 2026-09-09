@@ -1,4 +1,5 @@
 import { MaterialSymbol } from "@/components/ui/material-symbol";
+import type { CalendarOverview } from "@/lib/calendar/dto";
 
 export function Metric({
   label,
@@ -54,22 +55,22 @@ export function Metric({
   );
 }
 
-export function MascotLevel({ mobile = false }: Readonly<{ mobile?: boolean }>) {
+export function MascotLevel({ mobile = false, mascot }: Readonly<{ mobile?: boolean; mascot: CalendarOverview["mascot"] }>) {
   return (
     <article className={`${mobile ? "rounded-2xl p-3.5" : "rounded-xl p-5"} flex flex-col justify-between border border-[#bbf7d1] bg-gradient-to-br from-[#f0fdf6] to-[#ccfbf1]/70 shadow-[0_4px_16px_rgba(22,60,42,0.05)]`}>
       <div className="flex items-center justify-between">
         <span className={`${mobile ? "text-[11px]" : "text-xs"} font-bold uppercase tracking-wider text-[#145C34]`}>Cấp Bé Mầm</span>
-        <span className="rounded-full bg-[#00a86b] px-2 py-0.5 text-[10px] font-bold text-white">Cấp 3/5</span>
+        <span className="rounded-full bg-[#00a86b] px-2 py-0.5 text-[10px] font-bold text-white">Cấp {mascot.level}/{mascot.maxLevel}</span>
       </div>
       <div className="my-2 flex items-center gap-3">
         <div className={`${mobile ? "h-8 w-8" : "h-12 w-12"} flex items-center justify-center rounded-full border border-[#dcfce8] bg-white text-lg shadow-sm`}>🌿</div>
         <div>
-          <div className={`${mobile ? "text-xs" : "text-xl"} font-bold text-[#1C3127]`}>Mầm Căng Tràn</div>
-          <p className={`${mobile ? "text-[10px]" : "text-xs"} text-[#0f7652]`}>Còn 8 ngày để nở hoa</p>
+          <div className={`${mobile ? "text-xs" : "text-xl"} font-bold text-[#1C3127]`}>{mascot.label}</div>
+          <p className={`${mobile ? "text-[10px]" : "text-xs"} text-[#0f7652]`}>Còn {mascot.daysToNextLevel} ngày để nở hoa</p>
         </div>
       </div>
       <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#bbf7d1]">
-        <div className="h-full w-[65%] rounded-full bg-[#00a86b]" />
+        <div className="h-full rounded-full bg-[#00a86b]" style={{ width: `${mascot.progress * 100}%` }} />
       </div>
     </article>
   );

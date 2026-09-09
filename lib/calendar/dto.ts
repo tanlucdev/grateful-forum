@@ -1,5 +1,7 @@
 import type { EntryMetadata, EntryVisibility } from "@/lib/entries/types";
 
+export type CalendarView = "year" | "six-months" | "month" | "week";
+
 export type CalendarEntry = {
   id: string;
   content: string;
@@ -8,35 +10,37 @@ export type CalendarEntry = {
   metadata: EntryMetadata;
 };
 
-export type CalendarDay = {
-  count: number;
-  date: string;
-  day: number;
-  inMonth: boolean;
-  isToday: boolean;
-};
-
-export type CalendarYearDay = {
-  count: number;
-  date: string;
-  inYear: boolean;
-  isToday: boolean;
-};
+export type CalendarYearDay = { count: number; date: string; inYear: boolean; isToday: boolean };
+export type CalendarMonthDay = { count: number; date: string; day: number; inMonth: boolean; isToday: boolean; href: string };
+export type CalendarBadge = { emoji: string; title: string; description: string; status: string; progress: number; unlockedAt: string | null };
 
 export type CalendarOverview = {
-  year: number;
-  month: number;
-  monthLabel: string;
-  todayLabel: string;
-  currentStreak: number;
-  longestStreak: number;
-  totalEntries: number;
-  monthEntries: number;
-  activeDaysThisMonth: number;
-  monthCompletionRate: number;
-  daysElapsedInMonth: number;
-  daysInMonth: number;
-  todayEntries: CalendarEntry[];
-  monthDays: CalendarDay[];
-  yearDays: CalendarYearDay[];
+  timezone: string;
+  view: CalendarView;
+  period: {
+    year: number;
+    month: number;
+    selectedDate: string;
+    todayDate: string;
+    monthLabel: string;
+    selectedDateLabel: string;
+    gardenTitle: string;
+    gardenRangeLabel: string;
+  };
+  filters: { key: CalendarView; label: string; active: boolean; href: string }[];
+  stats: {
+    currentStreak: number;
+    longestStreak: number;
+    totalEntries: number;
+    monthEntries: number;
+    activeDaysThisMonth: number;
+    daysElapsedInMonth: number;
+    monthCompletionRate: number;
+    entriesDeltaFromPreviousMonth: number;
+  };
+  garden: { yearDays: CalendarYearDay[]; visibleDays: CalendarYearDay[]; totalFlowers: number; todayCount: number; todayStreakLabel: string };
+  monthDays: CalendarMonthDay[];
+  selectedEntries: CalendarEntry[];
+  badges: CalendarBadge[];
+  mascot: { level: number; maxLevel: number; label: string; progress: number; daysToNextLevel: number; whisper: string };
 };
