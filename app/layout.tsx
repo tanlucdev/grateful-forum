@@ -29,8 +29,8 @@ export default async function RootLayout({
   const dashboard = await loadOwnProfileDashboard();
   const authenticated = Boolean(dashboard);
   return (
-    <html lang="vi">
-      <body className={`${manrope.className} ${quicksand.variable}`}>
+    <html data-scroll-behavior="smooth" lang="vi" suppressHydrationWarning>
+      <body className={`${manrope.className} ${quicksand.variable}`} suppressHydrationWarning>
         <AppShell
           authenticated={authenticated}
           profile={{

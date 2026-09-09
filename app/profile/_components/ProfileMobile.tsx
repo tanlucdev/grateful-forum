@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { JournalEntry } from "@/lib/profile/types";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
 import { Avatar } from "./ProfileDesktopCards";
-import { formatRelative, profileAssets, type ProfileView } from "./profile-view";
+import { formatRelative, type ProfileView } from "./profile-view";
 
 export function MobileProfile({ view }: Readonly<{ view: ProfileView }>) {
   return (
@@ -18,12 +18,10 @@ export function MobileProfile({ view }: Readonly<{ view: ProfileView }>) {
             </button>
           </div>
           <h1 className="mb-1 text-[28px] font-bold leading-9 tracking-tight text-[#161d1b]">
-            {view.displayName === "Minh Trần" ? "Minh Tran" : view.displayName}
+            {view.displayName}
           </h1>
           <p className="max-w-[280px] text-center text-base leading-6 text-[#3d4a41]">
-            {view.bio === "Tìm niềm vui trong những điều nhỏ bé mỗi ngày 🌿"
-              ? "Tìm niềm vui trong những điều nhỏ bé mỗi ngày 🌻"
-              : view.bio}
+            {view.bio}
           </p>
           <div className="mt-6 flex flex-row items-center justify-center gap-3">
             <MobileStat icon="favorite" text={`${view.publicCount} điều biết ơn`} />
@@ -32,8 +30,8 @@ export function MobileProfile({ view }: Readonly<{ view: ProfileView }>) {
         </section>
         <MobileTabs />
         <div className="mt-6 flex flex-col gap-4 pb-4">
-          {view.entries.slice(0, 2).map((entry, index) => (
-            <MobileEntryCard entry={entry} index={index} key={entry.id} />
+          {view.entries.slice(0, 2).map((entry) => (
+            <MobileEntryCard entry={entry} key={entry.id} />
           ))}
         </div>
       </main>
@@ -58,10 +56,9 @@ function MobileHeader() {
   );
 }
 
-function MobileEntryCard({
-  entry,
-  index,
-}: Readonly<{ entry: JournalEntry; index: number }>) {
+function MobileEntryCard({ entry }: Readonly<{ entry: JournalEntry }>) {
+  const hasMetadata = entry.metadata.gratitudes.length || entry.metadata.reflection || entry.metadata.quote || entry.metadata.imageUrl;
+
   return (
     <article className="group flex cursor-pointer flex-col overflow-hidden rounded-xl bg-white p-4 shadow-[0_2px_12px_rgba(26,47,43,0.03)] transition-shadow hover:shadow-[0_4px_16px_rgba(26,47,43,0.06)]">
       <div className="mb-2 flex items-start justify-between">
@@ -72,20 +69,33 @@ function MobileEntryCard({
           <MaterialSymbol className="text-[20px]" name="more_vert" />
         </button>
       </div>
-      <p className="[display:-webkit-box] mb-3 overflow-hidden text-lg leading-7 text-[#161d1b] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]">
-        {entry.content}
-      </p>
-      {index === 0 ? (
-        <div
-          className="mb-3 h-32 w-full rounded-lg bg-cover bg-center"
-          style={{ backgroundImage: `url(${profileAssets.coffeeMobile})` }}
-        />
-      ) : null}
+      {hasMetadata ? <MobileEntryBody entry={entry} /> : <p className="[display:-webkit-box] mb-3 overflow-hidden text-lg leading-7 text-[#161d1b] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]">{entry.content}</p>}
       <div className="mt-auto flex items-center gap-4 border-t border-[#eef5f2]/50 pt-2">
-        <MobileAction count={index === 0 ? 24 : 15} icon="favorite" />
-        <MobileAction count={index === 0 ? 3 : 0} icon="chat_bubble_outline" />
+        <MobileAction count={0} icon="favorite" />
+        <MobileAction count={0} icon="chat_bubble_outline" />
       </div>
     </article>
+  );
+}
+
+function MobileEntryBody({ entry }: Readonly<{ entry: JournalEntry }>) {
+  return (
+    <div className="mb-3 flex flex-col gap-3">
+      {entry.metadata.quote ? <p className="whitespace-pre-wrap text-sm italic leading-5 text-[#3d4a41]">“{entry.metadata.quote}”</p> : null}
+      {entry.metadata.imageUrl ? (
+        <div className="h-32 w-full rounded-lg bg-cover bg-center" style={{ backgroundImage: `url(${entry.metadata.imageUrl})` }} />
+      ) : null}
+      {entry.metadata.gratitudes.length ? (
+        <ul className="space-y-1 text-[13px] leading-5 text-[#3d4a41]">
+          {entry.metadata.gratitudes.map((item, line) => (
+            <li className="whitespace-pre-wrap" key={`${line}-${item}`}>
+              {line + 1}. {item}
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      {entry.metadata.reflection ? <p className="whitespace-pre-wrap text-[13px] leading-5 text-[#161d1b]">{entry.metadata.reflection}</p> : null}
+    </div>
   );
 }
 

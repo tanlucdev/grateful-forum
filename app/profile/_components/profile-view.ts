@@ -23,53 +23,26 @@ export type ProfileView = {
   streak: number;
   username: string;
 };
-
-const sampleEntries: JournalEntry[] = [
-  {
-    id: "sample-coffee",
-    content:
-      "Biết ơn ly cà phê buổi sáng do mẹ pha. Mùi thơm của cà phê lan tỏa khắp phòng làm mình cảm thấy thật ấm lòng và sẵn sàng cho một ngày mới.",
-    createdAt: new Date().toISOString(),
-    visibility: "private",
-  },
-  {
-    id: "sample-deadline",
-    content:
-      "Biết ơn vì đã hoàn thành xong deadline đúng hạn. Một ngày làm việc mệt mỏi nhưng thật sự xứng đáng khi nhìn lại thành quả. Cảm giác trút bỏ được gánh nặng thật nhẹ nhõm.",
-    createdAt: new Date(Date.now() - 86400000).toISOString(),
-    visibility: "public",
-  },
-  {
-    id: "sample-walk",
-    content:
-      "Đi dạo quanh bờ hồ buổi chiều thu se lạnh, nghe bản nhạc quen thuộc và ngắm lá vàng rơi. Thật thư thái và bình yên.",
-    createdAt: new Date(Date.now() - 5 * 86400000).toISOString(),
-    visibility: "public",
-  },
-];
-
-export function toProfileView(dashboard: ProfileDashboard | null): ProfileView {
-  const entries = dashboard?.entries.length ? dashboard.entries : sampleEntries;
-  const entryCount = dashboard?.entryCount || 28;
-  const publicCount =
-    dashboard?.entries.filter((entry) => entry.visibility === "public").length || 12;
-  const displayName = dashboard?.profile.displayName || "Minh Trần";
-  const shareSlug = slugify(displayName);
-  const username = dashboard?.profile.username || shareSlug.replace(/-/g, "_");
+export function toProfileView(dashboard: ProfileDashboard): ProfileView {
+  const entries = dashboard.entries;
+  const displayName =
+    dashboard.profile.displayName ||
+    dashboard.profile.email?.split("@")[0] ||
+    "";
+  const shareSlug = slugify(displayName) || dashboard.profile.id;
+  const username = dashboard.profile.username || shareSlug.replace(/-/g, "_");
 
   return {
-    avatarDesktop: dashboard?.profile.avatarUrl || profileAssets.avatarDesktop,
-    avatarMobile: dashboard?.profile.avatarUrl || profileAssets.avatarMobile,
-    bio:
-      dashboard?.profile.bio ||
-      "Tìm niềm vui trong những điều nhỏ bé mỗi ngày 🌿",
+    avatarDesktop: dashboard.profile.avatarUrl || profileAssets.avatarDesktop,
+    avatarMobile: dashboard.profile.avatarUrl || profileAssets.avatarMobile,
+    bio: dashboard.profile.bio || "",
     displayName,
-    email: `${shareSlug.replace(/-/g, ".")}@example.com`,
+    email: dashboard.profile.email || "",
     entries,
-    entryCount,
-    publicCount,
+    entryCount: dashboard.entryCount,
+    publicCount: entries.filter((entry) => entry.visibility === "public").length,
     shareUrl: `begrateful.app/share/${shareSlug}`,
-    streak: dashboard?.streak || 3,
+    streak: dashboard.streak,
     username,
   };
 }

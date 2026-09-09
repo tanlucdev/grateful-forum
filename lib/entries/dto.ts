@@ -1,8 +1,15 @@
 import type { EntryVisibility } from "./types";
 
 export type CreateEntryRequest = {
-  content: string;
   visibility: EntryVisibility;
+  gratitudes: string[];
+  reflection: string;
+  mood: string;
+  washi: string;
+  space: string;
+  quote: string;
+  sticker: string;
+  imageUrl?: string | null;
 };
 
 export type CreateEntryResponse =

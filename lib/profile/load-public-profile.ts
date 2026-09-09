@@ -1,5 +1,6 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
+import { entrySelect, toEntryMetadata } from "@/lib/entries/records";
 import { getStreak } from "./streak";
 import type { PublicProfile } from "./types";
 
@@ -21,7 +22,7 @@ export async function loadPublicProfile(id: string): Promise<PublicProfile | nul
 
   const { data: entries } = await supabase
     .from("entries")
-    .select("id, content, visibility, created_at")
+    .select(entrySelect)
     .eq("user_id", id)
     .in("visibility", ["public", "anonymous"])
     .eq("hidden_at", null)
@@ -45,6 +46,7 @@ export async function loadPublicProfile(id: string): Promise<PublicProfile | nul
       content: entry.content,
       visibility: entry.visibility,
       createdAt: entry.created_at,
+      metadata: toEntryMetadata(entry),
     })),
   };
 }

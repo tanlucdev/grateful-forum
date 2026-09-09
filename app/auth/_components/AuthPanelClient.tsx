@@ -78,9 +78,10 @@ export function AuthPanelClient({
     return normalizeAuthErrorMessage(body?.error ?? "Không thể tạo tài khoản.");
   }
 
-  async function migrateGuestDataAfterLogin() {
+  async function migrateGuestDataAfterLogin(accessToken: string) {
     const response = await fetch("/api/auth/migrate-guest", {
       method: "POST",
+      headers: { authorization: `Bearer ${accessToken}` },
       credentials: "same-origin",
     });
 
@@ -159,7 +160,7 @@ export function AuthPanelClient({
         return;
       }
 
-      await migrateGuestDataAfterLogin();
+      await migrateGuestDataAfterLogin(data.session.access_token);
       toast.success(view === "signup" ? "Tạo tài khoản thành công." : "Đăng nhập thành công.");
       router.replace(returnTo);
       router.refresh();
@@ -244,7 +245,7 @@ function ForgotView({
           <ArrowLeft className="h-5 w-5" />
         </button>
         <div className="inline-flex items-center gap-1.5 rounded-full bg-white/70 px-3 py-1 text-[11px] font-semibold text-[#3d4a41] shadow-sm backdrop-blur">
-          <Heart className="h-3.5 w-3.5 fill-current text-[#006d43]" /> BeGrateful Care
+          <Heart className="h-3.5 w-3.5 fill-current text-[#006d43]" /> Grateful Forum Care
         </div>
         <span className="h-10 w-10" />
       </div>
@@ -259,13 +260,13 @@ function ForgotView({
               <Info className="h-3 w-3" />
             </div>
           </div>
-          <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[#1a2f2b]">BeGrateful</p>
+          <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[#1a2f2b]">Grateful Forum</p>
           <h1 className="mt-1 text-[24px] leading-8 font-bold text-[#1a2f2b]">Quên mật khẩu?</h1>
-          <p className="mt-2 text-[16px] leading-6 text-[#3d4a41]">Đừng lo lắng, hãy nhập email đã đăng ký. BeGrateful sẽ gửi đến bạn liên kết an toàn để đặt lại mật khẩu mới nhé.</p>
+          <p className="mt-2 text-[16px] leading-6 text-[#3d4a41]">Đừng lo lắng, hãy nhập email đã đăng ký. Grateful Forum sẽ gửi đến bạn liên kết an toàn để đặt lại mật khẩu mới nhé.</p>
         </div>
         <form className="mt-6 flex flex-col gap-4" noValidate onSubmit={(event) => { event.preventDefault(); onSubmit(); }}>
           <AuthField id="recovery-email" inputMode="email" label="Địa chỉ Email của bạn" onChange={setEmail} placeholder="tam.an.yen@email.com" type="email" value={email} disabled={!configured || loading} />
-          <div className="rounded-xl bg-[#d1e9e0]/30 p-3"><p className="text-[11px] leading-4 font-medium text-[#3d4a41]">Liên kết chỉ có hiệu lực trong vòng 15 phút và BeGrateful không bao giờ yêu cầu mã OTP qua điện thoại.</p></div>
+          <div className="rounded-xl bg-[#d1e9e0]/30 p-3"><p className="text-[11px] leading-4 font-medium text-[#3d4a41]">Liên kết chỉ có hiệu lực trong vòng 15 phút và Grateful Forum không bao giờ yêu cầu mã OTP qua điện thoại.</p></div>
           <button className="mt-1 flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-linear-to-r from-[#006d43] to-[#006d3d] px-6 py-3.5 text-sm leading-5 font-semibold text-white shadow-[0_8px_16px_rgba(0,109,67,0.15)] disabled:opacity-50 disabled:shadow-none" disabled={!configured || loading || !email} type="submit">
             <span>{loading ? "Đang chuẩn bị thư..." : "Gửi liên kết khôi phục"}</span>
             {loading ? <Loader2 className="h-[18px] w-[18px] animate-spin" /> : <ArrowRight className="h-[18px] w-[18px]" />}
@@ -328,7 +329,7 @@ function LoginView({
     <section className="w-full max-w-[400px] font-[family-name:var(--font-quicksand)]">
       <div className="mb-8 flex flex-col items-center text-center">
         <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[#00a86b]/10 text-[#006d43]"><Leaf className="h-7 w-7" fill="currentColor" strokeWidth={1.5} /></div>
-        <h1 className="mb-2 text-[28px] leading-9 font-bold text-[#1a2f2b]">BeGrateful</h1>
+        <h1 className="mb-2 text-[28px] leading-9 font-bold text-[#1a2f2b]">Grateful Forum</h1>
         <p className="text-base leading-6 text-[#3d4a41]">Nhật ký biết ơn hằng ngày</p>
       </div>
       <div className="rounded-[24px] bg-white p-6 shadow-[0_8px_30px_rgba(26,47,43,0.06)]">

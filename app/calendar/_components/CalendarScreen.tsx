@@ -2,17 +2,18 @@ import { DesktopFooter, FilterPills, HeroActions, MobileBottomNav } from "./cale
 import { GardenDesktop, GardenMobile } from "./calendar-garden";
 import { Badges, MascotWhisper, MonthCalendar, TodayMoments } from "./calendar-time";
 import { MascotLevel, Metric } from "./calendar-stat";
+import type { CalendarEntry } from "@/lib/calendar/dto";
 
-export function CalendarScreen() {
+export function CalendarScreen({ todayEntries }: Readonly<{ todayEntries: CalendarEntry[] }>) {
   return (
     <div className="min-h-dvh bg-[#f5faf7] font-[family-name:var(--font-quicksand)] text-[#1C3127]">
-      <DesktopCalendar />
-      <MobileCalendar />
+      <DesktopCalendar todayEntries={todayEntries} />
+      <MobileCalendar todayEntries={todayEntries} />
     </div>
   );
 }
 
-function DesktopCalendar() {
+function DesktopCalendar({ todayEntries }: Readonly<{ todayEntries: CalendarEntry[] }>) {
   return (
     <div className="hidden min-h-dvh bg-[#f4fbf8] md:block">
       <main className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-6 pb-10 pt-24 lg:px-16">
@@ -29,7 +30,7 @@ function DesktopCalendar() {
             <MonthCalendar desktop />
           </div>
           <div className="flex flex-col gap-4 lg:col-span-5">
-            <TodayMoments desktop />
+            <TodayMoments desktop entries={todayEntries} />
             <MascotWhisper desktop />
           </div>
         </section>
@@ -40,7 +41,7 @@ function DesktopCalendar() {
   );
 }
 
-function MobileCalendar() {
+function MobileCalendar({ todayEntries }: Readonly<{ todayEntries: CalendarEntry[] }>) {
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-[420px] flex-col bg-[#f5faf7] pb-24 shadow-2xl md:hidden">
       <div className="flex items-center justify-between px-6 pb-1 pt-2 text-xs font-semibold text-[#6C8377]">
@@ -77,13 +78,13 @@ function MobileCalendar() {
         </section>
         <GardenMobile />
         <MonthCalendar />
-        <TodayMoments />
+        <TodayMoments entries={todayEntries} />
         <MascotWhisper />
         <Badges />
         <footer className="space-y-1 pb-6 pt-4 text-center text-[#6C8377]">
-          <p className="text-xs font-semibold text-[#145C34]">BeGrateful</p>
+          <p className="text-xs font-semibold text-[#145C34]">Grateful Forum</p>
           <p className="text-[11px] italic">“Nuôi dưỡng tâm hồn an yên qua từng điều giản dị mỗi ngày.”</p>
-          <p className="pt-2 text-[10px] text-gray-400">© 2025 BeGrateful. Cùng Bé Mầm gieo mầm hạnh phúc.</p>
+          <p className="pt-2 text-[10px] text-gray-400">© 2025 Grateful Forum. Cùng Bé Mầm gieo mầm hạnh phúc.</p>
         </footer>
       </main>
       <MobileBottomNav />

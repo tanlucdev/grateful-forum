@@ -2,11 +2,12 @@ import { NextResponse } from "next/server";
 import { GUEST_SESSION_COOKIE } from "@/lib/auth/constants";
 import { getGuestId } from "@/lib/auth/guest-session";
 import { migrateGuestData } from "@/lib/auth/migrate-guest-data";
+import { parseBearerToken } from "@/lib/auth/bearer-token";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-export async function POST() {
+export async function POST(request: Request) {
   if (!hasSupabaseEnv()) {
     return NextResponse.json(
       { error: "Supabase chưa được cấu hình." },
@@ -15,7 +16,18 @@ export async function POST() {
   }
 
   const serverSupabase = await createSupabaseServerClient();
-  const { data: auth, error: authError } = await serverSupabase.auth.getUser();
+  const bearer = parseBearerToken(request.headers.get("authorization"));
+
+  if (!bearer.ok) {
+    return NextResponse.json(
+      { error: "Phiên đăng nhập không hợp lệ." },
+      { status: 401 },
+    );
+  }
+
+  const { data: auth, error: authError } = bearer.token
+    ? await serverSupabase.auth.getUser(bearer.token)
+    : await serverSupabase.auth.getUser();
 
   if (authError || !auth.user) {
     return NextResponse.json(

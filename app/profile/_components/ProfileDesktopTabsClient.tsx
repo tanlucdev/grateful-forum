@@ -3,13 +3,15 @@
 import { useState } from "react";
 import { MomentsTab } from "./ProfileMomentsTab";
 import { AllTab, PublicTab } from "./ProfilePublicTab";
+import type { ProfileView } from "./profile-view";
 
 type Tab = "all" | "public" | "moments";
 type LayoutMode = "grid" | "list";
 
 export function ProfileDesktopTabs({
   initialTab,
-}: Readonly<{ initialTab: Tab }>) {
+  view,
+}: Readonly<{ initialTab: Tab; view: ProfileView }>) {
   const [tab, setTab] = useState<Tab>(initialTab);
   const [layout, setLayout] = useState<LayoutMode>("list");
 
@@ -17,22 +19,20 @@ export function ProfileDesktopTabs({
     <section className="flex flex-col space-y-6">
       <div className={`flex items-center justify-between gap-4 pb-2 ${tab === "moments" ? "flex-wrap" : ""}`}>
         <div className="flex items-center gap-6">
-          <DesktopTab active={tab === "all"} count={28} label="Tất cả nhật ký" onClick={() => setTab("all")} />
-          <DesktopTab active={tab === "public"} count={12} label="Công khai" onClick={() => setTab("public")} />
-          <DesktopTab active={tab === "moments"} count={tab === "moments" ? 16 : 4} label="Bộ sưu tập khoảnh khắc" onClick={() => setTab("moments")} />
+          <DesktopTab active={tab === "all"} count={view.entryCount} label="Tất cả nhật ký" onClick={() => setTab("all")} />
+          <DesktopTab active={tab === "public"} count={view.publicCount} label="Công khai" onClick={() => setTab("public")} />
+          <DesktopTab active={tab === "moments"} count={0} label="Bộ sưu tập khoảnh khắc" onClick={() => setTab("moments")} />
         </div>
-        {tab === "moments" ? (
-          <MomentControls layout={layout} onChange={setLayout} />
-        ) : (
+        {tab === "moments" ? null : (
           <ListControls layout={layout} onChange={setLayout} />
         )}
       </div>
       {tab === "moments" ? (
         <MomentsTab layout={layout} />
       ) : tab === "public" ? (
-        <PublicTab layout={layout} />
+        <PublicTab entries={view.entries.filter((entry) => entry.visibility === "public" || entry.visibility === "anonymous")} layout={layout} />
       ) : (
-        <AllTab layout={layout} />
+        <AllTab entries={view.entries} layout={layout} />
       )}
     </section>
   );
@@ -86,49 +86,6 @@ function ListControls({
       >
         <span className="material-symbols-outlined text-[18px]">format_list_bulleted</span>
       </button>
-    </div>
-  );
-}
-
-function MomentControls({
-  layout,
-  onChange,
-}: Readonly<{
-  layout: LayoutMode;
-  onChange: (layout: LayoutMode) => void;
-}>) {
-  return (
-    <div className="flex flex-wrap items-center gap-2.5 pb-2.5">
-      <div className="hidden items-center gap-1.5 rounded-xl bg-[#eef5f2] px-2.5 py-1 text-[#3d4a41] sm:flex">
-        {["Tất cả", "Thiên nhiên & Cảnh sắc", "Gia đình & Bạn bè", "Góc nhỏ an yên", "Tháng này"].map((chip, index) => (
-          <span
-            className={`cursor-pointer rounded-lg px-2.5 py-1 text-[11px] font-medium leading-[14px] transition-colors ${index === 0 ? "bg-white font-semibold text-[#006d43] shadow-sm" : "hover:text-[#161d1b]"}`}
-            key={chip}
-          >
-            {chip}
-          </span>
-        ))}
-      </div>
-      <div className="hidden items-center rounded-xl bg-[#eef5f2] p-0.5 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.03)] sm:inline-flex">
-        <button
-          aria-pressed={layout === "grid"}
-          className={`inline-flex h-8 w-8 items-center justify-center rounded-lg transition-all ${layout === "grid" ? "bg-white text-[#006d43] shadow-sm" : "text-[#3d4a41] hover:text-[#161d1b]"}`}
-          onClick={() => onChange("grid")}
-          title="Dạng lưới"
-          type="button"
-        >
-          <span className="material-symbols-outlined text-[18px]">grid_view</span>
-        </button>
-        <button
-          aria-pressed={layout === "list"}
-          className={`inline-flex h-8 w-8 items-center justify-center rounded-lg transition-all ${layout === "list" ? "bg-white text-[#006d43] shadow-sm" : "text-[#3d4a41] hover:text-[#161d1b]"}`}
-          onClick={() => onChange("list")}
-          title="Dạng danh sách"
-          type="button"
-        >
-          <span className="material-symbols-outlined text-[18px]">format_list_bulleted</span>
-        </button>
-      </div>
     </div>
   );
 }

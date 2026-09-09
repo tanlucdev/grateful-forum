@@ -1,14 +1,14 @@
 import type { CreateEntryResponse } from "@/lib/entries/dto";
-import type { EntryVisibility } from "@/lib/entries/types";
 import { fetchJson } from "./fetch-json";
+import type { CreateEntryRequest } from "@/lib/entries/dto";
 
-export function createEntry(content: string, visibility: EntryVisibility) {
+export function createEntry(payload: CreateEntryRequest) {
   return fetchJson<CreateEntryResponse>(
     "/api/entries",
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content, visibility }),
+      body: JSON.stringify(payload),
     },
     "Could not save entry.",
   );

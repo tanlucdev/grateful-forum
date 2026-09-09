@@ -1,5 +1,6 @@
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { entrySelect, toEntryMetadata } from "@/lib/entries/records";
 import type { FeedPage } from "./dto";
 
 const PAGE_SIZE = 8;
@@ -12,7 +13,7 @@ export async function loadFeedPage(cursor?: string | null): Promise<FeedPage> {
   const supabase = await createSupabaseServerClient();
   let query = supabase
     .from("entries")
-    .select("id, content, visibility, created_at, user_id")
+    .select(entrySelect)
     .is("hidden_at", null)
     .in("visibility", ["public", "anonymous"])
     .order("created_at", { ascending: false })
@@ -59,6 +60,7 @@ export async function loadFeedPage(cursor?: string | null): Promise<FeedPage> {
         content: row.content,
         visibility: row.visibility,
         createdAt: row.created_at,
+        metadata: toEntryMetadata(row),
         author: author
           ? {
               id: author.id,

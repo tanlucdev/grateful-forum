@@ -1,19 +1,41 @@
 import Image from "next/image";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
 import type { EntryVisibility } from "@/lib/entries/types";
-import { privacyChoices } from "./composer-data";
+import {
+  privacyChoices,
+  writeQuotes,
+  writeStickers,
+  type WriteMood,
+  type WriteQuote,
+  type WriteSticker,
+} from "./composer-data";
 import { NavItem, Panel, SectionTitle, TinyButton } from "./composer-primitives";
-import type { WriteMood } from "./composer-data";
 
 export function SideRail({
+  imageUrl,
+  quote,
   resetDraft,
   setReflection,
+  setQuote,
+  setSticker,
   setVisibility,
+  sticker,
+  uploadImage,
+  uploading,
+  uploadStatus,
   visibility,
 }: {
+  imageUrl: string | null;
+  quote: WriteQuote;
   resetDraft: () => void;
   setReflection: (value: string) => void;
+  setQuote: (value: WriteQuote) => void;
+  setSticker: (value: WriteSticker) => void;
   setVisibility: (value: EntryVisibility) => void;
+  sticker: WriteSticker;
+  uploadImage: (file: File) => void;
+  uploading: boolean;
+  uploadStatus: string;
   visibility: EntryVisibility;
 }) {
   return (
@@ -22,13 +44,49 @@ export function SideRail({
         <SectionTitle helper="Tự động lồng khung" label="Ảnh kỷ niệm trong ngày (Polaroid)" />
         <div className="relative mt-4 rounded-2xl bg-white p-4 pt-6 pb-5 shadow-[0_8px_24px_rgba(26,47,43,0.08)]">
           <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-sm bg-[#d1e9e0]/80 px-10 py-1 text-[10px] font-bold tracking-[0.25em] text-[#006d43]">BEGRATEFUL</div>
-          <Image alt="Góc quán quen buổi sớm thu" className="h-auto w-full rounded-xl object-cover" height={720} src="/stitch/write/polaroid-desktop.jpg" width={960} />
-          <p className="pt-4 text-center text-[20px] font-semibold leading-7 italic text-[#006d43]">“Góc quán quen buổi sớm thu”</p>
+          {imageUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img alt="Ảnh kỷ niệm đã tải lên" className="aspect-[4/3] w-full rounded-xl object-cover" src={imageUrl} />
+          ) : (
+            <Image alt="Góc quán quen buổi sớm thu" className="h-auto w-full rounded-xl object-cover" height={720} src="/stitch/write/polaroid-desktop.jpg" width={960} />
+          )}
+          <p className="pt-4 text-center text-[20px] font-semibold leading-7 italic text-[#006d43]">“{imageUrl ? "Ảnh kỷ niệm hôm nay" : "Góc quán quen buổi sớm thu"}”</p>
           <div className="mt-3 flex items-center justify-center gap-4 text-[14px] font-medium text-[#3d4a41]">
-            <TinyButton bare icon="edit" label="Đổi ảnh" />
-            <span className="text-[#bccabe]">•</span>
-            <TinyButton bare icon="crop" label="Căn chỉnh" />
+            <label className="inline-flex cursor-pointer items-center gap-1.5 text-[14px] font-semibold text-[#3d4a41]">
+              <MaterialSymbol name="edit" />
+              <span>{uploading ? "Đang tải..." : "Đổi ảnh"}</span>
+              <input accept="image/avif,image/gif,image/jpeg,image/png,image/webp" className="sr-only" disabled={uploading} onChange={(event) => {
+                const file = event.target.files?.[0];
+                if (file) uploadImage(file);
+                event.target.value = "";
+              }} type="file" />
+            </label>
           </div>
+          {uploadStatus ? <p className="mt-2 text-center text-[12px] font-semibold text-[#006d43]">{uploadStatus}</p> : null}
+        </div>
+      </Panel>
+      <Panel>
+        <SectionTitle helper="Dữ liệu sẽ lưu cùng entry" label="Sticker & câu trích dẫn" />
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          {writeStickers.map((item) => {
+            const active = sticker === item.label;
+            return (
+              <button className={`flex items-center gap-2 rounded-xl p-2 text-left text-[13px] font-semibold ${active ? "bg-[#d1e9e0]/70 text-[#006d43]" : "bg-[#eef5f2]/60 text-[#3d4a41]"}`} key={item.label} onClick={() => setSticker(item.label)} type="button">
+                <Image alt={item.alt} className="h-9 w-9 rounded-lg object-cover" height={36} src={item.image} width={36} />
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
+        </div>
+        <div className="mt-4 space-y-2">
+          {writeQuotes.map((item) => {
+            const active = quote === item;
+            return (
+              <button className={`w-full rounded-xl p-3 text-left text-[13px] font-medium leading-5 ${active ? "bg-[#d1e9e0]/70 text-[#006d43]" : "bg-[#eef5f2]/60 text-[#3d4a41]"}`} key={item} onClick={() => setQuote(item)} type="button">
+                “{item}”
+              </button>
+            );
+          })}
         </div>
       </Panel>
       <Panel className="bg-[#d1e9e0]/40">
@@ -89,15 +147,21 @@ export function MobileNav() {
 export function PreviewModal({
   close,
   gratitudes,
+  imageUrl,
   mood,
+  quote,
   reflection,
+  sticker,
   submit,
   today,
 }: {
   close: () => void;
   gratitudes: string[];
+  imageUrl: string | null;
   mood: WriteMood;
+  quote: WriteQuote;
   reflection: string;
+  sticker: WriteSticker;
   submit: () => void;
   today: string;
 }) {
@@ -113,8 +177,17 @@ export function PreviewModal({
             <span className="text-[14px] font-semibold text-[#006d43]">{today}</span>
             <span className="text-[12px] font-medium text-[#3d4a41]">☕ {mood}</span>
           </div>
-          <p className="mt-3 text-[16px] leading-6 text-[#161d1b] italic">“{reflection.slice(0, 120)}...”</p>
-          <ul className="mt-4 space-y-1.5 text-[12px] font-medium text-[#3d4a41]">{gratitudes.map((item, index) => <li key={index}>{index + 1}. {item}</li>)}</ul>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <span className="rounded-full bg-white px-2.5 py-1 text-[11px] font-medium leading-4 text-[#3d4a41]">Sticker: {sticker}</span>
+            <span className="rounded-full bg-white px-2.5 py-1 text-[11px] font-medium leading-4 text-[#3d4a41]">Quote</span>
+          </div>
+          <p className="mt-3 whitespace-pre-wrap text-[16px] leading-6 text-[#161d1b] italic">“{quote}”</p>
+          {imageUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img alt="Ảnh kỷ niệm đã tải lên" className="mt-4 max-h-56 w-full rounded-xl object-cover" src={imageUrl} />
+          ) : null}
+          <p className="mt-4 whitespace-pre-wrap text-[16px] leading-6 text-[#161d1b]">{reflection}</p>
+          <ul className="mt-4 space-y-1.5 text-[12px] font-medium text-[#3d4a41]">{gratitudes.map((item, index) => <li className="whitespace-pre-wrap" key={index}>{index + 1}. {item}</li>)}</ul>
         </div>
         <button className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-xl bg-[#006d43] px-5 py-2.5 text-[14px] font-semibold text-white" onClick={submit} type="button">
           <MaterialSymbol fill name="eco" />

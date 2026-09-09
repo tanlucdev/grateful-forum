@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { useLayoutEffect, useRef, type ChangeEvent } from "react";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
 import {
   writeMoods,
@@ -6,7 +6,7 @@ import {
   type WriteMood,
   type WriteWashi,
 } from "./composer-data";
-import { Panel, SectionTitle, TinyButton } from "./composer-primitives";
+import { Panel, SectionTitle } from "./composer-primitives";
 
 type BaseProps = {
   canSubmit: boolean;
@@ -15,44 +15,6 @@ type BaseProps = {
   submit: () => void;
   today: string;
 };
-
-export function WriteHeader() {
-  return (
-    <header className="fixed inset-x-0 top-0 z-50 bg-[#f4fbf8]/90 pt-[env(safe-area-inset-top)] backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between px-5 md:px-6">
-        <div className="flex items-center gap-2 md:gap-3">
-          <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#d1e9e0]/60 text-[#006d43] md:hidden">
-            <MaterialSymbol fill name="potted_plant" />
-          </span>
-          <Image alt="Logo" className="hidden h-8 w-auto object-contain md:block" height={32} src="/stitch/feed/sprout-logo.jpg" width={32} />
-          <div className="flex flex-col leading-none">
-            <span className="text-xl font-semibold tracking-tight text-[#006d43]">BeGrateful</span>
-            <span className="text-[11px] font-medium text-[#3d4a41] md:hidden">Viết</span>
-          </div>
-        </div>
-        <nav className="hidden items-center gap-8 md:flex">
-          {["Feed", "Write", "Cá nhân"].map((label) => (
-            <button className={`border-b-2 px-2 py-5 text-sm font-semibold leading-5 ${label === "Write" ? "border-[#006d43] text-[#006d43]" : "border-transparent text-[#3d4a41]"}`} key={label} type="button">
-              {label}
-            </button>
-          ))}
-        </nav>
-        <div className="flex items-center gap-2 md:gap-4">
-          <button aria-label="Tìm kiếm" className="hidden h-11 w-11 items-center justify-center text-[#3d4a41] md:inline-flex" type="button">
-            <MaterialSymbol name="search" />
-          </button>
-          <button aria-label="Thông báo" className="inline-flex h-11 w-11 items-center justify-center text-[#3d4a41] md:hidden" type="button">
-            <MaterialSymbol name="notifications" />
-          </button>
-          <button className="hidden h-11 w-11 items-center justify-center rounded-full bg-[#006d43] text-white md:inline-flex" type="button">
-            <MaterialSymbol fill name="person" />
-          </button>
-          <Image alt="Profile" className="h-8 w-8 rounded-full object-cover shadow-[0_2px_6px_rgba(0,0,0,0.08)] md:hidden" height={32} src="/stitch/landing/mascot.jpg" width={32} />
-        </div>
-      </div>
-    </header>
-  );
-}
 
 export function WriteIntro({ setPreviewOpen, setStatus, ...props }: BaseProps & { setPreviewOpen: (open: boolean) => void; setStatus: (status: string) => void }) {
   const mobileDate = `Nhật ký hôm nay • ${props.today}`;
@@ -159,7 +121,7 @@ export function WritingPanel({ gratitudes, noteLength, reflection, setGratitudes
         {gratitudes.map((item, index) => (
           <div className="group flex items-start gap-3 rounded-2xl bg-[#eef5f2]/70 p-3.5" key={index}>
             <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-[#d1e9e0]/70 text-[14px] font-bold text-[#006d43]">{index + 1}</span>
-            <input className="w-full bg-transparent text-[16px] leading-6 text-[#161d1b] outline-none placeholder:text-[#bccabe]" onChange={(event) => setGratitudes(gratitudes.map((value, itemIndex) => itemIndex === index ? event.target.value : value))} value={item} />
+            <AutoGrowTextarea className="w-full resize-none bg-transparent text-[16px] leading-6 text-[#161d1b] outline-none placeholder:text-[#bccabe]" minRows={2} onChange={(event) => setGratitudes(gratitudes.map((value, itemIndex) => itemIndex === index ? event.target.value : value))} placeholder="Điều biết ơn của bạn..." value={item} />
             <button aria-label={`Xóa điều biết ơn ${index + 1}`} className="text-[#bccabe] hover:text-[#ba1a1a]" onClick={() => setGratitudes(gratitudes.map((value, itemIndex) => itemIndex === index ? "" : value))} type="button">
               <MaterialSymbol name="close" />
             </button>
@@ -179,16 +141,50 @@ export function WritingPanel({ gratitudes, noteLength, reflection, setGratitudes
           <span className="text-[12px] font-medium text-[#6d7a70]">{noteLength} ký tự</span>
         </div>
         <div className="rounded-2xl bg-[#eef5f2]/60 p-4">
-          <textarea className="min-h-[180px] w-full resize-none bg-transparent text-[16px] leading-7 text-[#161d1b] outline-none placeholder:text-[#bccabe]" onChange={(event) => setReflection(event.target.value)} placeholder="Ghi lại những rung động nhẹ nhàng trong ngày..." rows={6} value={reflection} />
+          <AutoGrowTextarea className="min-h-[180px] w-full resize-none bg-transparent text-[16px] leading-7 text-[#161d1b] outline-none placeholder:text-[#bccabe]" minRows={6} onChange={(event) => setReflection(event.target.value)} placeholder="Ghi lại những rung động nhẹ nhàng trong ngày..." value={reflection} />
           <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-[#dde4e1] pt-3">
             <div className="flex flex-wrap gap-2">
-              <TinyButton icon="sentiment_satisfied" label="72 Sticker Bé Mầm" />
-              <TinyButton icon="format_quote" label="Câu trích dẫn" />
+              <span className="rounded-full bg-[#d1e9e0]/40 px-2.5 py-1 text-[11px] font-medium leading-4 text-[#006d43]">Sticker và câu trích dẫn được chọn ở khay bên phải</span>
             </div>
             <div className="flex flex-wrap gap-1.5">{["#giadinh", "#thiennhien", "#an_yen"].map((tag) => <span className="rounded-md bg-[#d1e9e0]/40 px-2 py-0.5 text-[11px] font-medium leading-4 text-[#006d43]" key={tag}>{tag}</span>)}</div>
           </div>
         </div>
       </div>
     </Panel>
+  );
+}
+
+function AutoGrowTextarea({
+  className,
+  minRows,
+  onChange,
+  placeholder,
+  value,
+}: Readonly<{
+  className: string;
+  minRows: number;
+  onChange: (event: ChangeEvent<HTMLTextAreaElement>) => void;
+  placeholder: string;
+  value: string;
+}>) {
+  const ref = useRef<HTMLTextAreaElement | null>(null);
+
+  useLayoutEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+    element.style.height = "0px";
+    element.style.height = `${Math.max(element.scrollHeight, minRows * 28)}px`;
+  }, [minRows, value]);
+
+  return (
+    <textarea
+      className={className}
+      onChange={onChange}
+      placeholder={placeholder}
+      ref={ref}
+      rows={minRows}
+      style={{ overflow: "hidden" }}
+      value={value}
+    />
   );
 }
