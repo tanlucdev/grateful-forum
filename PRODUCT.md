@@ -12,15 +12,15 @@ delegated: Next.js App Router, TypeScript, Tailwind, Supabase; inferred from the
 
 ## Users
 
-People using a mobile-first gratitude journal. Assumed primary focus is personal reflection with public sharing as a second use case.
+People joining a mobile-first gratitude community. They can read gratitude posts from others, write their own, share publicly or anonymously, and keep private entries for later review.
 
 ## Product Purpose
 
-Let people write, save, read, and share gratitude entries with low friction.
+Help people practice and spread gratitude through a community where daily gratitude entries can encourage others, while private writing and personal history remain first-class.
 
 ## Positioning
 
-A gratitude journal that combines private journaling, public feed discovery, guest use, and account-backed persistence in one flow.
+A gratitude community that combines public feed discovery, daily writing, optional anonymous sharing, private journaling, and account-backed history in one flow.
 
 ## Operating Context
 
@@ -46,7 +46,7 @@ Only the user brief and repository scaffold. No existing content, assets, or cla
 
 - Keep writing fast.
 - Treat privacy as a first-class choice.
-- Make public sharing optional, not forced.
+- Make public sharing optional, not forced, while making community discovery welcoming.
 - Preserve guest work through signup.
 
 ## Accessibility & Inclusion

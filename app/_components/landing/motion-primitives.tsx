@@ -68,15 +68,6 @@ export function Reveal({
   );
 }
 
-export function CountUp({ value, suffix = "" }: Readonly<{ value: number; suffix?: string }>) {
-  return (
-    <span>
-      {value.toLocaleString("vi-VN")}
-      {suffix}
-    </span>
-  );
-}
-
 export function ProgressBar({
   className = "bg-primary",
   delay = 0,
@@ -228,13 +219,13 @@ export function MoodButton({
 
   return (
     <motion.button
-      className={`relative flex min-w-0 flex-col items-center gap-1 overflow-hidden rounded-2xl p-2.5 text-center text-xs font-bold ${active ? "text-on-primary" : "border border-emerald-100 bg-white/85 text-text-deep shadow-xs"}`}
+      className={`relative flex min-h-10 min-w-0 flex-row items-center justify-center gap-1 overflow-hidden rounded-xl px-3 py-2 text-center text-xs font-bold sm:flex-col sm:rounded-2xl sm:p-2.5 ${active ? "text-on-primary" : "border border-emerald-100 bg-white/85 text-text-deep shadow-xs"}`}
       onClick={onClick}
       type="button"
       {...softPress(Boolean(reduceMotion))}
     >
       {active ? <motion.span className="absolute inset-0 rounded-2xl bg-primary shadow-xs" layoutId="mood-indicator" {...activeChip(Boolean(reduceMotion))} /> : null}
-      <span className="relative text-lg">{icon}</span>
+      <span className="relative text-base sm:text-lg">{icon}</span>
       <span className="relative max-w-full truncate">{label}</span>
     </motion.button>
   );
@@ -242,19 +233,15 @@ export function MoodButton({
 
 export function TestimonialCard({
   avatar,
-  hearts,
   name,
   quote,
   tag,
-  thanks,
   time,
 }: Readonly<{
   avatar: string;
-  hearts: number;
   name: string;
   quote: string;
   tag: string;
-  thanks: number;
   time: string;
 }>) {
   const reduceMotion = useLandingReducedMotion();
@@ -277,10 +264,10 @@ export function TestimonialCard({
       </div>
       <div className="relative flex items-center justify-between border-t border-surface-container pt-3">
         <motion.button className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:opacity-80" type="button" {...softPress(Boolean(reduceMotion))}>
-          <MaterialSymbol className="text-[16px]" fill name="favorite" /> Đồng cảm ({hearts})
+          <MaterialSymbol className="text-[16px]" fill name="favorite" /> Đồng cảm
         </motion.button>
         <motion.button className="inline-flex items-center gap-1 text-xs font-medium text-on-surface-variant hover:text-primary" type="button" {...softPress(Boolean(reduceMotion))}>
-          <MaterialSymbol className="text-[15px]" name="spa" /> Gửi biết ơn ({thanks})
+          <MaterialSymbol className="text-[15px]" name="spa" /> Gửi lời cảm ơn
         </motion.button>
       </div>
     </motion.div>

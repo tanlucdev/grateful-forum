@@ -20,11 +20,11 @@ export function LandingClient() {
       <LandingHeader />
       <div className="relative z-10 lg:pt-24">
         <HeroSection />
-        <ChoiceSection />
-        <NotebookSection />
-        <GardenSection />
-        <BadgesSection />
         <CommunitySection />
+        <ChoiceSection />
+        <GardenSection />
+        <NotebookSection />
+        <BadgesSection />
         <BottomCta />
       </div>
       <Footer />
