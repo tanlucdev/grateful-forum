@@ -3,8 +3,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function FeedLoading() {
   return (
     <div className="min-h-svh bg-[#f4fbf8] text-[#161d1b]">
-      <main className="min-h-svh pt-16 md:mx-auto md:max-w-[1200px] md:px-6 md:pt-20">
-        <section className="flex w-full min-w-0 flex-col gap-5 px-5 pb-24 pt-4 md:hidden">
+      <main className="min-h-svh md:mx-auto md:max-w-[1200px] md:px-6 md:pt-20">
+        <section className="flex w-full min-w-0 flex-col gap-5 px-5 pt-4 md:hidden">
           <Skeleton className="h-24 rounded-[24px]" />
           <Skeleton className="h-24 rounded-[24px]" />
           <div className="space-y-4">

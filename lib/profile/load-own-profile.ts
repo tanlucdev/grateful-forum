@@ -60,3 +60,37 @@ export async function loadOwnProfileDashboard(): Promise<ProfileDashboard | null
     })),
   };
 }
+
+export async function loadOwnShellProfile() {
+  if (!hasSupabaseEnv()) {
+    return null;
+  }
+
+  const supabase = await createSupabaseServerClient();
+  const { data: auth } = await supabase.auth.getUser();
+
+  if (!auth.user) {
+    return null;
+  }
+
+  const [{ data: profileRow }, { data: entries }] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("id, display_name, avatar_url")
+      .eq("id", auth.user.id)
+      .single(),
+    supabase
+      .from("entries")
+      .select("created_at")
+      .eq("user_id", auth.user.id)
+      .order("created_at", { ascending: false }),
+  ]);
+
+  return {
+    avatarUrl: profileRow?.avatar_url || "",
+    displayName: profileRow?.display_name || auth.user.user_metadata?.display_name || auth.user.email?.split("@")[0] || "Tài khoản",
+    email: auth.user.email || "",
+    signedIn: true,
+    streak: getStreak((entries ?? []).map((entry) => entry.created_at)),
+  };
+}
