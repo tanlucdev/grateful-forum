@@ -2,14 +2,14 @@ import Image from "next/image";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
 import type { EntryVisibility } from "@/lib/entries/types";
 import {
-  privacyChoices,
   writeQuotes,
   writeStickers,
   type WriteMood,
   type WriteQuote,
   type WriteSticker,
 } from "./composer-data";
-import { NavItem, Panel, SectionTitle, TinyButton } from "./composer-primitives";
+import { DraftActions, PrivacySettings } from "./composer-ui";
+import { Panel, SectionTitle } from "./composer-primitives";
 
 export function SideRail({
   imageUrl,
@@ -92,7 +92,7 @@ export function SideRail({
       <Panel className="bg-[#d1e9e0]/40">
         <div className="flex items-start gap-3.5">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white">
-            <Image alt="Bé Mầm" className="h-9 w-9 object-contain" height={64} src="/stitch/landing/mascot.jpg" width={64} />
+            <Image alt="Bé Mầm" className="h-9 w-9 object-contain" height={64} src="/stitch/landing/mascot.png" width={64} />
           </div>
           <div className="space-y-1">
             <span className="text-[12px] font-bold uppercase tracking-[0.18em] text-[#006d43]">Lời dặn chánh niệm của Bé Mầm</span>
@@ -101,46 +101,10 @@ export function SideRail({
         </div>
       </Panel>
       <Panel>
-        <span className="block text-[12px] font-bold uppercase tracking-[0.18em] text-[#6d7a70]">Chế độ quyền riêng tư &amp; Chia sẻ</span>
-        <div className="mt-3 grid gap-2.5">
-          {privacyChoices.map((choice) => {
-            const active = visibility === choice.value;
-            return (
-              <button className={`flex items-start justify-between gap-3 rounded-xl p-3.5 text-left ${active ? "bg-white shadow-sm" : "bg-[#eef5f2]/60 hover:bg-[#eef5f2]"}`} key={choice.value} onClick={() => setVisibility(choice.value)} type="button">
-                <div className="flex items-start gap-2.5">
-                  <MaterialSymbol className={active ? "text-[#006d43]" : "text-[#3d4a41]"} fill={active} name={choice.icon} />
-                  <div className="space-y-0.5">
-                    <span className={`block text-[14px] font-semibold ${active ? "text-[#006d43]" : "text-[#161d1b]"}`}>{choice.title}</span>
-                    <p className="text-[12px] leading-5 text-[#3d4a41]">{choice.description}</p>
-                  </div>
-                </div>
-                <span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${active ? "bg-[#006d43]" : "bg-[#dde4e1]"}`}>{active ? <span className="h-2 w-2 rounded-full bg-white" /> : null}</span>
-              </button>
-            );
-          })}
-        </div>
+        <PrivacySettings setVisibility={setVisibility} visibility={visibility} />
       </Panel>
-      <div className="flex items-center justify-between gap-3 border-t border-[#dde4e1] pt-4">
-        <TinyButton bare icon="restore" label="Khôi phục bản nháp hôm qua" onClick={resetDraft} />
-        <TinyButton bare danger icon="delete_sweep" label="Xóa nội dung đang viết" onClick={() => setReflection("")} />
-      </div>
+      <DraftActions resetDraft={resetDraft} setReflection={setReflection} />
     </div>
-  );
-}
-
-export function MobileNav() {
-  return (
-    <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-[#dde4e1] bg-[#f4fbf8]/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden">
-      <div className="mx-auto flex h-20 max-w-md items-center justify-around px-2">
-        <NavItem icon="stream" label="Dòng thời gian" />
-        <button className="-mt-4 flex flex-col items-center gap-1" type="button">
-          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#006d43] text-white shadow-[0_8px_16px_rgba(0,109,67,0.22)]"><MaterialSymbol className="text-[26px]" fill name="eco" /></span>
-          <span className="text-[11px] font-bold text-[#006d43]">Viết</span>
-        </button>
-        <NavItem icon="calendar_today" label="Lịch biết ơn" />
-        <NavItem icon="person" label="Cá nhân" />
-      </div>
-    </nav>
   );
 }
 

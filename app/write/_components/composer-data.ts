@@ -22,7 +22,7 @@ export const writeQuotes = [
 export const writeStickers = [
   {
     label: "Bé Mầm",
-    image: "/stitch/landing/mascot.jpg",
+    image: "/stitch/landing/mascot.png",
     alt: "Sticker Bé Mầm",
   },
   {

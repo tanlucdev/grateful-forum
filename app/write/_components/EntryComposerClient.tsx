@@ -18,13 +18,17 @@ import {
   type WriteWashi,
 } from "./composer-data";
 import {
+  DraftActions,
+  ModeSwitcher,
   NotebookControls,
+  PrivacySettings,
   WriteIntro,
   WritingPanel,
 } from "./composer-ui";
-import { MobileNav, PreviewModal, SideRail } from "./composer-right-rail";
+import { PreviewModal, SideRail } from "./composer-right-rail";
 
 export function EntryComposerClient() {
+  const [mode, setMode] = useState<"minimal" | "creative">("creative");
   const [visibility, setVisibility] = useState<EntryVisibility>("private");
   const [washi, setWashi] = useState<WriteWashi>(writeWashiOptions[0].label);
   const [mood, setMood] = useState<WriteMood>(writeMoods[0].label);
@@ -142,7 +146,7 @@ export function EntryComposerClient() {
 
   return (
     <div className="min-h-dvh bg-[#f4fbf8] text-[#161d1b] [font-family:var(--font-quicksand)]">
-      <section className="mx-auto min-h-dvh max-w-[1200px] px-5 pb-32 pt-20 md:px-6 md:pt-24">
+      <section className="mx-auto min-h-dvh max-w-[1200px] px-5 pb-8 pt-6 md:px-6 md:pb-16 md:pt-24">
         <div className="flex flex-col gap-6">
           <WriteIntro
             canSubmit={canSubmit}
@@ -153,42 +157,54 @@ export function EntryComposerClient() {
             submit={submit}
             today={today}
           />
-          <section className="grid gap-6 lg:grid-cols-12">
-            <div className="flex flex-col gap-6 lg:col-span-7">
-              <NotebookControls
-                mood={mood}
-                setMood={setMood}
-                setSpace={setSpace}
-                setWashi={setWashi}
-                space={space}
-                washi={washi}
-              />
-              <WritingPanel
-                gratitudes={gratitudes}
-                noteLength={reflection.length}
-                reflection={reflection}
-                setGratitudes={setGratitudes}
-                setReflection={setReflection}
-              />
+          <ModeSwitcher mode={mode} setMode={setMode} />
+          <section aria-label="Nội dung nhật ký" className="relative overflow-hidden rounded-3xl bg-white p-5 shadow-[0_12px_40px_rgba(26,47,43,0.06)] md:p-7 lg:p-10" id="journal-editor-canvas">
+            <div className={`relative z-10 grid gap-8 ${mode === "creative" ? "lg:grid-cols-12 lg:gap-12" : "grid-cols-1"}`}>
+              <div className={`${mode === "creative" ? "lg:col-span-7 lg:pr-4" : "mx-auto w-full max-w-3xl"} flex flex-col gap-4`}>
+                <NotebookControls
+                  mode={mode}
+                  mood={mood}
+                  setMood={setMood}
+                  setSpace={setSpace}
+                  setWashi={setWashi}
+                  space={space}
+                  washi={washi}
+                />
+                <WritingPanel
+                  gratitudes={gratitudes}
+                  mode={mode}
+                  noteLength={reflection.length}
+                  reflection={reflection}
+                  setGratitudes={setGratitudes}
+                  setReflection={setReflection}
+                />
+                {mode === "minimal" ? (
+                  <>
+                    <PrivacySettings setVisibility={setVisibility} visibility={visibility} />
+                    <DraftActions resetDraft={resetDraft} setReflection={setReflection} />
+                  </>
+                ) : null}
+              </div>
+              {mode === "creative" ? (
+                <SideRail
+                  imageUrl={imageUrl}
+                  quote={quote}
+                  resetDraft={resetDraft}
+                  setReflection={setReflection}
+                  setQuote={setQuote}
+                  setSticker={setSticker}
+                  setVisibility={setVisibility}
+                  sticker={sticker}
+                  uploadImage={uploadImage}
+                  uploading={uploading}
+                  uploadStatus={uploadStatus}
+                  visibility={visibility}
+                />
+              ) : null}
             </div>
-            <SideRail
-              imageUrl={imageUrl}
-              quote={quote}
-              resetDraft={resetDraft}
-              setReflection={setReflection}
-              setQuote={setQuote}
-              setSticker={setSticker}
-              setVisibility={setVisibility}
-              sticker={sticker}
-              uploadImage={uploadImage}
-              uploading={uploading}
-              uploadStatus={uploadStatus}
-              visibility={visibility}
-            />
           </section>
         </div>
       </section>
-      <MobileNav />
       {previewOpen ? (
         <PreviewModal
           close={() => setPreviewOpen(false)}
