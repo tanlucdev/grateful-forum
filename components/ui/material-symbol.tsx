@@ -126,7 +126,8 @@ export function MaterialSymbol({
   className = "",
   fill = false,
   name,
-}: Readonly<{ className?: string; fill?: boolean; name: string }>) {
+  strokeWidth = 2.2,
+}: Readonly<{ className?: string; fill?: boolean; name: string; strokeWidth?: number }>) {
   const Icon = iconMap[name];
 
   if (Icon) {
@@ -136,7 +137,7 @@ export function MaterialSymbol({
         className={`inline-block shrink-0 leading-none ${className}`}
         fill={fill ? "currentColor" : "none"}
         focusable="false"
-        strokeWidth={2.2}
+        strokeWidth={strokeWidth}
         style={{ height: "1em", width: "1em" }}
       />
     );

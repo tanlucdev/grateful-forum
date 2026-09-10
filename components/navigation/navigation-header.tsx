@@ -149,7 +149,7 @@ export function MobileBottomNavigation({
               key={item.href}
               onClick={() => setPendingPath(targetPath)}
             >
-              <MaterialSymbol className="text-[29px]" name={item.icon} />
+              <MaterialSymbol className="text-[24px]" name={item.icon} strokeWidth={1.8} />
               <span className="max-w-full truncate">{item.label}</span>
             </Link>
           );
