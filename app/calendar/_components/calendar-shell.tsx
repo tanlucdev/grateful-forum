@@ -4,20 +4,20 @@ import type { CalendarOverview } from "@/lib/calendar/dto";
 
 export function HeroActions({ overview }: Readonly<{ overview: CalendarOverview }>) {
   return (
-    <section className="flex flex-col justify-between gap-4 pt-4 lg:flex-row lg:items-end">
-      <div>
-        <div className="flex items-center gap-2 text-xs font-medium tracking-[0.04em] text-[#3d4a41]">
+    <section className="grid gap-5 pt-4 lg:grid-cols-[minmax(0,1fr)_minmax(360px,520px)] lg:items-end">
+      <div className="min-w-0">
+        <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-[#3d4a41]">
           <MaterialSymbol className="text-base text-[#006d43]" name="calendar_today" />
           <span>Theo dõi chánh niệm & thói quen</span>
           <span>•</span>
           <span className="font-semibold text-[#006d43]">Nhật ký nhịp điệu</span>
         </div>
-        <h1 className="mt-1.5 text-[32px] font-bold leading-10 tracking-tight text-[#1A2F2B]">Nhịp điệu biết ơn</h1>
+        <h1 className="mt-1.5 text-[32px] font-bold leading-10 text-[#1A2F2B]">Nhịp điệu biết ơn</h1>
         <p className="mt-1 max-w-2xl text-base leading-6 text-[#3d4a41]">Mỗi ngày ghi lại một điều nhỏ bé để nuôi dưỡng tâm hồn bình an. Dõi theo hành trình gieo hạt cùng Bé Mầm.</p>
       </div>
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex w-full flex-col gap-2 rounded-2xl bg-[#e8efec]/75 p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_8px_24px_rgba(26,47,43,0.04)]">
         <FilterPills filters={overview.filters} />
-        <Link className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#006d43] to-[#006d3d] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(0,109,67,0.18)]" href="/write">
+        <Link className="flex h-12 items-center justify-center gap-2 rounded-[14px] bg-[#006d43] px-5 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(0,109,67,0.18)] hover:bg-[#145C34]" href="/write">
           <MaterialSymbol className="text-lg" name="edit_note" />
           Viết nhật ký hôm nay
         </Link>
@@ -28,13 +28,23 @@ export function HeroActions({ overview }: Readonly<{ overview: CalendarOverview 
 
 export function FilterPills({ compact = false, filters }: Readonly<{ compact?: boolean; filters: CalendarOverview["filters"] }>) {
   return (
-    <div className={`${compact ? "mt-4 text-xs" : "text-sm"} flex items-center rounded-full bg-[#e8efec] p-1 font-semibold text-[#3d4a41]`}>
+    <nav
+      aria-label="Bộ lọc lịch biết ơn"
+      className={`${compact ? "mt-4 text-[11px]" : "text-sm"} flex min-h-12 items-center gap-1 rounded-[14px] bg-[#dfe8e4] p-1 font-semibold text-[#3d4a41]`}
+    >
       {filters.map((item) => (
-        <Link className={`${compact ? "flex-1 rounded-xl py-1.5" : "rounded-full px-3.5 py-1.5"} ${item.active ? "bg-white text-[#006d43] shadow-sm" : ""}`} href={item.href} key={item.key}>
+        <Link
+          aria-current={item.active ? "page" : undefined}
+          className={`${compact ? "flex-1 px-1.5 py-2" : "flex-1 px-3 py-2.5"} rounded-[10px] text-center leading-5 outline-offset-2 ${
+            item.active ? "bg-white text-[#006d43] shadow-[0_2px_10px_rgba(26,47,43,0.08)]" : "hover:bg-white/55 hover:text-[#1A2F2B]"
+          }`}
+          href={item.href}
+          key={item.key}
+        >
           {item.label}
         </Link>
       ))}
-    </div>
+    </nav>
   );
 }
 
@@ -46,25 +56,5 @@ export function DesktopFooter() {
         <div className="text-xs">© 2025 Grateful Forum. Cùng Bé Mầm gieo mầm hạnh phúc.</div>
       </div>
     </footer>
-  );
-}
-
-export function MobileBottomNav() {
-  return (
-    <nav className="fixed bottom-0 z-50 flex w-full max-w-[420px] items-center justify-between border-t border-[#E3EFE9] bg-white/95 px-6 py-2.5 shadow-lg backdrop-blur-md">
-      <BottomItem href="/feed" label="Bảng tin" name="article" />
-      <Link aria-label="Viết nhật ký ngay" className="-mt-7 flex h-12 w-12 items-center justify-center rounded-full border-4 border-white bg-gradient-to-tr from-[#145C34] to-[#00a86b] text-2xl text-white shadow-[0_10px_30px_rgba(0,168,107,0.28)]" href="/write">+</Link>
-      <BottomItem active href="/calendar" label="Lịch biết ơn" name="calendar_today" />
-      <BottomItem href="/profile" label="Cá nhân" name="person" />
-    </nav>
-  );
-}
-
-function BottomItem({ href, label, name, active }: Readonly<{ href: string; label: string; name: string; active?: boolean }>) {
-  return (
-    <Link className={`flex w-16 flex-col items-center justify-center text-[10px] font-semibold ${active ? "font-bold text-[#145C34]" : "text-[#6C8377]"}`} href={href}>
-      <MaterialSymbol className="mb-0.5 text-xl" name={name} />
-      <span>{label}</span>
-    </Link>
   );
 }

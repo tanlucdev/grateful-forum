@@ -1,10 +1,6 @@
 import { MaterialSymbol } from "@/components/ui/material-symbol";
 import { ProfileEditModalButton } from "./ProfileModalsClient";
-import {
-  Avatar,
-  MilestoneCard,
-  Pill,
-} from "./ProfileDesktopCards";
+import { Avatar, MilestoneCard, Pill } from "./ProfileDesktopCards";
 import { ProfileDesktopTabs } from "./ProfileDesktopTabsClient";
 import type { ProfileView } from "./profile-view";
 
@@ -57,6 +53,7 @@ function DesktopHero({ view }: Readonly<{ view: ProfileView }>) {
               <Pill icon="local_fire_department" text={`${view.streak} ngày liên tiếp`} tone="fire" />
               <Pill icon="nest_eco_leaf" text="Đồng hành cùng Bé Mầm 14 ngày" />
             </div>
+            <WeeklyRhythm compact={false} />
           </div>
         </div>
         <div className="self-end md:self-center">
@@ -64,6 +61,39 @@ function DesktopHero({ view }: Readonly<{ view: ProfileView }>) {
         </div>
       </div>
     </section>
+  );
+}
+
+function WeeklyRhythm({ compact }: Readonly<{ compact: boolean }>) {
+  const days = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
+
+  return (
+    <div className={`${compact ? "rounded-xl bg-white p-3.5 shadow-[0_2px_12px_rgba(26,47,43,0.03)]" : "mt-4 rounded-2xl border border-[#006d43]/10 bg-[#eef5f2]/70 p-3 sm:px-4"} flex flex-col gap-3`}>
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-[#9cf5c0]/60 text-[#006d43]">
+            <MaterialSymbol className="text-base" fill name="potted_plant" />
+          </span>
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs font-bold text-[#1a2f2b]">Nhịp điệu tuần này</span>
+              <span className="rounded-full bg-[#99f3b6]/50 px-2 py-0.5 text-[11px] font-bold text-[#006d3d]">4/7 chồi xanh thắp sáng</span>
+            </div>
+            {!compact ? <p className="text-[11px] font-medium text-[#3d4a41]">Duy trì 4 ngày liên tiếp nuôi dưỡng mầm tĩnh tại</p> : null}
+          </div>
+        </div>
+      </div>
+      <div className="grid grid-cols-7 gap-1.5">
+        {days.map((day, index) => (
+          <div className={`${index < 4 ? "bg-[#d1e9e0]/35" : "bg-[#eef5f2] opacity-70"} flex flex-col items-center gap-1 rounded-lg py-1.5`} key={day}>
+            <span className={`text-[10px] ${index === 3 ? "font-bold text-[#006d43]" : "text-[#6d7a70]"}`}>{day}</span>
+            <span className={`${index < 3 ? "bg-[#006d43] text-white" : index === 3 ? "bg-[#006d3d] text-white shadow-[0_2px_6px_rgba(0,109,61,0.25)]" : "bg-[#dde4e1] text-[#6d7a70]"} flex h-6 w-6 items-center justify-center rounded-full text-[12px]`}>
+              {index < 3 ? "🌱" : index === 3 ? "🌸" : "·"}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -75,7 +105,7 @@ function RhythmCard() {
           <MaterialSymbol fill name="calendar_month" />
         </span>
         <div>
-          <h3 className="text-xl font-semibold leading-7 text-[#161d1b]">Nhịp điệu biết ơn</h3>
+          <h3 className="text-xl font-semibold leading-7 text-[#161d1b]">Nhịp điệu biết ơn tháng 10</h3>
           <p className="text-xs font-medium leading-4 text-[#3d4a41]">
             Bạn đã hoàn thành 85% mục tiêu tháng 10
           </p>

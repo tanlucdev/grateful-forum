@@ -1,4 +1,6 @@
-import { DesktopFooter, FilterPills, HeroActions, MobileBottomNav } from "./calendar-shell";
+import Link from "next/link";
+import { MaterialSymbol } from "@/components/ui/material-symbol";
+import { DesktopFooter, FilterPills, HeroActions } from "./calendar-shell";
 import { GardenDesktop, GardenMobile } from "./calendar-garden";
 import { Badges, MascotWhisper, MonthCalendar, TodayMoments } from "./calendar-time";
 import { MascotLevel, Metric } from "./calendar-stat";
@@ -43,7 +45,7 @@ function DesktopCalendar({ overview }: Readonly<{ overview: CalendarOverview }>)
 
 function MobileCalendar({ overview }: Readonly<{ overview: CalendarOverview }>) {
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-[420px] flex-col bg-[#f5faf7] pb-24 shadow-2xl md:hidden">
+    <div className="mx-0 flex min-h-dvh w-[100dvw] max-w-[420px] flex-col overflow-hidden bg-[#f5faf7] shadow-2xl md:hidden">
       <div className="flex items-center justify-between px-6 pb-1 pt-2 text-xs font-semibold text-[#6C8377]">
         <span>9:41</span>
         <span>● ◒ ▱</span>
@@ -64,10 +66,10 @@ function MobileCalendar({ overview }: Readonly<{ overview: CalendarOverview }>) 
           <span className="flex items-center gap-1 rounded-full border border-amber-200/80 bg-amber-50 px-2.5 py-1.5 text-xs font-bold text-amber-800 shadow-sm">🔥 {overview.stats.currentStreak} ngày</span>
         </div>
         <FilterPills compact filters={overview.filters} />
-        <button className="mt-3.5 flex w-full items-center justify-center gap-2 rounded-2xl bg-[#145C34] px-4 py-3 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(0,168,107,0.28)]">
-          <span className="text-lg leading-none">+</span>
+        <Link className="mt-3.5 flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-[#145C34] px-4 py-3 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(0,168,107,0.28)]" href="/write">
+          <MaterialSymbol className="text-lg" name="edit_note" />
           Viết nhật ký hôm nay
-        </button>
+        </Link>
       </header>
       <main className="mt-1 flex-1 space-y-5 px-4">
         <section className="grid grid-cols-2 gap-3">
@@ -87,7 +89,6 @@ function MobileCalendar({ overview }: Readonly<{ overview: CalendarOverview }>) 
           <p className="pt-2 text-[10px] text-gray-400">© 2025 Grateful Forum. Cùng Bé Mầm gieo mầm hạnh phúc.</p>
         </footer>
       </main>
-      <MobileBottomNav />
     </div>
   );
 }
