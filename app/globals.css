@@ -194,6 +194,15 @@ a:active {
   }
 }
 
+@keyframes landing-marquee-reverse-x {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
 .landing-theme {
   --color-surface: #f4fbf8;
   --color-surface-bright: #f4fbf8;
@@ -339,6 +348,20 @@ a:active {
   mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
 }
 
+.landing-community-marquee {
+  animation: landing-marquee-reverse-x 34s linear infinite;
+}
+
+.landing-community-marquee:hover,
+.landing-community-marquee:focus-within {
+  animation-play-state: paused;
+}
+
+.landing-community-marquee-mask {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .landing-motion *,
   .landing-motion *::before,
@@ -362,6 +385,11 @@ a:active {
   }
 
   .landing-motion .landing-badge-marquee {
+    animation-duration: 80s !important;
+    animation-iteration-count: infinite !important;
+  }
+
+  .landing-motion .landing-community-marquee {
     animation-duration: 80s !important;
     animation-iteration-count: infinite !important;
   }

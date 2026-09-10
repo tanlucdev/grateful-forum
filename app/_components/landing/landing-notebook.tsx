@@ -73,7 +73,7 @@ export function NotebookSection() {
     <Reveal>
       <section className="w-full py-16 lg:py-24" id="journal-flipbook">
         <div className="mx-auto max-w-md px-4 lg:max-w-7xl lg:px-margin-desktop">
-          <SectionHeader copy="Không chỉ là một ứng dụng khô khan, BeGrateful lưu giữ hành trình của bạn trong giao diện cuốn sổ tay mở đôi chân thực, nơi mỗi ngày biết ơn là một trang sách lưu bút mộc mạc." eyebrow="Trải nghiệm độc bản" title="Trang cá nhân như cuốn sổ tay lật giở từng ký ức" />
+          <SectionHeader copy="Mỗi bài viết riêng trở thành một phần lịch sử cá nhân để bạn xem lại những điều từng làm mình biết ơn." eyebrow="Hành trình cá nhân" title="Xem lại những điều bạn từng biết ơn" />
           <div className="relative mx-auto max-w-5xl rounded-[36px] border-2 border-white/80 bg-gradient-to-br from-[#e4eee7] via-[#dde8e1] to-[#d6e3db] p-3 shadow-[0_24px_60px_rgba(26,47,43,0.08)] transition-transform duration-500 hover:-translate-y-1 sm:p-7 lg:p-9">
             <div className="absolute -top-3 right-16 z-30 flex h-14 w-6 items-end justify-center rounded-b-md bg-gradient-to-b from-[#9cf5c0] via-primary to-[#005231] pb-1.5 shadow-[0_4px_12px_rgba(0,109,67,0.3)] sm:right-28"><span className="h-1.5 w-1.5 rounded-full bg-surface-white" /></div>
             <div className="relative grid overflow-hidden rounded-2xl border border-[#e2d8c9] bg-[#faf6ef] shadow-2xl" style={{ perspective: "1600px" }}>
@@ -107,7 +107,7 @@ export function NotebookSection() {
             </div>
             <div className="landing-zen-glass-card mx-auto mt-8 flex max-w-3xl flex-col items-center justify-between gap-4 rounded-2xl p-4 shadow-xs sm:flex-row">
               <div className="flex flex-col items-center gap-1 text-center">
-                <span className="flex items-center gap-1.5 text-xs font-bold text-text-deep"><MaterialSymbol className="text-[16px] text-primary" name="auto_stories" /> Trang {spread.left.page} - {spread.right.page} / 52 trang ghi chép</span>
+                <span className="flex items-center gap-1.5 text-xs font-bold text-text-deep"><MaterialSymbol className="text-[16px] text-primary" name="auto_stories" /> Lịch sử lời biết ơn của bạn</span>
                 <div className="mt-1 flex gap-1">{journalSpreads.map((item, index) => <span className={`h-1.5 w-5 rounded-full ${index === page ? "bg-primary" : "bg-surface-container-high"}`} key={item.left.page} />)}</div>
               </div>
               <div className="flex gap-2">
@@ -127,7 +127,7 @@ function NotebookLeft({ entry }: Readonly<{ entry: (typeof journalSpreads)[numbe
     <div className="hidden flex-col justify-between bg-gradient-to-r from-[#fdfbf7] to-[#f6f1e7] p-6 md:flex sm:p-8 lg:p-9">
       <div className="landing-tape pointer-events-none absolute -top-3 left-8 z-20 flex -rotate-2 items-center gap-1.5 rounded-sm border border-primary/20 bg-[#a7f3d0]/80 px-3.5 py-1 text-[11px] font-bold text-primary shadow-sm backdrop-blur-xs sm:left-12">
         <span className="text-xs">🌿</span>
-        <span>Washi Tape • An Yên</span>
+        <span>Bản ghi cá nhân</span>
       </div>
       <div>
         <div className="mb-4 border-b border-[#ebdcca] pb-3 pr-12 pt-2.5">
@@ -146,12 +146,12 @@ function NotebookLeft({ entry }: Readonly<{ entry: (typeof journalSpreads)[numbe
         </div>
         <p className="mb-4 text-xs italic leading-relaxed text-text-deep/90 sm:text-[12px]">&ldquo;{entry.quote}&rdquo;</p>
         <div className="mb-3 flex items-start gap-2.5 rounded-2xl border border-primary/15 bg-accent-mint/35 p-3 text-xs text-text-deep shadow-xs">
-          <span className="shrink-0 text-lg">🌱</span>
-          <div className="flex-1">
-            <span className="flex items-center justify-between text-[11px] font-bold text-primary">
-              <span>Lời nhắc chánh niệm hôm nay:</span>
-              <MaterialSymbol className="text-[14px]" name="check_circle" />
-            </span>
+            <span className="shrink-0 text-lg">🌱</span>
+            <div className="flex-1">
+              <span className="flex items-center justify-between text-[11px] font-bold text-primary">
+                <span>Gợi ý viết hôm nay:</span>
+                <MaterialSymbol className="text-[14px]" name="check_circle" />
+              </span>
             <p className="mt-0.5 text-[11px] font-medium leading-snug">&ldquo;Hãy gửi một tin nhắn cảm ơn người bạn yêu quý vì đã luôn hiện diện trong đời bạn.&rdquo;</p>
           </div>
         </div>
@@ -159,10 +159,8 @@ function NotebookLeft({ entry }: Readonly<{ entry: (typeof journalSpreads)[numbe
       <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[#ebdcca] pt-3.5 text-xs">
         <div className="flex items-center gap-1.5">{entry.gratitude.map((item) => <span className="rounded-md border border-primary/10 bg-white/90 px-2 py-0.5 text-[10px] font-bold text-primary" key={item}>{item}</span>)}</div>
         <div className="flex items-center gap-3 text-[11px] font-semibold text-on-surface-variant">
-          <span className="text-primary">💚 {entry.likes}</span>
-          <span>💬 0</span>
-          <span>🔗</span>
-          <span className="ml-1 font-bold text-[#b5a796]">Trang {entry.page}</span>
+          <span className="flex items-center gap-1 text-primary"><MaterialSymbol className="text-[14px]" name="lock" /> Bài viết riêng</span>
+          <span className="ml-1 font-bold text-[#b5a796]">Xem lại</span>
         </div>
       </div>
     </div>
@@ -198,7 +196,7 @@ function NotebookRight({ entry }: Readonly<{ entry: (typeof journalSpreads)[numb
           <span className="shrink-0 text-lg">🌱</span>
           <div className="flex-1">
             <span className="flex items-center justify-between text-[11px] font-bold text-primary">
-              <span>Lời nhắc chánh niệm hôm nay:</span>
+          <span>Gợi ý viết hôm nay:</span>
               <MaterialSymbol className="text-[14px]" name="check_circle" />
             </span>
             <p className="mt-0.5 text-[11px] font-medium leading-snug">&ldquo;Hãy gửi một tin nhắn cảm ơn người bạn yêu quý vì đã luôn hiện diện trong đời bạn.&rdquo;</p>
@@ -208,10 +206,8 @@ function NotebookRight({ entry }: Readonly<{ entry: (typeof journalSpreads)[numb
       <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[#ebdcca] pt-3.5 text-xs">
         <div className="flex items-center gap-1.5">{entry.tags.map((tag) => <span className="rounded-md border border-primary/10 bg-white/90 px-2 py-0.5 text-[10px] font-bold text-primary" key={tag}>{tag}</span>)}</div>
         <div className="flex items-center gap-3 text-[11px] font-semibold text-on-surface-variant">
-          <span className="text-primary">💚 {entry.hearts}</span>
-          <span>💬 {entry.comments}</span>
-          <span>🔗</span>
-          <span className="ml-1 font-bold text-[#b5a796]">Trang {entry.page}</span>
+          <span className="flex items-center gap-1 text-primary"><MaterialSymbol className="text-[14px]" name="lock" /> Bài viết riêng</span>
+          <span className="ml-1 font-bold text-[#b5a796]">Xem lại</span>
         </div>
       </div>
     </div>

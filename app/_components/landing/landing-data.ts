@@ -17,7 +17,6 @@ export type JournalLeft = Readonly<{
   quote: string;
   gratitude: readonly string[];
   place: string;
-  likes: number;
 }>;
 
 export type JournalRight = Readonly<{
@@ -29,8 +28,6 @@ export type JournalRight = Readonly<{
   desc: string;
   quote: string;
   tags: readonly string[];
-  hearts: number;
-  comments: number;
 }>;
 
 export type JournalSpread = Readonly<{
@@ -43,7 +40,6 @@ export type BadgeItem = Readonly<{
   status: string;
   title: string;
   copy: string;
-  value: number;
   unlocked: boolean;
 }>;
 
@@ -53,16 +49,14 @@ export type FeedCard = Readonly<{
   time: string;
   tag: string;
   quote: string;
-  hearts: number;
-  thanks: number;
 }>;
 
 export const navItems: readonly NavItem[] = [
   { href: "#", label: "Trang chủ" },
-  { href: "#private-public", label: "Viết an yên" },
-  { href: "#garden-spotlight", label: "Vườn hoa 365" },
-  { href: "#milestones", label: "Huy hiệu" },
   { href: "#community", label: "Cộng đồng" },
+  { href: "#private-public", label: "Chia sẻ" },
+  { href: "#garden-spotlight", label: "Lịch thực hành" },
+  { href: "#journal-flipbook", label: "Hành trình cá nhân" },
 ];
 
 export const moods: readonly MoodItem[] = [
@@ -70,12 +64,6 @@ export const moods: readonly MoodItem[] = [
   { icon: "☀️", label: "Ấm áp" },
   { icon: "☁️", label: "Nhẹ lòng" },
 ];
-
-export const landingStats = [
-  { value: 50000, suffix: "+", label: "đóa hoa đã nở" },
-  { value: 2400, suffix: "+", label: "bạn đồng hành" },
-  { value: 100, suffix: "%", label: "riêng tư" },
-] as const;
 
 export const journalSpreads: readonly JournalSpread[] = [
   {
@@ -93,11 +81,10 @@ export const journalSpreads: readonly JournalSpread[] = [
         "Mầm non hoa mười giờ bắt đầu trổ bông đầu tiên.",
       ],
       place: "Ban công góc nhỏ",
-      likes: 16,
     },
     right: {
       page: 25,
-      title: "TRANG 25 • MỞ LỐI AN YÊN",
+      title: "TRANG 25 • MỘT KHOẢNH KHẮC BIẾT ƠN",
       date: "Hôm nay, 25 Tháng 10",
       badge: "Đã gieo mầm trọn vẹn",
       photo: "Quán cà phê góc phố cùng bạn cũ",
@@ -105,8 +92,6 @@ export const journalSpreads: readonly JournalSpread[] = [
       quote:
         "Gặp lại người bạn thân thời đại học sau gần 2 năm xa cách. Chúng mình không còn vội vã bàn về thành tựu hay tiền bạc, mà ngồi hàng giờ lắng nghe những buồn vui vụn vặt thường nhật. Cảm giác thật biết ơn vì tình bạn mộc mạc và chân thành này vẫn vẹn nguyên như ngày đầu.",
       tags: ["#tinhban", "#gocnho"],
-      hearts: 28,
-      comments: 6,
     },
   },
   {
@@ -124,7 +109,6 @@ export const journalSpreads: readonly JournalSpread[] = [
         "Bữa cơm tối giản dị nhưng cả nhà ngồi lại cùng nhau.",
       ],
       place: "Con đường sau mưa",
-      likes: 21,
     },
     right: {
       page: 27,
@@ -136,8 +120,6 @@ export const journalSpreads: readonly JournalSpread[] = [
       quote:
         "Tối nay cả nhà ăn cơm muộn hơn thường lệ. Không có chuyện gì đặc biệt, chỉ là ai cũng kể một chút về ngày của mình. Mình nhận ra sự bình yên đôi khi không cần được sắp đặt, chỉ cần mọi người còn ngồi gần nhau.",
       tags: ["#giadinh", "#buaan"],
-      hearts: 34,
-      comments: 9,
     },
   },
   {
@@ -155,11 +137,10 @@ export const journalSpreads: readonly JournalSpread[] = [
         "Ly nước ấm trên bàn đúng lúc cổ họng khô.",
       ],
       place: "Góc bàn làm việc",
-      likes: 18,
     },
     right: {
       page: 29,
-      title: "TRANG 29 • NHÌN LẠI BÌNH YÊN",
+      title: "TRANG 29 • NHÌN LẠI ĐIỀU TỐT ĐẸP",
       date: "Thứ Ba, 29 Tháng 10",
       badge: "Một ngày đã đủ đầy",
       photo: "Bản nhạc cũ trong buổi chiều",
@@ -167,8 +148,6 @@ export const journalSpreads: readonly JournalSpread[] = [
       quote:
         "Có những ngày không cần một điều lớn lao để thấy biết ơn. Chỉ cần nghe lại bản nhạc từng thương, mình đã thấy nhiều phiên bản của mình được ôm lại thật dịu dàng.",
       tags: ["#congviec", "#amnhac"],
-      hearts: 25,
-      comments: 4,
     },
   },
   {
@@ -186,7 +165,6 @@ export const journalSpreads: readonly JournalSpread[] = [
         "Mình đã ăn sáng tử tế trước khi làm việc.",
       ],
       place: "Hiên nhà xanh",
-      likes: 29,
     },
     right: {
       page: 31,
@@ -198,21 +176,19 @@ export const journalSpreads: readonly JournalSpread[] = [
       quote:
         "Mình gọi cho mẹ khi đang chờ xe. Câu chuyện chỉ xoay quanh bữa ăn, thời tiết, vài điều quen thuộc, nhưng khi cúp máy mình thấy lòng ấm hẳn. Biết ơn những kết nối không cần phô trương.",
       tags: ["#giadinh", "#yeuthuong"],
-      hearts: 41,
-      comments: 8,
     },
   },
 ];
 
 export const badgeData: readonly BadgeItem[] = [
-  { icon: "🌱", status: "Đã đạt • 3/3 ngày", title: "Mầm Non Tỉnh Thức", copy: "Gieo hạt mầm đầu tiên vào tâm trí.", value: 1, unlocked: true },
-  { icon: "🧘", status: "Đã đạt • 7/7 ngày", title: "Tuần Lễ An Yên", copy: "Trọn một tuần lắng lại cảm nhận sự sống.", value: 1, unlocked: true },
-  { icon: "🌿", status: "Tiến độ 14/21 ngày", title: "Thói Quen 21 Ngày", copy: "Khoa học hình thành phản xạ biết ơn.", value: 0.66, unlocked: true },
-  { icon: "🌳", status: "Mục tiêu 100 ngày", title: "Rừng Cây Đại Thụ", copy: "Biến an yên thành cội nguồn bền vững.", value: 0.2, unlocked: false },
-  { icon: "💧", status: "Đã đạt • 30/30 ngày", title: "Giọt Nước Kiên Trì", copy: "Tưới mát lòng mình bằng những điều nhỏ.", value: 1, unlocked: true },
-  { icon: "🌸", status: "Tiến độ 42/60 ngày", title: "Đóa Hoa Dịu Lành", copy: "Ghi lại yêu thương trước khi ngày khép lại.", value: 0.7, unlocked: true },
-  { icon: "☀️", status: "Mục tiêu 90 ngày", title: "Nắng Mai Biết Ơn", copy: "Bắt đầu buổi sáng bằng một lời cảm ơn.", value: 0.35, unlocked: false },
-  { icon: "🍃", status: "Mục tiêu 365 ngày", title: "Khu Vườn 365", copy: "Một năm chăm sóc tâm hồn thật bền bỉ.", value: 0.12, unlocked: false },
+  { icon: "🌱", status: "Đã mở", title: "Mầm Bắt Đầu", copy: "Viết lời biết ơn đầu tiên của bạn.", unlocked: true },
+  { icon: "🧘", status: "Đã mở", title: "Nhịp Viết Đều", copy: "Giữ lại những điều đáng trân trọng.", unlocked: true },
+  { icon: "🌿", status: "Đang tiếp tục", title: "Thói Quen Biết Ơn", copy: "Duy trì việc viết qua từng ngày.", unlocked: true },
+  { icon: "🌳", status: "Chưa mở", title: "Người Gieo Lan Tỏa", copy: "Chia sẻ điều tích cực với cộng đồng.", unlocked: false },
+  { icon: "💧", status: "Đã mở", title: "Lời Cảm Ơn Bền Bỉ", copy: "Quay lại với việc thực hành khi cần.", unlocked: true },
+  { icon: "🌸", status: "Đang tiếp tục", title: "Ghi Lại Điều Tốt Đẹp", copy: "Nhìn thấy điều đáng biết ơn trong ngày.", unlocked: true },
+  { icon: "☀️", status: "Chưa mở", title: "Bắt Đầu Ngày Mới", copy: "Mở ngày bằng một lời biết ơn.", unlocked: false },
+  { icon: "🍃", status: "Chưa mở", title: "Hành Trình Dài Hơn", copy: "Để lòng biết ơn trở thành một nhịp sống.", unlocked: false },
 ];
 
 export const feedCards: readonly FeedCard[] = [
@@ -223,8 +199,6 @@ export const feedCards: readonly FeedCard[] = [
     tag: "#BìnhYên",
     quote:
       "Biết ơn chuyến xe buýt sáng nay không bị kẹt, bác tài xế bật bài nhạc Trịnh dịu dàng, thấy lòng mình mềm mại hẳn.",
-    hearts: 42,
-    thanks: 19,
   },
   {
     avatar: "HL",
@@ -233,8 +207,6 @@ export const feedCards: readonly FeedCard[] = [
     tag: "#TĩnhLặng",
     quote:
       "Cảm ơn mẹ đã gửi cho thùng bưởi quê ngọt mát. Ăn từng múi bưởi mà nghe thoang thoảng mùi đất quê nhà và tình thương của mẹ.",
-    hearts: 68,
-    thanks: 31,
   },
   {
     avatar: "TA",
@@ -242,9 +214,7 @@ export const feedCards: readonly FeedCard[] = [
     time: "3 giờ trước",
     tag: "#NuôiDưỡng",
     quote:
-      "Vừa cán mốc 21 ngày viết liên tục. Lần đầu tiên kiên trì với thói quen chữa lành nhẹ nhàng đến vậy cùng Bé Mầm.",
-    hearts: 112,
-    thanks: 47,
+      "Hôm nay mình lại viết được một lời biết ơn. Nhìn những bài viết khác trong cộng đồng, mình có thêm động lực để tiếp tục.",
   },
 ];
 
