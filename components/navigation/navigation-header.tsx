@@ -44,28 +44,28 @@ export function NavigationHeader({
   const activePath = pendingPath || pathname;
 
   return (
-    <header className="fixed inset-x-0 top-0 z-[80] hidden border-b border-[#e8efec] bg-white/90 pt-[env(safe-area-inset-top)] shadow-[0_1px_8px_rgba(26,47,43,0.03)] backdrop-blur-xl md:block">
-      <div className="mx-auto grid h-16 max-w-7xl grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 px-3 md:h-20 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:gap-3 md:px-5 lg:px-margin-desktop">
-        <div className="flex min-w-0 items-center justify-start gap-3">
+    <header className="fixed inset-x-0 top-0 z-[80] hidden bg-transparent pt-[calc(env(safe-area-inset-top)+8px)] md:block">
+      <div className="mx-auto grid h-[60px] max-w-7xl grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 rounded-[20px] border border-[#e8efec]/90 bg-white/88 px-4 shadow-[0_8px_24px_rgba(26,47,43,0.055)] backdrop-blur-xl lg:px-5">
+        <div className="flex min-w-0 items-center justify-start gap-2.5">
           <Link aria-label="Grateful Forum" className="flex min-w-0 items-center gap-2" href="/feed" onClick={() => setPendingPath("/feed")}>
             <Image
               alt=""
-              className="h-9 w-9 rounded-2xl object-cover shadow-xs lg:h-10 lg:w-10"
+              className="h-8 w-8 rounded-xl object-cover shadow-xs lg:h-9 lg:w-9"
               height={32}
               src="/stitch/landing/mascot.png"
               width={32}
             />
-            <span className="hidden truncate text-lg font-bold leading-tight text-primary lg:inline lg:text-xl">
+            <span className="hidden truncate text-[15px] font-bold leading-5 text-primary lg:inline">
               Grateful Forum
             </span>
           </Link>
-          <span className="hidden items-center gap-1.5 rounded-full bg-[#ffdad8]/60 px-3 py-1.5 text-xs font-semibold leading-4 text-[#852229] md:inline-flex">
-            <MaterialSymbol className="h-4 w-4 text-lg text-[#a5393e]" fill name="local_fire_department" />
+          <span className="hidden h-8 items-center gap-1.5 rounded-full bg-[#ffdad8]/60 px-2.5 text-[11px] font-semibold leading-4 text-[#852229] lg:inline-flex">
+            <MaterialSymbol className="text-[14px] text-[#a5393e]" fill name="local_fire_department" />
             <span className="whitespace-nowrap">{profile.streak} ngày liên tiếp</span>
           </span>
         </div>
 
-        <nav className="flex min-w-0 items-center justify-center gap-1 overflow-x-auto md:rounded-2xl md:border md:border-[#e8efec] md:bg-white/70 md:p-1">
+        <nav className="flex min-w-0 items-center justify-center gap-1 overflow-x-auto rounded-2xl border border-[#e8efec] bg-[#f4fbf8]/65 p-1">
           {navItems.map((item) => {
             const targetPath = item.href;
             const active = activePath === targetPath || activePath.startsWith(`${targetPath}/`);
@@ -74,16 +74,16 @@ export function NavigationHeader({
             return (
               <Link
                 aria-current={active ? "page" : undefined}
-                className={`inline-flex h-12 min-w-12 flex-col items-center justify-center rounded-xl px-2 text-[11px] font-semibold leading-4 transition-colors md:h-10 md:min-w-0 md:flex-row md:gap-2 md:px-3.5 md:text-sm md:leading-5 ${
+                className={`inline-flex h-9 min-w-0 items-center justify-center gap-1.5 rounded-full px-3.5 text-[13px] font-semibold leading-5 transition-colors ${
                   active
-                    ? "bg-primary text-white shadow-[0_2px_8px_rgba(0,109,67,0.14)]"
-                    : "text-on-surface-variant hover:bg-surface-white/70 hover:text-on-surface"
+                    ? "bg-[#d1e9e0]/70 text-[#006d43]"
+                    : "text-on-surface-variant hover:bg-white/80 hover:text-on-surface"
                 } ${pending ? "ring-1 ring-primary/20" : ""}`}
                 href={href}
                 key={item.href}
                 onClick={() => setPendingPath(targetPath)}
               >
-                <MaterialSymbol className="h-5 w-5 text-[20px] md:hidden" fill={active} name={item.icon} />
+                <MaterialSymbol className="text-[14px]" name={item.icon} strokeWidth={active ? 2 : 1.7} />
                 <span className="whitespace-nowrap">{item.label}</span>
               </Link>
             );
@@ -111,9 +111,9 @@ export function MobileBottomNavigation({
   return (
     <nav
       aria-label="Điều hướng chính"
-      className="fixed inset-x-0 bottom-0 z-[80] border-t border-[#e8efec] bg-white/95 pb-[calc(env(safe-area-inset-bottom)+10px)] shadow-[0_-10px_28px_rgba(26,47,43,0.08)] backdrop-blur-xl md:hidden"
+      className="fixed inset-x-0 bottom-0 z-[80] border-t border-[#e8efec] bg-white/95 pb-[calc(env(safe-area-inset-bottom)+8px)] shadow-[0_-8px_22px_rgba(26,47,43,0.07)] backdrop-blur-xl md:hidden"
     >
-      <div className="mx-auto grid h-[82px] w-full max-w-[430px] grid-cols-5 items-end px-3 pt-2">
+      <div className="mx-auto grid h-[72px] w-full max-w-[430px] grid-cols-5 items-end px-3 pt-1.5">
         {mobileNavItems.map((item) => {
           const targetPath = item.href;
           const active = activePath === targetPath || activePath.startsWith(`${targetPath}/`);
@@ -124,17 +124,17 @@ export function MobileBottomNavigation({
               <Link
                 aria-current={active ? "page" : undefined}
                 aria-label={item.label}
-                className="-mt-9 flex min-h-[92px] flex-col items-center justify-start gap-1 text-[#006d43] outline-offset-4"
+                className="-mt-8 flex min-h-[82px] flex-col items-center justify-start gap-0.5 text-[#006d43] outline-offset-4"
                 href={href}
                 key={item.href}
                 onClick={() => setPendingPath(targetPath)}
               >
-                <span className="flex h-[92px] w-[92px] items-center justify-center rounded-full bg-white shadow-[0_3px_10px_rgba(26,47,43,0.08)]">
-                  <span className="flex h-[74px] w-[74px] items-center justify-center rounded-full bg-[#00a86b] text-white shadow-[0_10px_28px_rgba(0,109,67,0.24)]">
-                    <MaterialSymbol className="text-[32px]" fill name={item.icon} />
+                <span className="flex h-[76px] w-[76px] items-center justify-center rounded-full bg-white shadow-[0_3px_10px_rgba(26,47,43,0.07)]">
+                  <span className="flex h-16 w-16 items-center justify-center rounded-full bg-[#00a86b] text-white shadow-[0_8px_22px_rgba(0,109,67,0.22)]">
+                    <MaterialSymbol className="text-[28px]" name={item.icon} strokeWidth={2.2} />
                   </span>
                 </span>
-                <span className="text-[13px] font-bold leading-4">{item.label}</span>
+                <span className="text-[12px] font-bold leading-4">{item.label}</span>
               </Link>
             );
           }
@@ -142,14 +142,16 @@ export function MobileBottomNavigation({
           return (
             <Link
               aria-current={active ? "page" : undefined}
-              className={`flex h-[72px] min-w-0 flex-col items-center justify-center gap-2 rounded-xl px-1 text-center text-[12px] font-semibold leading-4 outline-offset-4 ${
+              className={`flex h-[64px] min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl px-1 text-center text-[11px] font-semibold leading-4 outline-offset-4 ${
                 active ? "text-[#006d43]" : "text-[#8da0b6]"
               }`}
               href={href}
               key={item.href}
               onClick={() => setPendingPath(targetPath)}
             >
-              <MaterialSymbol className="text-[24px]" name={item.icon} strokeWidth={1.8} />
+              <span className={`flex h-8 w-11 items-center justify-center rounded-full ${active ? "bg-[#d1e9e0]/75" : ""}`}>
+                <MaterialSymbol className="text-[22px]" name={item.icon} strokeWidth={active ? 2 : 1.7} />
+              </span>
               <span className="max-w-full truncate">{item.label}</span>
             </Link>
           );
@@ -161,8 +163,8 @@ export function MobileBottomNavigation({
 
 function LoginButton() {
   return (
-    <Link className="inline-flex h-10 items-center gap-2 rounded-2xl bg-primary px-3 text-sm font-semibold text-white shadow-[0_8px_16px_rgba(0,109,67,0.15)] md:px-4" href={loginHref("/profile")}>
-      <MaterialSymbol className="h-4 w-4 text-lg" name="login" />
+    <Link className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-primary px-3 text-[13px] font-semibold text-white shadow-[0_6px_14px_rgba(0,109,67,0.14)]" href={loginHref("/profile")}>
+      <MaterialSymbol className="text-[15px]" name="login" />
       <span className="hidden sm:inline">Đăng nhập</span>
     </Link>
   );
