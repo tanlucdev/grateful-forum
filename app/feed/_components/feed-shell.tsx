@@ -11,7 +11,7 @@ export function MobileReflectionBanner() {
             alt="Bé Mầm"
             className="h-full w-full object-cover"
             height={56}
-            src="/stitch/feed/mascot.jpg"
+            src="/stitch/landing/mascot.png"
             width={56}
           />
         </div>
@@ -118,7 +118,7 @@ export function DesktopAside() {
             alt="Mascot Mầm"
             className="mb-3 h-28 w-28 object-contain drop-shadow-sm"
             height={112}
-            src="/stitch/feed/mascot.jpg"
+            src="/stitch/landing/mascot.png"
             width={112}
           />
           <div className="relative mb-4 w-full rounded-2xl bg-[#eef5f2] px-4 py-3">

@@ -1,13 +1,13 @@
 import Image from "next/image";
 
 const previews = [
-  { alt: "Reward preview desktop", src: "/stitch/feed/mascot.jpg" },
+  { alt: "Reward preview desktop", src: "/stitch/landing/mascot.png" },
   { alt: "Reward preview mobile", src: "/stitch/feed/breakfast.jpg" },
 ] as const;
 
 export default function RewardPage() {
   return (
-    <main className="min-h-screen bg-[#f4fbf8] px-4 py-6 pt-24 text-[#13231b] md:px-6">
+    <main className="min-h-screen bg-[#f4fbf8] px-4 py-6 pt-6 text-[#13231b] md:px-6 md:pt-24">
       <div className="mx-auto grid w-full max-w-6xl gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
         <section className="space-y-4">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#3f7c60]">Reward</p>
