@@ -1,0 +1,3 @@
+interface:
+  display_name: "Branch Commit Splitter"
+  short_description: "Split dirty worktrees into stacked branches and focused commits"
