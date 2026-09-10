@@ -12,5 +12,6 @@ supabase/.temp/
 .impeccable/
 .stitch/
 stitch-downloads/
+stitch-artifacts/
 test-results/
 LANDING_UI_HANDOFF.md
