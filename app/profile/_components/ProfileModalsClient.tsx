@@ -14,7 +14,10 @@ type Draft = {
   bio: string;
 };
 
-export function ProfileEditModalButton({ view }: Readonly<{ view: ProfileView }>) {
+export function ProfileEditModalButton({
+  variant = "default",
+  view,
+}: Readonly<{ variant?: "default" | "icon"; view: ProfileView }>) {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [draft, setDraft] = useState<Draft>({
@@ -53,12 +56,17 @@ export function ProfileEditModalButton({ view }: Readonly<{ view: ProfileView }>
   return (
     <>
       <button
-        className="inline-flex items-center gap-2 rounded-xl bg-[#e8efec] px-4 py-2.5 text-sm font-semibold leading-5 text-[#161d1b] shadow-sm transition-colors hover:bg-[#e3eae7]"
+        aria-label="Chỉnh sửa hồ sơ"
+        className={
+          variant === "icon"
+            ? "inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#eef5f2] text-[#006d43] shadow-sm transition-colors hover:bg-[#e3eae7]"
+            : "inline-flex items-center gap-2 rounded-xl bg-[#e8efec] px-4 py-2.5 text-sm font-semibold leading-5 text-[#161d1b] shadow-sm transition-colors hover:bg-[#e3eae7]"
+        }
         onClick={() => setOpen(true)}
         type="button"
       >
-        <MaterialSymbol className="text-base" name="tune" />
-        <span>Chỉnh sửa hồ sơ</span>
+        <MaterialSymbol className={variant === "icon" ? "text-lg" : "text-base"} name={variant === "icon" ? "edit_note" : "tune"} />
+        {variant === "icon" ? null : <span>Chỉnh sửa hồ sơ</span>}
       </button>
       {open && mounted
         ? createPortal(
