@@ -21,6 +21,7 @@ export type ProfileDashboard = {
   profile: ProfileRecord;
   entryCount: number;
   streak: number;
+  timezone: string;
   entries: JournalEntry[];
 };
 

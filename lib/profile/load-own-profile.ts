@@ -1,5 +1,6 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
+import { queryCalendarTimezone } from "@/lib/calendar/queries";
 import { entrySelect, toEntryMetadata } from "@/lib/entries/records";
 import { getStreak } from "./streak";
 import type { ProfileDashboard } from "./types";
@@ -16,7 +17,7 @@ export async function loadOwnProfileDashboard(): Promise<ProfileDashboard | null
     return null;
   }
 
-  const [{ data: profileRow }, { data: entries }] = await Promise.all([
+  const [{ data: profileRow }, { data: entries }, timezone] = await Promise.all([
     supabase
       .from("profiles")
       .select("id, display_name, username, avatar_url, bio")
@@ -26,8 +27,10 @@ export async function loadOwnProfileDashboard(): Promise<ProfileDashboard | null
       .from("entries")
       .select(entrySelect)
       .eq("user_id", auth.user.id)
+      .is("hidden_at", null)
       .order("created_at", { ascending: false })
       .order("id", { ascending: false }),
+    queryCalendarTimezone(supabase, auth.user.id),
   ]);
 
   const profile = profileRow ?? {
@@ -51,6 +54,7 @@ export async function loadOwnProfileDashboard(): Promise<ProfileDashboard | null
     },
     entryCount: journal.length,
     streak: getStreak(journal.map((entry) => entry.created_at)),
+    timezone,
     entries: journal.map((entry) => ({
       id: entry.id,
       content: entry.content,
@@ -83,6 +87,7 @@ export async function loadOwnShellProfile() {
       .from("entries")
       .select("created_at")
       .eq("user_id", auth.user.id)
+      .is("hidden_at", null)
       .order("created_at", { ascending: false }),
   ]);
 

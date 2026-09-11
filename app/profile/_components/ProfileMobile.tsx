@@ -10,7 +10,7 @@ export function MobileProfile({ view }: Readonly<{ view: ProfileView }>) {
         <div className="pointer-events-none absolute -left-16 -top-16 h-56 w-56 rounded-full bg-[#d1e9e0]/40 blur-3xl" />
         <div className="pointer-events-none absolute -right-12 top-10 h-48 w-48 rounded-full bg-[#9cf5c0]/30 blur-3xl" />
         <ProfileBrief view={view} />
-        <WeeklyRhythm />
+        <WeeklyRhythm view={view} />
         <MobileTabs view={view} />
         <MobileControls />
         <ProfileJournalBook mobile view={view} />
@@ -72,8 +72,8 @@ function MobileStat({
   );
 }
 
-function WeeklyRhythm() {
-  const days = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
+function WeeklyRhythm({ view }: Readonly<{ view: ProfileView }>) {
+  const activeCount = view.weeklyRhythm.filter((day) => day.active).length;
 
   return (
     <section className="relative z-10 mt-3 flex flex-col gap-2 rounded-xl bg-white p-3.5 shadow-[0_2px_12px_rgba(26,47,43,0.03)]">
@@ -82,14 +82,14 @@ function WeeklyRhythm() {
           <MaterialSymbol className="text-lg text-[#006d43]" fill name="potted_plant" />
           <span className="text-xs font-semibold text-[#161d1b]">Nhịp điệu tuần này</span>
         </div>
-        <span className="text-[10px] font-medium text-[#006d43]">4/7 chồi xanh thắp sáng</span>
+        <span className="text-[10px] font-medium text-[#006d43]">{activeCount}/7 chồi xanh thắp sáng</span>
       </div>
       <div className="grid grid-cols-7 gap-1.5 pt-1">
-        {days.map((day, index) => (
-          <div className={`${index < 4 ? "bg-[#d1e9e0]/30" : "bg-[#eef5f2] opacity-60"} flex flex-col items-center gap-1 rounded-lg py-1.5`} key={day}>
-            <span className={`text-[10px] ${index === 3 ? "font-bold text-[#006d43]" : "text-[#6d7a70]"}`}>{day}</span>
-            <span className={`${index < 3 ? "bg-[#006d43] text-white" : index === 3 ? "bg-[#006d3d] text-white" : "bg-[#dde4e1] text-[#6d7a70]"} flex h-6 w-6 items-center justify-center rounded-full text-[12px]`}>
-              {index < 3 ? "🌱" : index === 3 ? "🌸" : "·"}
+        {view.weeklyRhythm.map((day) => (
+          <div className={`${day.active ? "bg-[#d1e9e0]/30" : "bg-[#eef5f2] opacity-60"} flex flex-col items-center gap-1 rounded-lg py-1.5`} key={day.date}>
+            <span className={`text-[10px] ${day.isToday ? "font-bold text-[#006d43]" : "text-[#6d7a70]"}`}>{day.label}</span>
+            <span aria-label={`${day.label} ${day.count} nhật ký`} className={`${day.active ? "bg-[#006d43] text-white" : day.isToday ? "bg-white text-[#006d43] ring-1 ring-[#006d43]/35" : "bg-[#dde4e1] text-[#6d7a70]"} flex h-6 w-6 items-center justify-center rounded-full text-[12px]`} title={`${day.date}: ${day.count} nhật ký`}>
+              {day.active ? <MaterialSymbol className="text-base" fill name={day.isToday ? "local_florist" : "psychiatry_alt"} /> : "·"}
             </span>
           </div>
         ))}

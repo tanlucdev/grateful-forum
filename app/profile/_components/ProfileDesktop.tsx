@@ -53,7 +53,7 @@ function DesktopHero({ view }: Readonly<{ view: ProfileView }>) {
               <Pill icon="local_fire_department" text={`${view.streak} ngày liên tiếp`} tone="fire" />
               <Pill icon="nest_eco_leaf" text="Đồng hành cùng Bé Mầm 14 ngày" />
             </div>
-            <WeeklyRhythm compact={false} />
+            <WeeklyRhythm compact={false} view={view} />
           </div>
         </div>
         <div className="self-end md:self-center">
@@ -64,8 +64,8 @@ function DesktopHero({ view }: Readonly<{ view: ProfileView }>) {
   );
 }
 
-function WeeklyRhythm({ compact }: Readonly<{ compact: boolean }>) {
-  const days = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
+function WeeklyRhythm({ compact, view }: Readonly<{ compact: boolean; view: ProfileView }>) {
+  const activeCount = view.weeklyRhythm.filter((day) => day.active).length;
 
   return (
     <div className={`${compact ? "rounded-xl bg-white p-3.5 shadow-[0_2px_12px_rgba(26,47,43,0.03)]" : "mt-4 rounded-2xl border border-[#006d43]/10 bg-[#eef5f2]/70 p-3 sm:px-4"} flex flex-col gap-3`}>
@@ -77,18 +77,18 @@ function WeeklyRhythm({ compact }: Readonly<{ compact: boolean }>) {
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-xs font-bold text-[#1a2f2b]">Nhịp điệu tuần này</span>
-              <span className="rounded-full bg-[#99f3b6]/50 px-2 py-0.5 text-[11px] font-bold text-[#006d3d]">4/7 chồi xanh thắp sáng</span>
+              <span className="rounded-full bg-[#99f3b6]/50 px-2 py-0.5 text-[11px] font-bold text-[#006d3d]">{activeCount}/7 chồi xanh thắp sáng</span>
             </div>
-            {!compact ? <p className="text-[11px] font-medium text-[#3d4a41]">Duy trì 4 ngày liên tiếp nuôi dưỡng mầm tĩnh tại</p> : null}
+            {!compact ? <p className="text-[11px] font-medium text-[#3d4a41]">{activeCount ? `Tuần này bạn đã viết nhật ký ${activeCount} ngày` : "Tuần này chưa có ngày viết nhật ký"}</p> : null}
           </div>
         </div>
       </div>
       <div className="grid grid-cols-7 gap-1.5">
-        {days.map((day, index) => (
-          <div className={`${index < 4 ? "bg-[#d1e9e0]/35" : "bg-[#eef5f2] opacity-70"} flex flex-col items-center gap-1 rounded-lg py-1.5`} key={day}>
-            <span className={`text-[10px] ${index === 3 ? "font-bold text-[#006d43]" : "text-[#6d7a70]"}`}>{day}</span>
-            <span className={`${index < 3 ? "bg-[#006d43] text-white" : index === 3 ? "bg-[#006d3d] text-white shadow-[0_2px_6px_rgba(0,109,61,0.25)]" : "bg-[#dde4e1] text-[#6d7a70]"} flex h-6 w-6 items-center justify-center rounded-full text-[12px]`}>
-              {index < 3 ? "🌱" : index === 3 ? "🌸" : "·"}
+        {view.weeklyRhythm.map((day) => (
+          <div className={`${day.active ? "bg-[#d1e9e0]/35" : "bg-[#eef5f2] opacity-70"} flex flex-col items-center gap-1 rounded-lg py-1.5`} key={day.date}>
+            <span className={`text-[10px] ${day.isToday ? "font-bold text-[#006d43]" : "text-[#6d7a70]"}`}>{day.label}</span>
+            <span aria-label={`${day.label} ${day.count} nhật ký`} className={`${day.active ? "bg-[#006d43] text-white" : day.isToday ? "bg-white text-[#006d43] ring-1 ring-[#006d43]/35" : "bg-[#dde4e1] text-[#6d7a70]"} flex h-6 w-6 items-center justify-center rounded-full text-[12px]`} title={`${day.date}: ${day.count} nhật ký`}>
+              {day.active ? <MaterialSymbol className="text-base" fill name={day.isToday ? "local_florist" : "psychiatry_alt"} /> : "·"}
             </span>
           </div>
         ))}
