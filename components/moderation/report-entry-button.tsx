@@ -17,10 +17,10 @@ export function ReportEntryButton({ entryId }: Readonly<{ entryId: string }>) {
     try {
       await reportEntry(entryId, reason);
       setReason("");
-      setStatus("Reported.");
+      setStatus("Đã gửi báo cáo.");
       setOpen(false);
     } catch (error) {
-      setStatus(error instanceof Error ? error.message : "Could not report entry.");
+      setStatus(error instanceof Error ? error.message : "Không thể gửi báo cáo.");
     } finally {
       setSaving(false);
     }
@@ -30,48 +30,48 @@ export function ReportEntryButton({ entryId }: Readonly<{ entryId: string }>) {
     <div className="mt-4">
       <button
         aria-expanded={open}
-        className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 text-xs font-medium text-[var(--muted)]"
+        className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[#d5e2dc] bg-white px-3 text-xs font-medium text-[#4a5752] hover:border-emerald-200 hover:bg-emerald-50"
         onClick={() => setOpen((value) => !value)}
         type="button"
       >
         <Flag className="h-4 w-4" />
-        Report
+        Báo cáo
       </button>
       {open ? (
-        <div className="mt-3 rounded-lg border border-[var(--border)] bg-[var(--surface-raised)] p-3 shadow-[0_12px_28px_rgba(50,39,26,0.08)]">
-          <label className="text-sm font-medium text-[var(--text)]" htmlFor={`reason-${entryId}`}>
-            Reason
+        <div className="mt-3 rounded-2xl border border-[#e5eee9] bg-white p-3 shadow-[0_12px_28px_rgba(45,60,50,0.08)]">
+          <label className="text-sm font-medium text-[#1c3b2c]" htmlFor={`reason-${entryId}`}>
+            Lý do
           </label>
           <textarea
-            className="mt-2 min-h-24 w-full resize-none rounded-lg border border-[var(--border)] bg-white p-3 text-sm outline-none focus:border-[var(--trust)]"
+            className="mt-2 min-h-24 w-full resize-none rounded-xl border border-[#d5e2dc] bg-white p-3 text-sm text-[#1c3b2c] outline-none focus:border-[#00a86b]"
             id={`reason-${entryId}`}
             onChange={(event) => setReason(event.target.value)}
-            placeholder="Spam, unsafe content, private information..."
+            placeholder="Spam, nội dung không an toàn, thông tin riêng tư..."
             value={reason}
           />
           <div className="mt-3 flex items-center gap-3">
             <button
-              className="inline-flex min-h-11 items-center rounded-full bg-[var(--text)] px-4 text-sm font-medium text-white disabled:opacity-50"
+              className="inline-flex min-h-11 items-center rounded-full bg-[#00a86b] px-4 text-sm font-bold text-white disabled:opacity-50"
               disabled={saving || reason.trim().length < 3}
               onClick={submit}
               type="button"
             >
-              Submit
+              Gửi
             </button>
             <button
-              className="inline-flex min-h-11 items-center rounded-full border border-[var(--border)] bg-[var(--surface)] px-4 text-sm font-medium text-[var(--text)]"
+              className="inline-flex min-h-11 items-center rounded-full border border-[#d5e2dc] bg-white px-4 text-sm font-medium text-[#1c3b2c]"
               onClick={() => setOpen(false)}
               type="button"
             >
-              Cancel
+              Hủy
             </button>
-            <p className="text-sm text-[var(--muted)]" role="status">
+            <p className="text-sm text-[#6b7a74]" role="status">
               {status}
             </p>
           </div>
         </div>
       ) : status ? (
-        <p className="mt-2 text-sm text-[var(--muted)]" role="status">
+        <p className="mt-2 text-sm text-[#6b7a74]" role="status">
           {status}
         </p>
       ) : null}
