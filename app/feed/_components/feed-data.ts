@@ -38,14 +38,26 @@ export function toDisplayItem(item: FeedItem, index: number): DisplayItem {
 
 export function toneClasses(tone: DisplayItem["tone"]) {
   if (tone === "tertiary") {
-    return { dot: "bg-[#a5393e]", text: "text-[#a5393e]" };
+    return {
+      badge: "border-orange-100 bg-orange-50/80 text-orange-900",
+      moodIcon: "🌙",
+      tape: "bg-[rgba(254,215,195,0.85)] text-orange-950",
+    };
   }
 
   if (tone === "mint") {
-    return { dot: "bg-[#4ca374]", text: "text-[#006d43]" };
+    return {
+      badge: "border-teal-100 bg-teal-50 text-teal-800",
+      moodIcon: "🍵",
+      tape: "bg-[rgba(184,225,205,0.78)] text-emerald-900",
+    };
   }
 
-  return { dot: "bg-[#006d43]", text: "text-[#006d43]" };
+  return {
+    badge: "border-amber-100 bg-amber-50/80 text-amber-800",
+    moodIcon: "🌟",
+    tape: "bg-[rgba(253,230,138,0.8)] text-amber-950",
+  };
 }
 
 export function formatRelative(value: string) {
