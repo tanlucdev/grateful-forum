@@ -1,4 +1,5 @@
 import type { JournalEntry, ProfileDashboard } from "@/lib/profile/types";
+import { makeWeeklyRhythm, type WeeklyRhythmDay } from "@/lib/profile/weekly-rhythm";
 
 export const profileAssets = {
   avatarDesktop: "/stitch/profile/avatar-desktop.jpg",
@@ -21,8 +22,10 @@ export type ProfileView = {
   publicCount: number;
   shareUrl: string;
   streak: number;
+  weeklyRhythm: WeeklyRhythmDay[];
   username: string;
 };
+
 export function toProfileView(dashboard: ProfileDashboard): ProfileView {
   const entries = dashboard.entries;
   const displayName =
@@ -43,6 +46,7 @@ export function toProfileView(dashboard: ProfileDashboard): ProfileView {
     publicCount: entries.filter((entry) => entry.visibility === "public").length,
     shareUrl: `begrateful.app/share/${shareSlug}`,
     streak: dashboard.streak,
+    weeklyRhythm: makeWeeklyRhythm(entries, dashboard.timezone),
     username,
   };
 }
