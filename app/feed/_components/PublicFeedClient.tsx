@@ -86,9 +86,9 @@ export function PublicFeedClient({
         </section>
 
         <section className="hidden w-full py-8 md:block">
-          <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
-            <div className="flex flex-col gap-6 lg:col-span-8">
-              <div className="flex flex-col items-start justify-between gap-4 pb-3 sm:flex-row sm:items-end">
+          <div className="grid grid-cols-1 items-start gap-8 md:grid-cols-12">
+            <div className="flex flex-col gap-6 md:col-span-7 lg:col-span-8">
+              <div className="flex flex-col items-start justify-between gap-4 pb-3 xl:flex-row xl:items-end">
                 <div>
                   <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#00a86b]">
                     <span className="h-2 w-2 rounded-full bg-[#00a86b]" />
@@ -101,12 +101,12 @@ export function PublicFeedClient({
                     Đọc một điều biết ơn của người khác để nhắc nhở chính mình về hạnh phúc bình dị.
                   </p>
                 </div>
-                <div className="inline-flex items-center gap-1 rounded-full border border-[#d5e2dc] bg-white/90 p-1 text-xs font-medium text-[#4a5752] shadow-[0_4px_20px_-2px_rgba(28,59,44,0.05)] backdrop-blur-md">
+                <div className="inline-flex max-w-full flex-wrap items-center gap-1 rounded-full border border-[#d5e2dc] bg-white/90 p-1 text-xs font-medium text-[#4a5752] shadow-[0_4px_20px_-2px_rgba(28,59,44,0.05)] backdrop-blur-md">
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-[#00a86b] px-3 py-1.5 text-white">
                     <span className="h-1.5 w-1.5 rounded-full bg-white" />
                     Tất cả hạt mầm
                   </span>
-                  <span className="hidden items-center gap-1.5 rounded-full px-3 py-1.5 lg:inline-flex">
+                  <span className="hidden items-center gap-1.5 rounded-full px-3 py-1.5 xl:inline-flex">
                     <span className="text-[#00a86b]">✦</span>
                     Khoảnh khắc đời thường
                   </span>

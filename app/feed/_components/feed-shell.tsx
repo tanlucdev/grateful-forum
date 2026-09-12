@@ -72,7 +72,7 @@ export function WritePrompt() {
           >
             Hôm nay điều giản dị gì đã sưởi ấm trái tim bạn? Nhấn để ghi lại...
           </Link>
-          <div className="mt-3 flex items-center justify-between gap-3 border-t border-[#f0f4f2] pt-3 text-xs">
+          <div className="mt-3 flex flex-col items-start justify-between gap-3 border-t border-[#f0f4f2] pt-3 text-xs xl:flex-row xl:items-center">
             <div className="flex min-w-0 flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-50 px-2.5 py-1 font-medium text-emerald-800">
                 <span>✨</span>
@@ -88,7 +88,7 @@ export function WritePrompt() {
               </span>
             </div>
             <Link
-              className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#00a86b] px-4 py-1.5 text-xs font-bold text-white hover:bg-[#0e5f3c]"
+              className="inline-flex min-h-9 shrink-0 items-center gap-1 rounded-full bg-[#00a86b] px-4 py-1.5 text-xs font-bold text-white hover:bg-[#0e5f3c]"
               href="/write"
             >
               <span>Viết ngay</span>
@@ -125,7 +125,7 @@ export function MobileFeedEnd({ status }: Readonly<{ status: string }>) {
 
 export function DesktopAside() {
   return (
-    <aside className="flex flex-col gap-6 lg:col-span-4">
+    <aside className="flex flex-col gap-6 md:col-span-5 lg:col-span-4">
       <section className="relative overflow-hidden rounded-3xl border border-[#e5eee9] bg-white p-6 shadow-[0_2px_14px_-1px_rgba(60,80,70,0.06)]">
         <div className="absolute -right-6 -top-6 h-32 w-32 rounded-full bg-emerald-100/60 blur-2xl" />
         <div className="relative flex items-center justify-between border-b border-[#f0f4f2] pb-3">
