@@ -5,4 +5,4 @@
 - When a task edits the `/write` gratitude journal surface, read `./.agents/skills/journal-write-native/SKILL.md` before editing.
 - Do not read these skills on unrelated turns.
 
-- After creating or updating a branch and commit, push it to `https://github.com/tanlucdev/begrateful.git`.
+- After creating or updating a branch and commit, push it to `https://github.com/tanlucdev/begrateful.git` using the GitHub account `tanlucdev`; do not push with another GitHub identity.
