@@ -28,9 +28,9 @@ export function composeEntryContent(input: CreateEntryRequest) {
     `Sticker: ${input.sticker}`,
     `Câu trích dẫn: ${input.quote}`,
     ...(input.imageUrl ? [`Ảnh: ${input.imageUrl}`] : []),
-    "",
-    "Ba điều biết ơn:",
-    ...input.gratitudes.map((item, index) => `${index + 1}. ${item}`),
+    ...(input.gratitudes.length
+      ? ["", "Điều biết ơn:", ...input.gratitudes.map((item, index) => `${index + 1}. ${item}`)]
+      : []),
     "",
     "Tự sự:",
     input.reflection,

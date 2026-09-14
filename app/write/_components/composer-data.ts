@@ -42,14 +42,9 @@ export const writeStickers = [
   },
 ] as const;
 
-export const defaultGratitudes = [
-  "Tách trà sớm mẹ chu đáo chuẩn bị còn bốc khói ấm.",
-  "Cơn gió thu mát lành thổi bay mọi âu lo áp lực công việc.",
-  "Mầm non hoa mười giờ bắt đầu trổ bông đầu tiên xinh xắn.",
-];
+export const defaultGratitudes = [] as string[];
 
-export const defaultReflection =
-  "Sáng nay thức dậy sớm hơn mọi khi, tự tay pha một tách trà hoa cúc ấm. Nhìn ánh nắng xuyên qua kẽ lá ngoài ban công nhỏ, cảm thấy lòng bình yên đến lạ lùng. Nhận ra rằng hạnh phúc đôi khi không phải đích đến to tát, mà chỉ là được hít thở thật sâu trong khoảnh khắc hiện tại này cùng Bé Mầm.";
+export const defaultReflection = "";
 
 export const privacyChoices = [
   {

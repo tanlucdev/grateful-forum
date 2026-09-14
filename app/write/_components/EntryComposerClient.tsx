@@ -34,6 +34,7 @@ export function EntryComposerClient() {
   const [mood, setMood] = useState<WriteMood>(writeMoods[0].label);
   const [space, setSpace] = useState("Ban công góc nhỏ");
   const [gratitudes, setGratitudes] = useState([...defaultGratitudes]);
+  const [gratitudesOpen, setGratitudesOpen] = useState(false);
   const [reflection, setReflection] = useState(defaultReflection);
   const [quote, setQuote] = useState<WriteQuote>(writeQuotes[0]);
   const [sticker, setSticker] = useState<WriteSticker>(writeStickers[0].label);
@@ -52,6 +53,10 @@ export function EntryComposerClient() {
       }).format(new Date()),
     [],
   );
+  const filledGratitudes = useMemo(
+    () => gratitudes.map((item) => item.trim()).filter(Boolean),
+    [gratitudes],
+  );
   const entryText = useMemo(
     () =>
       [
@@ -61,18 +66,15 @@ export function EntryComposerClient() {
         `Sticker: ${sticker}`,
         `Câu trích dẫn: ${quote}`,
         imageUrl ? `Ảnh: ${imageUrl}` : "",
-        ...gratitudes
-          .filter((item) => item.trim())
-          .map((item, index) => `${index + 1}. ${item.trim()}`),
+        ...filledGratitudes.map((item, index) => `${index + 1}. ${item}`),
         reflection.trim(),
         visibility === "private" ? "Riêng tư" : "Cộng đồng",
       ]
         .filter(Boolean)
         .join("\n"),
-    [gratitudes, imageUrl, mood, quote, reflection, space, sticker, visibility, washi],
+    [filledGratitudes, imageUrl, mood, quote, reflection, space, sticker, visibility, washi],
   );
   const canSubmit =
-    gratitudes.every((item) => item.trim()) &&
     reflection.trim().length > 0 &&
     space.trim().length > 0 &&
     quote.trim().length > 0 &&
@@ -86,6 +88,7 @@ export function EntryComposerClient() {
     setMood(writeMoods[0].label);
     setSpace("Ban công góc nhỏ");
     setGratitudes([...defaultGratitudes]);
+    setGratitudesOpen(false);
     setReflection(defaultReflection);
     setQuote(writeQuotes[0]);
     setSticker(writeStickers[0].label);
@@ -123,7 +126,7 @@ export function EntryComposerClient() {
     try {
       const result = await createEntry({
         visibility,
-        gratitudes: gratitudes.map((item) => item.trim()),
+        gratitudes: filledGratitudes,
         reflection: reflection.trim(),
         mood,
         washi,
@@ -172,10 +175,12 @@ export function EntryComposerClient() {
                 />
                 <WritingPanel
                   gratitudes={gratitudes}
+                  gratitudesOpen={gratitudesOpen}
                   mode={mode}
                   noteLength={reflection.length}
                   reflection={reflection}
                   setGratitudes={setGratitudes}
+                  setGratitudesOpen={setGratitudesOpen}
                   setReflection={setReflection}
                 />
                 {mode === "minimal" ? (
@@ -208,7 +213,7 @@ export function EntryComposerClient() {
       {previewOpen ? (
         <PreviewModal
           close={() => setPreviewOpen(false)}
-          gratitudes={gratitudes}
+          gratitudes={filledGratitudes}
           imageUrl={imageUrl}
           mood={mood}
           quote={quote}

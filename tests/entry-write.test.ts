@@ -15,6 +15,34 @@ assert.throws(() =>
   }),
 );
 
+assert.deepEqual(
+  createEntryRequestSchema.parse({
+    visibility: "private",
+    gratitudes: [],
+    reflection: "Một khoảnh khắc tự sự.",
+    mood: "Bình thản",
+    washi: "Washi An Yên",
+    space: "Bàn làm việc",
+    quote: "Một điều biết ơn ngắn cũng đủ làm ngày hôm nay dịu lại.",
+    sticker: "Bé Mầm",
+  }).gratitudes,
+  [],
+);
+
+assert.equal(
+  createEntryRequestSchema.parse({
+    visibility: "private",
+    gratitudes: ["Một điều nhỏ", "Một điều nữa", "Điều thứ ba", "Điều thứ tư"],
+    reflection: "Một khoảnh khắc tự sự.",
+    mood: "Bình thản",
+    washi: "Washi An Yên",
+    space: "Bàn làm việc",
+    quote: "Một điều biết ơn ngắn cũng đủ làm ngày hôm nay dịu lại.",
+    sticker: "Bé Mầm",
+  }).gratitudes.length,
+  4,
+);
+
 assert.throws(() =>
   validateEntryMediaFile(new File([new Uint8Array([1])], "note.txt", { type: "text/plain" })),
 );
