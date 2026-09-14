@@ -1,6 +1,6 @@
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { safeAuthRedirect } from "@/lib/auth/redirects";
-import { AuthPanelClient } from "./_components/AuthPanelClient";
+import { AuthPanelClient } from "./_components/auth-panel-client";
 
 export default async function AuthPage({
   searchParams,

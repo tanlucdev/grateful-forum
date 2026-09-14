@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { loginHref } from "@/lib/auth/redirects";
 import { CalendarAuthError, loadCalendarOverview } from "@/lib/calendar/service";
 import { calendarQuerySchema } from "@/lib/calendar/validation";
-import { CalendarScreen } from "./_components/CalendarScreen";
+import { CalendarScreen } from "./_components/calendar-screen";
 
 export default async function CalendarPage({
   searchParams,
