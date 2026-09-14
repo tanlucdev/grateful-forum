@@ -171,7 +171,14 @@ export function NotebookControls({ mode, mood, setMood, setSpace, setWashi, spac
   );
 }
 
-export function WritingPanel({ gratitudes, mode, noteLength, reflection, setGratitudes, setReflection }: { gratitudes: string[]; mode: "minimal" | "creative"; noteLength: number; reflection: string; setGratitudes: (items: string[]) => void; setReflection: (value: string) => void }) {
+export function WritingPanel({ gratitudes, gratitudesOpen, mode, noteLength, reflection, setGratitudes, setGratitudesOpen, setReflection }: { gratitudes: string[]; gratitudesOpen: boolean; mode: "minimal" | "creative"; noteLength: number; reflection: string; setGratitudes: (items: string[]) => void; setGratitudesOpen: (open: boolean) => void; setReflection: (value: string) => void }) {
+  const showGratitudes = mode === "creative" && gratitudesOpen;
+
+  function openGratitudes() {
+    if (gratitudes.length === 0) setGratitudes(["", "", ""]);
+    setGratitudesOpen(true);
+  }
+
   return (
     <div className="flex flex-col gap-3">
       {mode === "creative" ? (
@@ -181,23 +188,30 @@ export function WritingPanel({ gratitudes, mode, noteLength, reflection, setGrat
               <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#006d43] text-[12px] font-bold text-white">3</span>
               <h2 className="text-[20px] font-semibold leading-7 text-[#1a2f2b]">3 Điều biết ơn hôm nay</h2>
             </div>
-            <span className="rounded-full bg-[#d1e9e0]/50 px-2.5 py-1 text-[11px] font-semibold leading-4 text-[#006d43]">#NhẹNhàngNuôiDưỡng</span>
+            <button className="inline-flex items-center gap-1.5 rounded-full bg-[#d1e9e0]/50 px-2.5 py-1 text-[11px] font-semibold leading-4 text-[#006d43]" onClick={showGratitudes ? () => setGratitudesOpen(false) : openGratitudes} type="button">
+              <MaterialSymbol className="text-[15px]" name={showGratitudes ? "expand_less" : "expand_more"} />
+              <span>{showGratitudes ? "Thu gọn" : "Mở phần này"}</span>
+            </button>
           </div>
-          <div className="space-y-2.5">
-            {gratitudes.map((item, index) => (
-              <div className="group flex items-start gap-3 rounded-2xl bg-[#eef5f2]/70 p-3.5" key={index}>
-                <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-[#d1e9e0]/70 text-[14px] font-bold text-[#006d43]">{index + 1}</span>
-                <AutoGrowTextarea className="w-full resize-none bg-transparent text-[14px] leading-6 text-[#161d1b] outline-none placeholder:text-[#bccabe]" minRows={1} onChange={(event) => setGratitudes(gratitudes.map((value, itemIndex) => itemIndex === index ? event.target.value : value))} placeholder="Điều biết ơn của bạn..." value={item} />
-                <button aria-label={`Xóa điều biết ơn ${index + 1}`} className="text-[#bccabe] opacity-0 transition-opacity hover:text-[#ba1a1a] group-hover:opacity-100" onClick={() => setGratitudes(gratitudes.map((value, itemIndex) => itemIndex === index ? "" : value))} type="button">
-                  <MaterialSymbol name="close" />
-                </button>
+          {showGratitudes ? (
+            <>
+              <div className="space-y-2.5">
+                {gratitudes.map((item, index) => (
+                  <div className="group flex items-start gap-3 rounded-2xl bg-[#eef5f2]/70 p-3.5" key={index}>
+                    <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-[#d1e9e0]/70 text-[14px] font-bold text-[#006d43]">{index + 1}</span>
+                    <AutoGrowTextarea className="w-full resize-none bg-transparent text-[14px] leading-6 text-[#161d1b] outline-none placeholder:text-[#bccabe]" minRows={1} onChange={(event) => setGratitudes(gratitudes.map((value, itemIndex) => itemIndex === index ? event.target.value : value))} placeholder="Điều biết ơn của bạn..." value={item} />
+                    <button aria-label={`Xóa điều biết ơn ${index + 1}`} className="text-[#6d7a70] transition-colors hover:text-[#ba1a1a] md:opacity-0 md:group-hover:opacity-100" onClick={() => setGratitudes(gratitudes.filter((_, itemIndex) => itemIndex !== index))} type="button">
+                      <MaterialSymbol name="close" />
+                    </button>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-          <button className="self-start inline-flex items-center gap-2 rounded-xl bg-[#e8efec] px-4 py-2 text-[12px] font-semibold leading-4 text-[#006d43]" onClick={() => setGratitudes([...gratitudes, ""])} type="button">
-            <MaterialSymbol className="text-[16px]" name="add_circle" />
-            <span>Thêm điều biết ơn thứ tư</span>
-          </button>
+              <button className="self-start inline-flex items-center gap-2 rounded-xl bg-[#e8efec] px-4 py-2 text-[12px] font-semibold leading-4 text-[#006d43] disabled:opacity-45" disabled={gratitudes.length >= 10} onClick={() => setGratitudes([...gratitudes, ""])} type="button">
+                <MaterialSymbol className="text-[16px]" name="add_circle" />
+                <span>Thêm điều biết ơn</span>
+              </button>
+            </>
+          ) : null}
         </>
       ) : null}
       <div className={`flex flex-col gap-2.5 ${mode === "creative" ? "mt-1" : ""}`}>

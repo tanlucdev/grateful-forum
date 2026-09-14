@@ -5,7 +5,7 @@ const gratitudeSchema = z.string().trim().min(1).max(1000);
 
 export const createEntryRequestSchema = z.object({
   visibility: z.enum(entryVisibilities),
-  gratitudes: z.array(gratitudeSchema).length(3),
+  gratitudes: z.array(gratitudeSchema).max(10),
   reflection: z.string().trim().min(1).max(5000),
   mood: z.string().trim().min(1).max(80),
   washi: z.string().trim().min(1).max(80),
