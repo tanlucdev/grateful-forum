@@ -263,12 +263,12 @@ export function TestimonialCard({
         <p className="mb-4 text-sm leading-relaxed text-text-deep">&ldquo;{quote}&rdquo;</p>
       </div>
       <div className="relative flex items-center justify-between border-t border-surface-container pt-3">
-        <motion.button className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:opacity-80" type="button" {...softPress(Boolean(reduceMotion))}>
+        <motion.span className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:opacity-80" {...softPress(Boolean(reduceMotion))}>
           <MaterialSymbol className="text-[16px]" fill name="favorite" /> Đồng cảm
-        </motion.button>
-        <motion.button className="inline-flex items-center gap-1 text-xs font-medium text-on-surface-variant hover:text-primary" type="button" {...softPress(Boolean(reduceMotion))}>
+        </motion.span>
+        <motion.span className="inline-flex items-center gap-1 text-xs font-medium text-on-surface-variant hover:text-primary" {...softPress(Boolean(reduceMotion))}>
           <MaterialSymbol className="text-[15px]" name="spa" /> Gửi lời cảm ơn
-        </motion.button>
+        </motion.span>
       </div>
     </motion.div>
   );

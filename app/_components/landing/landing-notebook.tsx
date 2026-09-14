@@ -71,7 +71,7 @@ export function NotebookSection() {
 
   return (
     <Reveal>
-      <section className="w-full py-16 lg:py-24" id="journal-flipbook">
+      <section className="w-full scroll-mt-24 py-16 lg:scroll-mt-28 lg:py-24" id="journal-flipbook">
         <div className="mx-auto max-w-md px-4 lg:max-w-7xl lg:px-margin-desktop">
           <SectionHeader copy="Mỗi bài viết riêng trở thành một phần lịch sử cá nhân để bạn xem lại những điều từng làm mình biết ơn." eyebrow="Hành trình cá nhân" title="Xem lại những điều bạn từng biết ơn" />
           <div className="relative mx-auto max-w-5xl rounded-[36px] border-2 border-white/80 bg-gradient-to-br from-[#e4eee7] via-[#dde8e1] to-[#d6e3db] p-3 shadow-[0_24px_60px_rgba(26,47,43,0.08)] transition-transform duration-500 hover:-translate-y-1 sm:p-7 lg:p-9">

@@ -52,7 +52,7 @@ export type FeedCard = Readonly<{
 }>;
 
 export const navItems: readonly NavItem[] = [
-  { href: "#", label: "Trang chủ" },
+  { href: "#home", label: "Trang chủ" },
   { href: "#community", label: "Cộng đồng" },
   { href: "#private-public", label: "Chia sẻ" },
   { href: "#garden-spotlight", label: "Lịch thực hành" },

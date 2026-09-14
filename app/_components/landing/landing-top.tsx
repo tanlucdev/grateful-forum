@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState, type MouseEvent } from "react";
 
 import { MaterialSymbol } from "@/components/ui/material-symbol";
 import { loginHref } from "@/lib/auth/redirects";
@@ -11,14 +11,80 @@ import { loginHref } from "@/lib/auth/redirects";
 import { moods, navItems } from "./landing-data";
 import { LiveDot, MoodButton, ShimmerCTA, softPress, tapLift, useLandingReducedMotion } from "./motion-primitives";
 
+const HEADER_SCROLL_LOCK_MIN_MS = 650;
+const HEADER_SCROLL_LOCK_MAX_MS = 1400;
+const SECTION_MARKER_RATIO = 0.38;
+
 export function LandingHeader() {
-  const [hoveredNav, setHoveredNav] = useState(0);
+  const [activeNav, setActiveNav] = useState(0);
   const reduceMotion = useLandingReducedMotion();
+  const scrollLockUntilRef = useRef(0);
+  const scrollUnlockTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const sections = navItems
+      .map((item, index) => ({ element: document.getElementById(item.href.slice(1)), index }))
+      .filter((section): section is { element: HTMLElement; index: number } => Boolean(section.element));
+
+    if (!sections.length) return;
+
+    let frame = 0;
+
+    const updateActiveNav = () => {
+      frame = 0;
+      if (performance.now() < scrollLockUntilRef.current) return;
+
+      const marker = window.innerHeight * SECTION_MARKER_RATIO;
+      const nextActive = sections.reduce((current, section) => (section.element.getBoundingClientRect().top <= marker ? section.index : current), sections[0].index);
+
+      setActiveNav((current) => (current === nextActive ? current : nextActive));
+    };
+
+    const scheduleUpdate = () => {
+      if (!frame) frame = window.requestAnimationFrame(updateActiveNav);
+    };
+
+    updateActiveNav();
+    window.addEventListener("scroll", scheduleUpdate, { passive: true });
+    window.addEventListener("resize", scheduleUpdate);
+
+    return () => {
+      if (frame) window.cancelAnimationFrame(frame);
+      if (scrollUnlockTimerRef.current) window.clearTimeout(scrollUnlockTimerRef.current);
+      window.removeEventListener("scroll", scheduleUpdate);
+      window.removeEventListener("resize", scheduleUpdate);
+    };
+  }, []);
+
+  const navigateToSection = useCallback(
+    (event: MouseEvent<HTMLAnchorElement>, href: string, index: number) => {
+      event.preventDefault();
+
+      const target = document.getElementById(href.slice(1));
+      if (!target) return;
+
+      setActiveNav(index);
+      window.history.pushState(null, "", href);
+
+      const distance = Math.abs(target.getBoundingClientRect().top);
+      const scrollToTarget = (behavior: ScrollBehavior) => target.scrollIntoView({ block: "start", behavior });
+      const lockMs = reduceMotion ? 0 : Math.min(HEADER_SCROLL_LOCK_MAX_MS, Math.max(HEADER_SCROLL_LOCK_MIN_MS, distance * 0.35));
+
+      if (scrollUnlockTimerRef.current) window.clearTimeout(scrollUnlockTimerRef.current);
+      scrollLockUntilRef.current = performance.now() + lockMs;
+
+      scrollToTarget(reduceMotion ? "instant" : "smooth");
+      scrollUnlockTimerRef.current = window.setTimeout(() => {
+        scrollLockUntilRef.current = 0;
+      }, lockMs);
+    },
+    [reduceMotion],
+  );
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/60 bg-[#faf7f0]/85 px-4 py-3 shadow-[0_4px_20px_rgba(26,47,43,0.03)] backdrop-blur-xl lg:fixed lg:left-0 lg:right-0 lg:w-full lg:px-0 lg:py-0">
       <div className="mx-auto flex max-w-md items-center justify-between gap-3 lg:h-20 lg:max-w-7xl lg:px-margin-desktop">
-        <Link className="flex shrink-0 items-center gap-3" href="#">
+        <Link className="flex shrink-0 items-center gap-3" href="#home" onClick={(event) => navigateToSection(event, "#home", 0)}>
           <Image alt="" className="h-9 w-9 object-cover lg:h-10 lg:w-10 " height={40} src="/stitch/landing/mascot.png" width={40} />
           <div className="flex flex-col">
             <span className="text-lg font-bold leading-tight tracking-tight text-primary lg:text-xl">Grateful Forum</span>
@@ -28,21 +94,23 @@ export function LandingHeader() {
         <nav className="relative hidden items-center gap-1.5 rounded-2xl border border-white/80 bg-white/70 p-1 shadow-[0_2px_12px_rgba(0,0,0,0.03)] lg:flex">
           {navItems.map(({ href, label }, index) => (
             <motion.a
-              className={`relative rounded-xl px-3.5 py-1.5 text-sm font-bold transition-colors ${
-                hoveredNav === index ? "text-primary" : "text-on-surface-variant"
+              className={`relative overflow-hidden rounded-xl px-3.5 py-1.5 text-sm font-bold transition-colors ${
+                activeNav === index ? "text-on-primary" : "text-on-surface-variant hover:text-primary"
               }`}
+              aria-current={activeNav === index ? "location" : undefined}
               href={href}
               key={href}
-              onMouseEnter={() => setHoveredNav(index)}
+              onClick={(event) => navigateToSection(event, href, index)}
               {...softPress(Boolean(reduceMotion))}
             >
-              {hoveredNav === index ? (
+              {activeNav === index ? (
                 <motion.span
-                  className="absolute inset-0 rounded-xl bg-surface-white shadow-xs"
-                  layoutId="landing-nav-indicator"
+                  className="absolute inset-0 rounded-xl bg-primary shadow-[0_6px_16px_rgba(0,109,67,0.18)]"
+                  layoutId="landing-nav-active"
+                  transition={reduceMotion ? { duration: 0.01 } : { duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
                 />
               ) : null}
-              <span className="relative">{label}</span>
+              <span className="relative z-10">{label}</span>
             </motion.a>
           ))}
         </nav>
@@ -61,7 +129,7 @@ export function HeroSection() {
   const [selectedMood, setSelectedMood] = useState(0);
   const reduceMotion = useLandingReducedMotion();
   return (
-    <section className="mx-auto grid max-w-md grid-cols-1 gap-6 px-4 pb-12 pt-6 text-center lg:max-w-7xl lg:grid-cols-12 lg:gap-10 lg:px-margin-desktop lg:pb-24 lg:pt-8 lg:text-left">
+    <section className="mx-auto grid scroll-mt-24 max-w-md grid-cols-1 gap-6 px-4 pb-12 pt-6 text-center lg:scroll-mt-28 lg:max-w-7xl lg:grid-cols-12 lg:gap-10 lg:px-margin-desktop lg:pb-24 lg:pt-8 lg:text-left" id="home">
       <div className="flex flex-col items-center lg:col-span-7 lg:items-start">
         <div className="relative mb-4 inline-flex items-center gap-2 overflow-hidden rounded-full border border-primary/20 bg-primary-fixed/50 px-3.5 py-1.5 text-xs font-bold text-primary">
           <span aria-hidden="true" className="landing-badge-shine pointer-events-none absolute -inset-y-1 left-[-55%] w-1/2 -skew-x-12" />
