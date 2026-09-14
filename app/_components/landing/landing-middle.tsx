@@ -11,7 +11,7 @@ import { CardFooter, CardTop, LiftCard, Metric, ProgressBar, ProgressBlock, Reve
 export function ChoiceSection() {
   return (
     <Reveal>
-      <section className="w-full py-16" id="private-public">
+      <section className="w-full scroll-mt-24 py-16 lg:scroll-mt-28" id="private-public">
         <div className="mx-auto max-w-md px-4 lg:max-w-7xl lg:px-margin-desktop">
           <SectionHeader copy="Mỗi lời biết ơn đều có thể bắt đầu từ một khoảnh khắc riêng, rồi trở thành động lực cho người khác khi bạn sẵn sàng chia sẻ." eyebrow="Bạn luôn chọn cách tham gia" title="Chia sẻ với cộng đồng hoặc giữ riêng cho mình" />
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-8">
@@ -52,7 +52,7 @@ export function GardenSection() {
   const reduceMotion = useLandingReducedMotion();
   return (
     <Reveal>
-      <section className="w-full py-16 lg:py-24" id="garden-spotlight">
+      <section className="w-full scroll-mt-24 py-16 lg:scroll-mt-28 lg:py-24" id="garden-spotlight">
         <div className="mx-auto max-w-md px-4 lg:max-w-7xl lg:px-margin-desktop">
           <div className="mb-12 flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
             <div>

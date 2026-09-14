@@ -335,7 +335,7 @@ a:active {
 }
 
 .landing-badge-marquee {
-  animation: landing-marquee-x 34s linear infinite;
+  animation: landing-marquee-x 68s linear infinite;
 }
 
 .landing-badge-marquee:hover,
@@ -349,7 +349,7 @@ a:active {
 }
 
 .landing-community-marquee {
-  animation: landing-marquee-reverse-x 34s linear infinite;
+  animation: landing-marquee-reverse-x 82s linear infinite;
 }
 
 .landing-community-marquee:hover,
