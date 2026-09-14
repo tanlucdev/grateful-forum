@@ -34,6 +34,10 @@ Refactor shape:
 Naming:
 - Use `Client` suffix for client components.
 - Use `Section`, `Card`, `Modal`, `Loader`, or `Skeleton` when the role is clear.
-- Use kebab-case folders, PascalCase files.
+- Use kebab-case folders.
+- Keep Next reserved route files as `page.tsx`, `route.ts`, `layout.tsx`, `loading.tsx`, and related App Router names.
+- Put component entries in `kebab-case/index.tsx`; keep the exported symbol `PascalCase`.
+- Keep non-component modules as `kebab-case.ts`.
+- Keep `components/ui/*.tsx` flat for primitive/shadcn-style components.
 
 When the repo already has a working pattern, follow it. Do not introduce `src/`, new global state, or a new abstraction layer unless the current code genuinely needs it.

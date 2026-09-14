@@ -1,5 +1,5 @@
 import { loadAdminQueue } from "@/lib/moderation/load-admin-queue";
-import { ModerationQueueClient } from "./_components/ModerationQueueClient";
+import { ModerationQueueClient } from "./_components/moderation-queue-client";
 
 export default async function ModerationPage() {
   const queue = await loadAdminQueue();

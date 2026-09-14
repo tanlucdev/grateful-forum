@@ -1,7 +1,7 @@
 import { sampleCalendarOverview } from "@/lib/calendar/sample";
 import { visibleYearDays } from "@/lib/calendar/stats";
 import { calendarHref, calendarQuerySchema } from "@/lib/calendar/validation";
-import { CalendarScreen } from "../_components/CalendarScreen";
+import { CalendarScreen } from "../_components/calendar-screen";
 
 export default async function CalendarSamplePage({
   searchParams,
