@@ -4,6 +4,7 @@ import { ReportEntryButton } from "@/components/moderation/report-entry-button";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
 import type { DisplayItem } from "../feed-data";
 import { toneClasses } from "../feed-data";
+import { MindfulActionsClient } from "../feed-actions-client";
 
 export function MobileFeedCard({ item }: Readonly<{ item: DisplayItem }>) {
   const tone = toneClasses(item.tone);
@@ -27,7 +28,7 @@ export function MobileFeedCard({ item }: Readonly<{ item: DisplayItem }>) {
       </div>
       <EntryBody item={item} mobile />
       <Tags item={item} />
-      <MindfulActions item={item} compact />
+      <MindfulActionsClient item={item} compact />
     </article>
   );
 }
@@ -60,7 +61,7 @@ export function DesktopFeedCard({ item }: Readonly<{ item: DisplayItem }>) {
       </div>
       <EntryBody item={item} />
       <Tags item={item} />
-      <MindfulActions item={item} />
+      <MindfulActionsClient item={item} />
       <ReportEntryButton entryId={item.id} />
     </article>
   );
@@ -235,37 +236,4 @@ function Tags({ item }: Readonly<{ item: DisplayItem }>) {
       ))}
     </div>
   );
-}
-
-function MindfulActions({ compact = false, item }: Readonly<{ compact?: boolean; item: DisplayItem }>) {
-  const first = item.isAnonymous ? "Ôm lấy bạn" : "Đồng cảm";
-  const second = item.isAnonymous ? "Cùng cố gắng nhé" : "Gửi năng lượng lành";
-
-  return (
-    <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-[#f0f4f2] pt-4 text-xs">
-      <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-        <Reaction label={first} count={reactionCount(item.id, 11)} icon="volunteer_activism" />
-        <Reaction label={second} count={reactionCount(item.id, 17)} icon={item.isAnonymous ? "psychiatry" : "auto_awesome"} />
-        {compact ? null : <Reaction label="Tưới mát" count={reactionCount(item.id, 23)} icon="psychiatry" />}
-      </div>
-      <button className="flex items-center gap-1 text-xs font-semibold text-[#6b7a74] hover:text-[#00a86b]" type="button">
-        <MaterialSymbol className="text-base" name="bookmark" />
-        <span className="hidden sm:inline">Lưu truyền cảm hứng</span>
-      </button>
-    </div>
-  );
-}
-
-function Reaction({ count, icon, label }: Readonly<{ count: number; icon: string; label: string }>) {
-  return (
-    <button className="flex max-w-full items-center gap-1.5 rounded-full border border-[#e5eee9] bg-white px-3.5 py-1.5 font-medium text-[#4a5752] shadow-[0_1px_2px_rgba(26,47,43,0.04)] hover:border-[#bbf7d0] hover:bg-[#f0fdf4] hover:text-[#0e5f3c]" type="button">
-      <MaterialSymbol className="text-base" name={icon} />
-      <span className="truncate">{label}</span>
-      <span className="rounded-full bg-emerald-50 px-1.5 text-[11px] font-bold text-emerald-800">{count}</span>
-    </button>
-  );
-}
-
-function reactionCount(id: string, salt: number) {
-  return id.split("").reduce((total, char) => total + char.charCodeAt(0), salt) % 37 + 6;
 }

@@ -1,5 +1,7 @@
 import type { FeedItem } from "@/lib/feed/types";
 import type { EntryMetadata } from "@/lib/entries/types";
+import type { FeedReactionCounts } from "@/lib/feed/engagement-state";
+import type { FeedReactionType } from "@/lib/feed/validation";
 
 export type DisplayItem = {
   id: string;
@@ -12,8 +14,11 @@ export type DisplayItem = {
   initial?: string;
   isAnonymous: boolean;
   profileHref?: string;
+  reactions: FeedReactionCounts;
   time: string;
   tone: "primary" | "tertiary" | "mint";
+  viewerBookmarked: boolean;
+  viewerReaction: FeedReactionType | null;
 };
 
 export function toDisplayItem(item: FeedItem, index: number): DisplayItem {
@@ -31,8 +36,11 @@ export function toDisplayItem(item: FeedItem, index: number): DisplayItem {
     isAnonymous: !author,
     metadata: item.metadata,
     profileHref: author ? `/profile/${author.id}` : undefined,
+    reactions: item.reactions,
     time: formatRelative(item.createdAt),
     tone,
+    viewerBookmarked: item.viewerBookmarked,
+    viewerReaction: item.viewerReaction,
   };
 }
 
