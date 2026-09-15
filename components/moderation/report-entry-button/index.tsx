@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Flag } from "lucide-react";
 import { reportEntry } from "@/lib/api/reports";
+import { MaterialSymbol } from "@/components/ui/material-symbol";
 
 export function ReportEntryButton({ entryId }: Readonly<{ entryId: string }>) {
   const [open, setOpen] = useState(false);
@@ -27,18 +27,18 @@ export function ReportEntryButton({ entryId }: Readonly<{ entryId: string }>) {
   }
 
   return (
-    <div className="mt-4">
+    <div className="mt-3">
       <button
         aria-expanded={open}
-        className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[#d5e2dc] bg-white px-3 text-xs font-medium text-[#4a5752] hover:border-emerald-200 hover:bg-emerald-50"
+        className="inline-flex min-h-9 items-center gap-1.5 rounded-full bg-[#f7fbf9] px-3 text-xs font-bold text-[#52645b] shadow-[0_1px_4px_rgba(26,47,43,0.04)] ring-1 ring-[#e3eee8] transition-colors hover:bg-white hover:text-[#852229] hover:ring-[#f0c9c9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#99f3b6] focus-visible:ring-offset-2"
         onClick={() => setOpen((value) => !value)}
         type="button"
       >
-        <Flag className="h-4 w-4" />
+        <MaterialSymbol className="text-[15px]" name="flag" />
         Báo cáo
       </button>
       {open ? (
-        <div className="mt-3 rounded-2xl border border-[#e5eee9] bg-white p-3 shadow-[0_12px_28px_rgba(45,60,50,0.08)]">
+        <div className="mt-3 rounded-2xl bg-white p-3 shadow-[0_12px_28px_rgba(45,60,50,0.08)] ring-1 ring-[#e5eee9]">
           <label className="text-sm font-medium text-[#1c3b2c]" htmlFor={`reason-${entryId}`}>
             Lý do
           </label>
@@ -51,7 +51,7 @@ export function ReportEntryButton({ entryId }: Readonly<{ entryId: string }>) {
           />
           <div className="mt-3 flex items-center gap-3">
             <button
-              className="inline-flex min-h-11 items-center rounded-full bg-[#00a86b] px-4 text-sm font-bold text-white disabled:opacity-50"
+              className="inline-flex min-h-10 items-center rounded-full bg-[#006d43] px-4 text-sm font-bold text-white shadow-[0_6px_14px_rgba(0,109,67,0.14)] transition-colors hover:bg-[#145C34] disabled:cursor-not-allowed disabled:opacity-50"
               disabled={saving || reason.trim().length < 3}
               onClick={submit}
               type="button"
@@ -59,7 +59,7 @@ export function ReportEntryButton({ entryId }: Readonly<{ entryId: string }>) {
               Gửi
             </button>
             <button
-              className="inline-flex min-h-11 items-center rounded-full border border-[#d5e2dc] bg-white px-4 text-sm font-medium text-[#1c3b2c]"
+              className="inline-flex min-h-10 items-center rounded-full bg-[#f7fbf9] px-4 text-sm font-semibold text-[#1c3b2c] ring-1 ring-[#d5e2dc] transition-colors hover:bg-white"
               onClick={() => setOpen(false)}
               type="button"
             >

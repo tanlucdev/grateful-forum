@@ -1,18 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ReportEntryButton } from "@/components/moderation/report-entry-button";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
 import type { DisplayItem } from "../feed-data";
 import { toneClasses } from "../feed-data";
 import { MindfulActionsClient } from "../feed-actions-client";
 
 export function MobileFeedCard({ item }: Readonly<{ item: DisplayItem }>) {
-  const tone = toneClasses(item.tone);
-
   return (
     <article className="relative w-full min-w-0 rounded-3xl border border-[#e5eee9] bg-white p-5 shadow-[0_2px_14px_-1px_rgba(60,80,70,0.06)]">
       <Tape tone={item.tone} />
-      <div className="mt-2 flex items-start justify-between gap-3">
+      <div className="mt-2 flex items-start justify-between gap-3 pr-8">
         <div className="flex min-w-0 items-center gap-3">
           <Avatar item={item} />
           <div className="min-w-0 flex-1">
@@ -22,13 +19,10 @@ export function MobileFeedCard({ item }: Readonly<{ item: DisplayItem }>) {
             </p>
           </div>
         </div>
-        <span className={`shrink-0 rounded-full border px-2.5 py-1 text-[11px] font-semibold ${tone.badge}`}>
-          {item.isAnonymous ? "Ẩn danh" : "Công khai"}
-        </span>
       </div>
       <EntryBody item={item} mobile />
       <Tags item={item} />
-      <MindfulActionsClient item={item} compact />
+      <MindfulActionsClient item={item} compact floatingMenu />
     </article>
   );
 }
@@ -39,7 +33,7 @@ export function DesktopFeedCard({ item }: Readonly<{ item: DisplayItem }>) {
   return (
     <article className="relative w-full min-w-0 rounded-3xl border border-[#e5eee9] bg-white p-7 shadow-[0_2px_14px_-1px_rgba(60,80,70,0.06),0_1px_3px_rgba(0,0,0,0.02)] transition-shadow hover:shadow-[0_4px_20px_-2px_rgba(28,59,44,0.05)]">
       <Tape tone={item.tone} />
-      <div className="mt-2 flex flex-col items-start justify-between gap-3 xl:flex-row xl:gap-4">
+      <div className="mt-2 flex flex-col items-start justify-between gap-3 pr-9 xl:flex-row xl:gap-4">
         <div className="flex min-w-0 items-center gap-3">
           <Avatar item={item} />
           <div className="min-w-0 flex-1">
@@ -54,15 +48,10 @@ export function DesktopFeedCard({ item }: Readonly<{ item: DisplayItem }>) {
             </p>
           </div>
         </div>
-        <span className={`flex max-w-full shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold ${tone.badge}`}>
-          <span>{tone.moodIcon}</span>
-          <span>{item.metadata.mood || (item.isAnonymous ? "Lắng đọng" : "An yên")}</span>
-        </span>
       </div>
       <EntryBody item={item} />
       <Tags item={item} />
-      <MindfulActionsClient item={item} />
-      <ReportEntryButton entryId={item.id} />
+      <MindfulActionsClient item={item} floatingMenu />
     </article>
   );
 }
