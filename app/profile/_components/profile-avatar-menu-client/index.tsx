@@ -39,24 +39,24 @@ export function ProfileAvatarMenu({ view }: Readonly<{ view: ProfileView }>) {
         aria-expanded={open}
         aria-haspopup="menu"
         aria-label="Menu tài khoản"
-        className="flex items-center justify-center rounded-full p-0.5 ring-2 ring-[#006d43]/20 transition-all hover:ring-[#006d43]/40"
+        className="flex items-center justify-center rounded-full p-0.5 ring-2 ring-primary/20 transition-all hover:ring-primary/40"
         onClick={() => setOpen((current) => !current)}
         type="button"
       >
         <Avatar className="h-8 w-8" src={view.avatarDesktop} />
       </button>
       {open ? (
-        <div className="absolute right-0 top-full z-[60] mt-2 w-72 rounded-2xl border border-[#e3eae7]/60 bg-[#ffffff] p-3 text-[#161d1b] shadow-xl">
-          <div className="mb-2 flex items-center gap-3 rounded-xl bg-[#eef5f2] p-2.5">
-            <Avatar className="h-10 w-10 ring-2 ring-[#006d43]/20" src={view.avatarDesktop} />
+        <div className="absolute right-0 top-full z-[60] mt-2 w-72 rounded-2xl border border-border/60 bg-card p-3 text-foreground shadow-xl">
+          <div className="mb-2 flex items-center gap-3 rounded-xl bg-muted p-2.5">
+            <Avatar className="h-10 w-10 ring-2 ring-primary/20" src={view.avatarDesktop} />
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5">
                 <span className="truncate text-sm font-bold leading-5">{view.displayName}</span>
-                <span className="rounded-full bg-[#99f3b6] px-1.5 py-0.5 text-[10px] font-medium leading-none text-[#0b7141]">
+                <span className="rounded-full bg-accent px-1.5 py-0.5 text-[10px] font-medium leading-none text-primary">
                   Tâm Hồn An Yên
                 </span>
               </div>
-              <p className="mt-0.5 truncate text-xs text-[#3d4a41]">{view.email}</p>
+              <p className="mt-0.5 truncate text-xs text-muted-foreground">{view.email}</p>
             </div>
           </div>
           <div className="space-y-0.5 text-sm">
@@ -65,9 +65,9 @@ export function ProfileAvatarMenu({ view }: Readonly<{ view: ProfileView }>) {
             <MenuItem icon="military_tech" label="Bộ sưu tập huy hiệu & cột mốc" />
             <MenuItem icon="settings" label="Cài đặt & Quyền riêng tư" />
           </div>
-          <div className="my-2 border-t border-[#e8efec]" />
+          <div className="my-2 border-t border-border" />
           <button
-            className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-sm font-medium text-[#ba1a1a] transition-colors hover:bg-[#ffdad6]/30"
+            className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
             type="button"
           >
             <MaterialSymbol className="text-lg" name="logout" />
@@ -87,13 +87,13 @@ function MenuItem({
 }: Readonly<{ active?: boolean; badge?: string; icon: string; label: string }>) {
   return (
     <button
-      className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2 transition-colors ${active ? "bg-[#006d43]/10 font-medium text-[#006d43]" : "text-[#3d4a41] hover:bg-[#eef5f2] hover:text-[#161d1b]"}`}
+      className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2 transition-colors ${active ? "bg-primary/10 font-medium text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
       type="button"
     >
       <MaterialSymbol className="text-lg" fill={active && icon === "person"} name={icon} />
       <span>{label}</span>
       {badge ? (
-        <span className="ml-auto rounded-full bg-[#99f3b6] px-2 py-0.5 text-[10px] font-semibold leading-none text-[#00522d]">
+        <span className="ml-auto rounded-full bg-accent px-2 py-0.5 text-[10px] font-semibold leading-none text-primary">
           {badge}
         </span>
       ) : null}
@@ -105,7 +105,7 @@ function Avatar({ className, src }: Readonly<{ className: string; src: string }>
   return (
     <span
       aria-hidden="true"
-      className={`block shrink-0 rounded-full bg-[#e8efec] bg-cover bg-center ${className}`}
+      className={`block shrink-0 rounded-full bg-secondary bg-cover bg-center ${className}`}
       style={{ backgroundImage: `url(${src})` }}
     />
   );

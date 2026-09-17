@@ -1,4 +1,5 @@
 import type { CreateEntryRequest } from "./dto.ts";
+import { getStickerLabel } from "./stickers.ts";
 import type { EntryMetadata, EntryVisibility } from "./types.ts";
 
 export const entrySelect =
@@ -25,7 +26,7 @@ export function composeEntryContent(input: CreateEntryRequest) {
     `Washi: ${input.washi}`,
     `Tâm trạng: ${input.mood}`,
     `Không gian: ${input.space}`,
-    `Sticker: ${input.sticker}`,
+    `Sticker: ${getStickerLabel(input.sticker, "vi")}`,
     `Câu trích dẫn: ${input.quote}`,
     ...(input.imageUrl ? [`Ảnh: ${input.imageUrl}`] : []),
     ...(input.gratitudes.length

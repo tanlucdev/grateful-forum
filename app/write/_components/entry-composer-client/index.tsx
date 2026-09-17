@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { createEntry } from "@/lib/api/entries";
 import { uploadEntryMedia } from "@/lib/api/entry-media";
+import { DEFAULT_STICKER_ID, getStickerLabel } from "@/lib/entries/stickers";
 import type { EntryVisibility } from "@/lib/entries/types";
 import { addLocalEntry, markLocalEntrySynced } from "@/lib/entries/local-store";
 import {
@@ -10,7 +11,6 @@ import {
   defaultReflection,
   writeMoods,
   writeQuotes,
-  writeStickers,
   writeWashiOptions,
   type WriteMood,
   type WriteQuote,
@@ -18,7 +18,6 @@ import {
   type WriteWashi,
 } from "../composer-data";
 import {
-  DraftActions,
   ModeSwitcher,
   NotebookControls,
   PrivacySettings,
@@ -37,7 +36,7 @@ export function EntryComposerClient() {
   const [gratitudesOpen, setGratitudesOpen] = useState(false);
   const [reflection, setReflection] = useState(defaultReflection);
   const [quote, setQuote] = useState<WriteQuote>(writeQuotes[0]);
-  const [sticker, setSticker] = useState<WriteSticker>(writeStickers[0].label);
+  const [sticker, setSticker] = useState<WriteSticker>(DEFAULT_STICKER_ID);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState("");
@@ -63,7 +62,7 @@ export function EntryComposerClient() {
         `Washi: ${washi}`,
         `Tâm trạng: ${mood}`,
         `Không gian: ${space}`,
-        `Sticker: ${sticker}`,
+        `Sticker: ${getStickerLabel(sticker, "vi")}`,
         `Câu trích dẫn: ${quote}`,
         imageUrl ? `Ảnh: ${imageUrl}` : "",
         ...filledGratitudes.map((item, index) => `${index + 1}. ${item}`),
@@ -91,7 +90,7 @@ export function EntryComposerClient() {
     setGratitudesOpen(false);
     setReflection(defaultReflection);
     setQuote(writeQuotes[0]);
-    setSticker(writeStickers[0].label);
+    setSticker(DEFAULT_STICKER_ID);
     setImageUrl(null);
     setUploadStatus("");
     setStatus("Khôi phục bản nháp hôm qua.");
@@ -148,7 +147,7 @@ export function EntryComposerClient() {
   }
 
   return (
-    <div className="min-h-dvh bg-[#f4fbf8] text-[#161d1b] [font-family:var(--font-quicksand)]">
+    <div className="min-h-dvh text-foreground [font-family:var(--font-quicksand)]">
       <section className="mx-auto min-h-dvh max-w-[1200px] px-5 pb-8 pt-6 md:px-6 md:pb-16 md:pt-24">
         <div className="flex flex-col gap-6">
           <WriteIntro
@@ -161,9 +160,9 @@ export function EntryComposerClient() {
             today={today}
           />
           <ModeSwitcher mode={mode} setMode={setMode} />
-          <section aria-label="Nội dung nhật ký" className="relative overflow-hidden rounded-3xl bg-white p-5 shadow-[0_12px_40px_rgba(26,47,43,0.06)] md:p-7 lg:p-10" id="journal-editor-canvas">
-            <div className={`relative z-10 grid gap-8 ${mode === "creative" ? "lg:grid-cols-12 lg:gap-12" : "grid-cols-1"}`}>
-              <div className={`${mode === "creative" ? "lg:col-span-7 lg:pr-4" : "mx-auto w-full max-w-3xl"} flex flex-col gap-4`}>
+          <section aria-label="Nội dung nhật ký" className="relative overflow-hidden rounded-3xl bg-card p-4 shadow-sm md:p-7 lg:p-8" id="journal-editor-canvas">
+            <div className={`relative z-10 grid gap-6 ${mode === "creative" ? "lg:grid-cols-12 lg:gap-8" : "grid-cols-1"}`}>
+              <div className={`${mode === "creative" ? "lg:col-span-8" : "mx-auto w-full max-w-3xl"} flex flex-col gap-4`}>
                 <NotebookControls
                   mode={mode}
                   mood={mood}
@@ -178,28 +177,24 @@ export function EntryComposerClient() {
                   gratitudesOpen={gratitudesOpen}
                   mode={mode}
                   noteLength={reflection.length}
+                  quote={quote}
                   reflection={reflection}
                   setGratitudes={setGratitudes}
                   setGratitudesOpen={setGratitudesOpen}
+                  setQuote={setQuote}
                   setReflection={setReflection}
+                  setSticker={setSticker}
+                  sticker={sticker}
                 />
                 {mode === "minimal" ? (
-                  <>
-                    <PrivacySettings setVisibility={setVisibility} visibility={visibility} />
-                    <DraftActions resetDraft={resetDraft} setReflection={setReflection} />
-                  </>
+                  <PrivacySettings setVisibility={setVisibility} visibility={visibility} />
                 ) : null}
               </div>
               {mode === "creative" ? (
                 <SideRail
                   imageUrl={imageUrl}
-                  quote={quote}
-                  resetDraft={resetDraft}
-                  setReflection={setReflection}
-                  setQuote={setQuote}
-                  setSticker={setSticker}
+                  setImageUrl={setImageUrl}
                   setVisibility={setVisibility}
-                  sticker={sticker}
                   uploadImage={uploadImage}
                   uploading={uploading}
                   uploadStatus={uploadStatus}

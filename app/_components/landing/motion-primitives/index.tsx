@@ -125,7 +125,7 @@ export function LiftCard({ children, className = "" }: Readonly<{ children: Reac
 
   return (
     <motion.div className={`landing-zen-glass-card group relative flex flex-col justify-between overflow-hidden rounded-3xl p-7 ${className}`} {...tapLift(Boolean(reduceMotion))}>
-      <div className="pointer-events-none absolute inset-0 opacity-0 shadow-[0_20px_45px_-10px_rgba(0,109,67,0.15)] transition-opacity group-hover:opacity-100" />
+      <div className="pointer-events-none absolute inset-0 opacity-0 shadow-[var(--primary-shadow-md)] transition-opacity group-hover:opacity-100" />
       {children}
     </motion.div>
   );
@@ -149,7 +149,7 @@ export function CardTop({
   return (
     <div>
       <div className="mb-5 flex items-center justify-between">
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#9cf5c0] to-[#6ee7b7] text-primary shadow-[0_4px_12px_rgba(0,109,67,0.15)]">
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-accent to-primary-fixed text-primary shadow-[var(--primary-shadow-sm)]">
           {icon.startsWith("🌸") ? <span className={iconClass}>{icon}</span> : <MaterialSymbol className={iconClass} name={icon} />}
         </div>
         <span className={`flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold shadow-xs ${statusClass}`}>

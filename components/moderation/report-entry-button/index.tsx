@@ -1,8 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Flag } from "lucide-react";
 import { reportEntry } from "@/lib/api/reports";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { MaterialSymbol } from "@/components/ui/material-symbol";
+import { Textarea } from "@/components/ui/textarea";
 
 export function ReportEntryButton({ entryId }: Readonly<{ entryId: string }>) {
   const [open, setOpen] = useState(false);
@@ -27,51 +30,52 @@ export function ReportEntryButton({ entryId }: Readonly<{ entryId: string }>) {
   }
 
   return (
-    <div className="mt-4">
-      <button
+    <div className="mt-3">
+      <Button
         aria-expanded={open}
-        className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[#d5e2dc] bg-white px-3 text-xs font-medium text-[#4a5752] hover:border-emerald-200 hover:bg-emerald-50"
+        className="rounded-full text-xs font-bold shadow-sm"
         onClick={() => setOpen((value) => !value)}
+        size="sm"
         type="button"
+        variant="outline"
       >
-        <Flag className="h-4 w-4" />
+        <MaterialSymbol className="text-[15px]" name="flag" />
         Báo cáo
-      </button>
+      </Button>
       {open ? (
-        <div className="mt-3 rounded-2xl border border-[#e5eee9] bg-white p-3 shadow-[0_12px_28px_rgba(45,60,50,0.08)]">
-          <label className="text-sm font-medium text-[#1c3b2c]" htmlFor={`reason-${entryId}`}>
+        <div className="mt-3 rounded-2xl bg-card p-3 shadow-sm ring-1 ring-border">
+          <Label htmlFor={`reason-${entryId}`}>
             Lý do
-          </label>
-          <textarea
-            className="mt-2 min-h-24 w-full resize-none rounded-xl border border-[#d5e2dc] bg-white p-3 text-sm text-[#1c3b2c] outline-none focus:border-[#00a86b]"
+          </Label>
+          <Textarea
+            className="mt-2 min-h-24 resize-none rounded-xl bg-card"
             id={`reason-${entryId}`}
             onChange={(event) => setReason(event.target.value)}
             placeholder="Spam, nội dung không an toàn, thông tin riêng tư..."
             value={reason}
           />
           <div className="mt-3 flex items-center gap-3">
-            <button
-              className="inline-flex min-h-11 items-center rounded-full bg-[#00a86b] px-4 text-sm font-bold text-white disabled:opacity-50"
+            <Button
               disabled={saving || reason.trim().length < 3}
               onClick={submit}
               type="button"
             >
               Gửi
-            </button>
-            <button
-              className="inline-flex min-h-11 items-center rounded-full border border-[#d5e2dc] bg-white px-4 text-sm font-medium text-[#1c3b2c]"
+            </Button>
+            <Button
               onClick={() => setOpen(false)}
               type="button"
+              variant="outline"
             >
               Hủy
-            </button>
-            <p className="text-sm text-[#6b7a74]" role="status">
+            </Button>
+            <p className="text-sm text-muted-foreground" role="status">
               {status}
             </p>
           </div>
         </div>
       ) : status ? (
-        <p className="mt-2 text-sm text-[#6b7a74]" role="status">
+        <p className="mt-2 text-sm text-muted-foreground" role="status">
           {status}
         </p>
       ) : null}

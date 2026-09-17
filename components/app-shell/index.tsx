@@ -29,8 +29,8 @@ export function AppShell({
 
   return (
     <div
-      className={`min-h-screen bg-[var(--bg)] text-[var(--text)] ${
-        showHeader ? "journal-write-theme" : ""
+      className={`min-h-screen bg-background text-foreground ${
+        showHeader ? "journal-write-theme app-garden-bg" : ""
       }`}
     >
       {showHeader ? (

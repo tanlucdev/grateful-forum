@@ -1,4 +1,5 @@
-export function Skeleton({ className = "" }: Readonly<{ className?: string }>) {
-  return <div aria-hidden="true" className={`animate-pulse bg-[#dde4e1] ${className}`} />;
-}
+import { cn } from "@/lib/utils";
 
+export function Skeleton({ className = "" }: Readonly<{ className?: string }>) {
+  return <div aria-hidden="true" className={cn("animate-pulse rounded-md bg-muted", className)} />;
+}

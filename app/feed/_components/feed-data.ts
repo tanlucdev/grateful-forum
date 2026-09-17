@@ -47,24 +47,24 @@ export function toDisplayItem(item: FeedItem, index: number): DisplayItem {
 export function toneClasses(tone: DisplayItem["tone"]) {
   if (tone === "tertiary") {
     return {
-      badge: "border-orange-100 bg-orange-50/80 text-orange-900",
+      badge: "border-[var(--fire-soft)] bg-[var(--fire-soft)]/40 text-[var(--fire)]",
       moodIcon: "🌙",
-      tape: "bg-[rgba(254,215,195,0.85)] text-orange-950",
+      tape: "bg-[var(--fire-soft)] text-[var(--fire)]",
     };
   }
 
   if (tone === "mint") {
     return {
-      badge: "border-teal-100 bg-teal-50 text-teal-800",
+      badge: "border-accent bg-accent/70 text-accent-foreground",
       moodIcon: "🍵",
-      tape: "bg-[rgba(184,225,205,0.78)] text-emerald-900",
+      tape: "bg-accent text-accent-foreground",
     };
   }
 
   return {
-    badge: "border-amber-100 bg-amber-50/80 text-amber-800",
+    badge: "border-secondary-container bg-secondary-container/50 text-primary",
     moodIcon: "🌟",
-    tape: "bg-[rgba(253,230,138,0.8)] text-amber-950",
+    tape: "bg-secondary-container text-primary",
   };
 }
 

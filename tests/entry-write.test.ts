@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { createEntryRequestSchema } from "../lib/entries/schema.ts";
+import { getStickerLabel, STICKER_GROUPS, stickers } from "../lib/entries/stickers.ts";
 import { validateEntryMediaFile } from "../lib/entry-media/validation.ts";
 
 assert.throws(() =>
@@ -42,6 +43,25 @@ assert.equal(
   }).gratitudes.length,
   4,
 );
+
+assert.equal(stickers.length, 72);
+assert.equal(new Set(stickers.map((sticker) => sticker.id)).size, 72);
+
+for (const group of STICKER_GROUPS) {
+  assert.equal(stickers.filter((sticker) => sticker.group === group.id).length, 18);
+}
+
+for (const sticker of stickers) {
+  assert.ok(sticker.labels.vi);
+  assert.ok(sticker.labels.en);
+  assert.ok(sticker.alts.vi);
+  assert.ok(sticker.alts.en);
+  assert.ok(sticker.tags.vi.length);
+  assert.ok(sticker.tags.en.length);
+}
+
+assert.equal(getStickerLabel("sprout-calm", "vi"), "Bé Mầm an yên");
+assert.equal(getStickerLabel("Bé Mầm", "vi"), "Bé Mầm");
 
 assert.throws(() =>
   validateEntryMediaFile(new File([new Uint8Array([1])], "note.txt", { type: "text/plain" })),
