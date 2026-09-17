@@ -1,3 +1,5 @@
+import type { StickerId } from "@/lib/entries/stickers";
+
 export const writeWashiOptions = [
   { label: "Washi An Yên", accent: "#006d43", bg: "#d1e9e0" },
   { label: "Mây Xanh", accent: "#6b8fb6", bg: "#e6eff7" },
@@ -17,29 +19,6 @@ export const writeQuotes = [
   "Hạnh phúc không phải là có tất cả những gì bạn muốn, mà là trân trọng tất cả những gì bạn đang có.",
   "Mỗi lời biết ơn được gieo xuống là một mầm xanh hy vọng được nảy mầm.",
   "Những điều nhỏ bé hôm nay đang âm thầm nuôi lớn ngày mai.",
-] as const;
-
-export const writeStickers = [
-  {
-    label: "Bé Mầm",
-    image: "/stitch/landing/mascot.png",
-    alt: "Sticker Bé Mầm",
-  },
-  {
-    label: "Tách trà",
-    image: "/stitch/profile/coffee-mobile.jpg",
-    alt: "Sticker tách trà",
-  },
-  {
-    label: "Mầm xanh",
-    image: "/stitch/profile/sprout.jpg",
-    alt: "Sticker mầm xanh",
-  },
-  {
-    label: "Dạo vườn",
-    image: "/stitch/profile/park.jpg",
-    alt: "Sticker dạo vườn",
-  },
 ] as const;
 
 export const defaultGratitudes = [] as string[];
@@ -64,4 +43,4 @@ export const privacyChoices = [
 export type WriteWashi = (typeof writeWashiOptions)[number]["label"];
 export type WriteMood = (typeof writeMoods)[number]["label"];
 export type WriteQuote = (typeof writeQuotes)[number];
-export type WriteSticker = (typeof writeStickers)[number]["label"];
+export type WriteSticker = StickerId;

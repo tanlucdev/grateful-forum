@@ -30,24 +30,24 @@ export function ModerationQueueClient({
     <section className="grid gap-3">
       {reports.length ? reports.map((report) => (
         <article
-          className="soft-surface rounded-lg border border-[var(--border)] bg-[var(--surface-raised)] p-4"
+          className="soft-surface rounded-lg border border-border bg-card p-4"
           key={report.id}
         >
           <div className="flex items-start justify-between gap-3">
             <div>
-              <p className="text-xs font-medium uppercase tracking-[0.18em] text-[var(--muted)]">
+              <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
                 {report.status}
               </p>
-              <p className="mt-2 text-sm font-medium text-[var(--text)]">
+              <p className="mt-2 text-sm font-medium text-foreground">
                 {report.reason}
               </p>
             </div>
-            <span className="rounded-full border border-[var(--border)] bg-[var(--bg)] px-2 py-1 text-xs text-[var(--muted)]">
+            <span className="rounded-full border border-border bg-background px-2 py-1 text-xs text-muted-foreground">
               {new Date(report.createdAt).toLocaleDateString("en")}
             </span>
           </div>
           {report.entry ? (
-            <p className="mt-4 whitespace-pre-wrap rounded-lg border border-[var(--border)] bg-[var(--bg)] p-3 text-sm leading-6 text-[var(--text)]">
+            <p className="mt-4 whitespace-pre-wrap rounded-lg border border-border bg-background p-3 text-sm leading-6 text-foreground">
               {report.entry.content}
             </p>
           ) : null}
@@ -56,7 +56,7 @@ export function ModerationQueueClient({
               const Icon = item.icon;
               return (
                 <button
-                  className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 text-xs font-medium text-[var(--text)]"
+                  className="inline-flex min-h-11 items-center gap-2 rounded-full border border-border bg-card px-3 text-xs font-medium text-foreground"
                   key={item.action}
                   onClick={() => void act(report, item.action)}
                   type="button"
@@ -69,7 +69,7 @@ export function ModerationQueueClient({
           </div>
         </article>
       )) : (
-        <p className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4 text-sm text-[var(--muted)]">
+        <p className="rounded-lg border border-border bg-card p-4 text-sm text-muted-foreground">
           No reports need review.
         </p>
       )}

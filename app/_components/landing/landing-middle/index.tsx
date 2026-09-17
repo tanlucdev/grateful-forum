@@ -16,7 +16,7 @@ export function ChoiceSection() {
           <SectionHeader copy="Mỗi lời biết ơn đều có thể bắt đầu từ một khoảnh khắc riêng, rồi trở thành động lực cho người khác khi bạn sẵn sàng chia sẻ." eyebrow="Bạn luôn chọn cách tham gia" title="Chia sẻ với cộng đồng hoặc giữ riêng cho mình" />
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-8">
             <LiftCard className="border-2 border-primary/25">
-              <CardTop icon="auto_stories" iconClass="text-[26px]" status="Riêng tư" statusClass="bg-gradient-to-r from-primary to-[#059669] text-on-primary" statusIcon="lock">
+              <CardTop icon="auto_stories" iconClass="text-[26px]" status="Riêng tư" statusClass="bg-gradient-to-r from-primary to-[var(--leaf-deep)] text-on-primary" statusIcon="lock">
                 <h3 className="mb-2 text-xl font-bold text-text-deep">Viết cho riêng mình</h3>
                 <p className="mb-6 text-sm leading-relaxed text-on-surface-variant">Ghi lại điều bạn trân trọng mà không cần chia sẻ. Những bài viết riêng vẫn được lưu để bạn xem lại hành trình của mình bất cứ lúc nào.</p>
                 <ProgressBlock label="Lịch sử cá nhân" progress={1} value="Xem lại bất cứ lúc nào" />
@@ -72,10 +72,10 @@ export function GardenSection() {
                   <span className="mt-0.5 flex items-center gap-1.5 text-xs font-semibold text-primary">Theo dõi nhịp viết theo từng ngày</span>
                 </div>
                 <div className="flex gap-2">
-                  <motion.button className="flex h-8 w-8 items-center justify-center rounded-xl border border-emerald-100 bg-white/80 text-on-surface hover:bg-emerald-50" type="button" {...softPress(Boolean(reduceMotion))}>
+                  <motion.button className="flex h-8 w-8 items-center justify-center rounded-xl border border-accent bg-card/80 text-on-surface hover:bg-accent/40" type="button" {...softPress(Boolean(reduceMotion))}>
                     <MaterialSymbol className="text-[18px]" name="chevron_left" />
                   </motion.button>
-                  <motion.button className="flex h-8 w-8 items-center justify-center rounded-xl border border-emerald-100 bg-white/80 text-on-surface hover:bg-emerald-50" type="button" {...softPress(Boolean(reduceMotion))}>
+                  <motion.button className="flex h-8 w-8 items-center justify-center rounded-xl border border-accent bg-card/80 text-on-surface hover:bg-accent/40" type="button" {...softPress(Boolean(reduceMotion))}>
                     <MaterialSymbol className="text-[18px]" name="chevron_right" />
                   </motion.button>
                 </div>
@@ -107,7 +107,7 @@ function CalendarDayButton({ day, selected, setSelectedDay }: Readonly<{ day: nu
   const reduceMotion = useLandingReducedMotion();
 
   return (
-    <motion.button className={`flex aspect-square flex-col items-center justify-center rounded-2xl text-xs transition duration-150 ${selected ? "bg-gradient-to-br from-primary to-[#059669] text-on-primary shadow-[0_6px_18px_rgba(0,109,67,0.35)] ring-4 ring-primary-fixed" : day < 17 ? "border border-emerald-200 bg-[#d1fae5]/80 text-text-deep shadow-xs" : "border border-dashed border-emerald-300/60 bg-white/70 text-on-surface-variant"}`} onClick={() => setSelectedDay(day)} type="button" {...tapLift(Boolean(reduceMotion))}>
+    <motion.button className={`flex aspect-square flex-col items-center justify-center rounded-2xl text-xs transition duration-150 ${selected ? "bg-gradient-to-br from-primary to-[var(--leaf-deep)] text-on-primary shadow-[var(--primary-shadow-sm)] ring-4 ring-primary-fixed" : day < 17 ? "border border-accent bg-accent/70 text-text-deep shadow-xs" : "border border-dashed border-accent/60 bg-card/70 text-on-surface-variant"}`} onClick={() => setSelectedDay(day)} type="button" {...tapLift(Boolean(reduceMotion))}>
       <span>{day % 5 === 3 ? "🌷" : day < 17 ? "🌸" : day === 17 ? "Chờ" : ""}</span>
       <span className="mt-0.5 text-[10px] font-bold">{day}</span>
     </motion.button>
@@ -129,7 +129,7 @@ function GardenDetail({ selectedDay }: Readonly<{ selectedDay: number }>) {
           ))}
         </div>
         <div className="flex items-start gap-3 rounded-2xl border border-primary/15 bg-gradient-to-r from-emerald-100/50 to-teal-50/50 p-4 shadow-xs">
-          <div className="landing-mascot-breathe flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#9cf5c0] to-[#6ee7b7] text-sm shadow-xs">🌱</div>
+          <div className="landing-mascot-breathe flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-accent to-primary-fixed text-sm shadow-xs">🌱</div>
           <div><span className="block text-xs font-bold text-primary">Lời nhắn từ Bé Mầm:</span><p className="mt-0.5 text-xs italic leading-snug text-text-deep">&ldquo;Khu vườn của bạn hôm nay thơm ngát lắm. Hãy ôm lấy chính mình nhé!&rdquo;</p></div>
         </div>
       </div>

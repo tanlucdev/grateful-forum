@@ -1,37 +1,38 @@
 import Image from "next/image";
 import Link from "next/link";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
+import { getStickerLabel } from "@/lib/entries/stickers";
 import type { DisplayItem } from "../feed-data";
 import { toneClasses } from "../feed-data";
 import { MindfulActionsClient } from "../feed-actions-client";
 
-export function MobileFeedCard({ item }: Readonly<{ item: DisplayItem }>) {
+export function MobileFeedCard({ item, priorityImage = false }: Readonly<{ item: DisplayItem; priorityImage?: boolean }>) {
   return (
-    <article className="relative w-full min-w-0 rounded-3xl border border-[#e5eee9] bg-white p-5 shadow-[0_2px_14px_-1px_rgba(60,80,70,0.06)]">
+    <article className="relative w-full min-w-0 rounded-3xl border border-border bg-card p-5 shadow-card">
       <Tape tone={item.tone} />
       <div className="mt-2 flex items-start justify-between gap-3 pr-8">
         <div className="flex min-w-0 items-center gap-3">
           <Avatar item={item} />
           <div className="min-w-0 flex-1">
             <Author item={item} mobile />
-            <p className="truncate text-[11px] font-medium leading-[14px] text-[#85978f]">
+            <p className="truncate text-[11px] font-medium leading-[14px] text-muted-foreground">
               {item.time} • {item.detail}
             </p>
           </div>
         </div>
       </div>
-      <EntryBody item={item} mobile />
+      <EntryBody item={item} mobile priorityImage={priorityImage} />
       <Tags item={item} />
       <MindfulActionsClient item={item} compact floatingMenu />
     </article>
   );
 }
 
-export function DesktopFeedCard({ item }: Readonly<{ item: DisplayItem }>) {
+export function DesktopFeedCard({ item, priorityImage = false }: Readonly<{ item: DisplayItem; priorityImage?: boolean }>) {
   const tone = toneClasses(item.tone);
 
   return (
-    <article className="relative w-full min-w-0 rounded-3xl border border-[#e5eee9] bg-white p-7 shadow-[0_2px_14px_-1px_rgba(60,80,70,0.06),0_1px_3px_rgba(0,0,0,0.02)] transition-shadow hover:shadow-[0_4px_20px_-2px_rgba(28,59,44,0.05)]">
+    <article className="relative w-full min-w-0 rounded-3xl border border-border bg-card p-7 shadow-card transition-shadow hover:shadow-md">
       <Tape tone={item.tone} />
       <div className="mt-2 flex flex-col items-start justify-between gap-3 pr-9 xl:flex-row xl:gap-4">
         <div className="flex min-w-0 items-center gap-3">
@@ -43,41 +44,41 @@ export function DesktopFeedCard({ item }: Readonly<{ item: DisplayItem }>) {
                 {item.isAnonymous ? "Chia sẻ ẩn danh" : "Thành viên gieo hạt"}
               </span>
             </div>
-            <p className="mt-0.5 truncate text-[11px] text-[#85978f]">
+            <p className="mt-0.5 truncate text-[11px] text-muted-foreground">
               {item.time} • {item.detail}
             </p>
           </div>
         </div>
       </div>
-      <EntryBody item={item} />
+      <EntryBody item={item} priorityImage={priorityImage} />
       <Tags item={item} />
       <MindfulActionsClient item={item} floatingMenu />
     </article>
   );
 }
 
-function EntryBody({ item, mobile = false }: Readonly<{ item: DisplayItem; mobile?: boolean }>) {
+function EntryBody({ item, mobile = false, priorityImage = false }: Readonly<{ item: DisplayItem; mobile?: boolean; priorityImage?: boolean }>) {
   const hasMetadata = item.metadata.gratitudes.length || item.metadata.reflection || item.metadata.quote || item.metadata.imageUrl;
 
   if (!hasMetadata) {
-    return <p className="mt-4 whitespace-pre-wrap text-[15px] font-medium leading-relaxed text-[#2d4237]">{item.content}</p>;
+    return <p className="mt-4 whitespace-pre-wrap text-[15px] font-medium leading-relaxed text-foreground">{item.content}</p>;
   }
 
   return (
     <div className={`${mobile ? "mt-4 gap-3" : "mt-4 gap-4"} flex flex-col`}>
       {item.metadata.quote ? (
-        <p className={`${mobile ? "text-sm" : "text-[15px]"} whitespace-pre-wrap border-l-2 border-emerald-300 pl-4 italic leading-relaxed text-[#2d4237]`}>
+        <p className={`${mobile ? "text-sm" : "text-[15px]"} whitespace-pre-wrap border-l-2 border-accent pl-4 italic leading-relaxed text-foreground`}>
           “{item.metadata.quote}”
         </p>
       ) : null}
       {item.metadata.gratitudes.length ? (
         <ul className="space-y-2.5">
           {item.metadata.gratitudes.map((text, index) => (
-            <li className="flex min-w-0 items-start gap-3 rounded-2xl border border-[#e5eee9] bg-[#f8faf8] p-3.5" key={`${index}-${text}`}>
-              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-800">
+            <li className="flex min-w-0 items-start gap-3 rounded-2xl border border-border bg-muted/50 p-3.5" key={`${index}-${text}`}>
+              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-bold text-accent-foreground">
                 {index + 1}
               </span>
-              <p className={`${mobile ? "text-[14px]" : "text-sm"} min-w-0 whitespace-pre-wrap leading-relaxed text-[#264234]`}>
+              <p className={`${mobile ? "text-[14px]" : "text-sm"} min-w-0 whitespace-pre-wrap leading-relaxed text-foreground`}>
                 {text}
               </p>
             </li>
@@ -85,35 +86,35 @@ function EntryBody({ item, mobile = false }: Readonly<{ item: DisplayItem; mobil
         </ul>
       ) : null}
       {item.metadata.reflection ? (
-        <p className={`${mobile ? "text-[15px]" : "text-[15px]"} whitespace-pre-wrap font-medium leading-relaxed text-[#2d4237]`}>
+        <p className={`${mobile ? "text-[15px]" : "text-[15px]"} whitespace-pre-wrap font-medium leading-relaxed text-foreground`}>
           {item.metadata.reflection}
         </p>
       ) : null}
-      {item.metadata.imageUrl || !item.metadata.gratitudes.length ? <Polaroid item={item} mobile={mobile} /> : null}
+      {item.metadata.imageUrl || !item.metadata.gratitudes.length ? <Polaroid item={item} mobile={mobile} priorityImage={priorityImage} /> : null}
     </div>
   );
 }
 
-function Polaroid({ item, mobile }: Readonly<{ item: DisplayItem; mobile: boolean }>) {
+function Polaroid({ item, mobile, priorityImage }: Readonly<{ item: DisplayItem; mobile: boolean; priorityImage: boolean }>) {
   const imageUrl = item.metadata.imageUrl;
   const fallback = item.tone === "tertiary" ? "/stitch/feed/succulent.jpg" : "/stitch/feed/breakfast.jpg";
   const caption = item.metadata.space || (item.tone === "tertiary" ? "Chồi non sau mưa" : "Góc nhỏ bình yên");
 
   return (
     <div className="flex justify-center sm:justify-start">
-      <div className={`${mobile ? "max-w-[260px]" : "max-w-sm"} w-full rounded-xl border border-[#e5eee9]/70 bg-white p-[10px] pb-6 shadow-[0_12px_28px_-6px_rgba(45,60,50,0.12),0_2px_6px_rgba(0,0,0,0.04)]`}>
+      <div className={`${mobile ? "max-w-[260px]" : "max-w-sm"} w-full rounded-xl border border-border bg-card p-[10px] pb-6 shadow-card`}>
         <div
-          className={`${mobile ? "h-40" : "aspect-[4/3]"} relative overflow-hidden rounded-lg bg-amber-50 bg-cover bg-center`}
+          className={`${mobile ? "h-40" : "aspect-[4/3]"} relative overflow-hidden rounded-lg bg-muted bg-cover bg-center`}
           style={imageUrl ? { backgroundImage: `url(${imageUrl})` } : undefined}
         >
           {imageUrl ? null : (
-            <Image alt="" className="object-cover" fill sizes={mobile ? "260px" : "384px"} src={fallback} />
+            <Image alt="" className="object-cover" fill loading={priorityImage ? "eager" : undefined} sizes={mobile ? "260px" : "384px"} src={fallback} />
           )}
           <span className="absolute bottom-2 left-2 rounded bg-black/40 px-2 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
             📷 {caption}
           </span>
         </div>
-        <p className="pt-2 text-center font-serif text-sm italic text-[#4a5752]">“{caption}”</p>
+        <p className="pt-2 text-center font-serif text-sm italic text-muted-foreground">“{caption}”</p>
       </div>
     </div>
   );
@@ -130,27 +131,27 @@ export function Avatar({ item }: Readonly<{ item: DisplayItem }>) {
     );
 
     return item.profileHref ? (
-      <Link className="h-10 w-10 shrink-0 overflow-hidden rounded-full border border-emerald-100 bg-[#d1e9e0]" href={item.profileHref}>
+      <Link className="h-10 w-10 shrink-0 overflow-hidden rounded-full border border-border bg-accent" href={item.profileHref}>
         {avatar}
       </Link>
     ) : (
-      <div className="h-10 w-10 shrink-0 overflow-hidden rounded-full border border-emerald-100 bg-[#d1e9e0]">{avatar}</div>
+      <div className="h-10 w-10 shrink-0 overflow-hidden rounded-full border border-border bg-accent">{avatar}</div>
     );
   }
 
   return item.initial ? (
-    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-emerald-200 bg-[#dcfce7] text-sm font-bold text-emerald-900">
+    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border bg-accent text-sm font-bold text-accent-foreground">
       {item.initial}
     </div>
   ) : (
-    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-emerald-200 bg-emerald-50 text-lg text-emerald-800">
+    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border bg-muted text-lg text-primary">
       🍃
     </div>
   );
 }
 
 export function Author({ item, mobile = false }: Readonly<{ item: DisplayItem; mobile?: boolean }>) {
-  const className = `${mobile ? "text-[13px] leading-[18px]" : "text-sm leading-5"} truncate font-bold text-[#1c3b2c] ${
+  const className = `${mobile ? "text-[13px] leading-[18px]" : "text-sm leading-5"} truncate font-bold text-foreground ${
     item.isAnonymous ? "italic" : ""
   }`;
 
@@ -175,7 +176,7 @@ export function FeedSentinel({
   return (
     <>
       <div className="h-6" ref={refEl} />
-      <p className="pb-4 text-center text-sm font-medium text-[#6b7a74]" role="status">
+      <p className="pb-4 text-center text-sm font-medium text-muted-foreground" role="status">
         {status}
       </p>
     </>
@@ -184,13 +185,13 @@ export function FeedSentinel({
 
 export function FeedEmptyState() {
   return (
-    <section className="flex flex-col items-center gap-3 rounded-3xl border border-[#e5eee9] bg-white px-5 py-10 text-center shadow-[0_2px_14px_-1px_rgba(60,80,70,0.06)]">
-      <MaterialSymbol className="text-2xl text-[#00a86b]" name="auto_stories" />
+    <section className="flex flex-col items-center gap-3 rounded-3xl border border-border bg-card px-5 py-10 text-center shadow-card">
+      <MaterialSymbol className="text-2xl text-primary" name="auto_stories" />
       <div className="space-y-1">
-        <p className="text-sm font-bold leading-5 text-[#1c3b2c]">Chưa có chia sẻ công khai</p>
-        <p className="text-xs leading-4 text-[#6b7a74]">Các bài viết public hoặc anonymous sẽ xuất hiện tại đây.</p>
+        <p className="text-sm font-bold leading-5 text-foreground">Chưa có chia sẻ công khai</p>
+        <p className="text-xs leading-4 text-muted-foreground">Các bài viết public hoặc anonymous sẽ xuất hiện tại đây.</p>
       </div>
-      <Link className="inline-flex items-center gap-2 rounded-full bg-[#00a86b] px-4 py-2 text-sm font-bold leading-5 text-white" href="/write">
+      <Link className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-bold leading-5 text-primary-foreground" href="/write">
         <MaterialSymbol className="text-sm" name="edit" />
         <span>Viết ngay</span>
       </Link>
@@ -210,7 +211,7 @@ function Tape({ tone }: Readonly<{ tone: DisplayItem["tone"] }>) {
 }
 
 function Tags({ item }: Readonly<{ item: DisplayItem }>) {
-  const tags = [item.metadata.mood, item.metadata.sticker, item.metadata.space].filter(Boolean);
+  const tags = [item.metadata.mood, getStickerLabel(item.metadata.sticker, "vi"), item.metadata.space].filter(Boolean);
 
   if (!tags.length) {
     return null;
@@ -219,7 +220,7 @@ function Tags({ item }: Readonly<{ item: DisplayItem }>) {
   return (
     <div className="mt-4 flex flex-wrap gap-2">
       {tags.map((label) => (
-        <span className="max-w-full truncate rounded-lg bg-[#f0f6f3] px-2.5 py-1 text-xs font-medium text-[#466657]" key={label}>
+        <span className="max-w-full truncate rounded-lg bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground" key={label}>
           #{String(label).replace(/\s+/g, "_").toLowerCase()}
         </span>
       ))}

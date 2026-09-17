@@ -7,12 +7,12 @@ const previews = [
 
 export default function RewardPage() {
   return (
-    <main className="min-h-screen bg-[#f4fbf8] px-4 py-6 pt-6 text-[#13231b] md:px-6 md:pt-24">
+    <main className="min-h-screen px-4 py-6 pt-6 text-foreground md:px-6 md:pt-24">
       <div className="mx-auto grid w-full max-w-6xl gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
         <section className="space-y-4">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#3f7c60]">Reward</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">Reward</p>
           <h1 className="max-w-xl text-4xl font-semibold tracking-tight">Reward page</h1>
-          <p className="max-w-2xl text-base leading-7 text-[#4a5b52]">
+          <p className="max-w-2xl text-base leading-7 text-muted-foreground">
             Mừng những khoảnh khắc biết ơn đã được nuôi đều mỗi ngày.
           </p>
         </section>
@@ -20,7 +20,7 @@ export default function RewardPage() {
         <section className="grid gap-4 sm:grid-cols-2">
           {previews.map((preview, index) => (
             <div
-              className="relative aspect-[4/3] overflow-hidden rounded-lg border border-[#d7e6de] bg-white shadow-[0_12px_40px_rgba(13,36,24,0.08)]"
+              className="relative aspect-[4/3] overflow-hidden rounded-lg border border-border bg-card shadow-sm"
               key={preview.alt}
             >
               {/* ponytail: direct public assets avoid missing Stitch HTML at prerender. restore HTML only when committed. */}
@@ -28,6 +28,7 @@ export default function RewardPage() {
                 alt={preview.alt}
                 className="object-cover"
                 fill
+                loading={index === 1 ? "eager" : undefined}
                 priority={index === 0}
                 src={preview.src}
               />

@@ -10,7 +10,7 @@ export default async function AuthPage({
   const params = await searchParams;
 
   return (
-    <main className="auth-stitch journal-write-theme flex min-h-dvh w-full items-center justify-center bg-[var(--bg)] px-5 py-10">
+    <main className="auth-stitch journal-write-theme app-garden-bg flex min-h-dvh w-full items-center justify-center px-5 py-10">
       <AuthPanelClient configured={hasSupabaseEnv()} returnTo={safeAuthRedirect(params?.next)} />
     </main>
   );

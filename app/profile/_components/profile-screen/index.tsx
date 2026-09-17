@@ -7,7 +7,7 @@ export function ProfileScreen({
   view,
 }: Readonly<{ initialTab: "all" | "public" | "moments"; view: ProfileView }>) {
   return (
-    <div className="min-h-svh bg-[#f4fbf8] font-[family-name:var(--font-quicksand)] text-[#161d1b]">
+    <div className="min-h-svh font-[family-name:var(--font-quicksand)] text-foreground">
       <DesktopProfile initialTab={initialTab} view={view} />
       <MobileProfile view={view} />
     </div>

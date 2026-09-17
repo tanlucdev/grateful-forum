@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
-import { Manrope, Quicksand } from "next/font/google";
+import { Manrope, Quicksand, Geist } from "next/font/google";
 import type { ReactNode } from "react";
 import "./globals.css";
 import { AppShell } from "@/components/app-shell";
 import { loadOwnShellProfile } from "@/lib/profile/load-own-profile";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const manrope = Manrope({
   subsets: ["latin", "vietnamese"],
@@ -29,7 +32,7 @@ export default async function RootLayout({
   const profile = await loadOwnShellProfile();
   const authenticated = Boolean(profile);
   return (
-    <html data-scroll-behavior="smooth" lang="vi" suppressHydrationWarning>
+    <html data-scroll-behavior="smooth" lang="vi" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
       <body className={`${manrope.className} ${quicksand.variable}`} suppressHydrationWarning>
         <AppShell
           profile={{
