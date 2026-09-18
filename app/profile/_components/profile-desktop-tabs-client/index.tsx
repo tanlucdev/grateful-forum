@@ -93,7 +93,7 @@ function ListControls({
         title="Dạng lưới"
         type="button"
       >
-        <MaterialSymbol className="text-lg" name="grid_view" />
+        <MaterialSymbol className="text-lg" name="grid_view" strokeWidth={1.6} />
       </button>
       <button
         aria-pressed={layout === "list"}
@@ -102,7 +102,7 @@ function ListControls({
         title="Dạng danh sách"
         type="button"
       >
-        <MaterialSymbol className="text-lg" name="stream" />
+        <MaterialSymbol className="text-lg" name="stream" strokeWidth={1.6} />
       </button>
       <button
         aria-pressed={layout === "journal"}
@@ -111,7 +111,7 @@ function ListControls({
         title="Cuốn sổ tay"
         type="button"
       >
-        <MaterialSymbol className="text-lg" name="auto_stories" />
+        <MaterialSymbol className="text-lg" name="auto_stories" strokeWidth={1.6} />
       </button>
     </div>
   );
