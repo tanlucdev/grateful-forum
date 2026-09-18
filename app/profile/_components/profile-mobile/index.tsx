@@ -89,7 +89,7 @@ function WeeklyRhythm({ view }: Readonly<{ view: ProfileView }>) {
           <div className={`${day.active ? "bg-accent/30" : "bg-muted opacity-60"} flex flex-col items-center gap-1 rounded-lg py-1.5`} key={day.date}>
             <span className={`text-[10px] ${day.isToday ? "font-bold text-primary" : "text-muted-foreground"}`}>{day.label}</span>
             <span aria-label={`${day.label} ${day.count} nhật ký`} className={`${day.active ? "bg-primary text-primary-foreground" : day.isToday ? "bg-card text-primary ring-1 ring-primary/35" : "bg-input text-muted-foreground"} flex h-6 w-6 items-center justify-center rounded-full text-[12px]`} title={`${day.date}: ${day.count} nhật ký`}>
-              {day.active ? <MaterialSymbol className="text-base" fill name={day.isToday ? "local_florist" : "psychiatry_alt"} /> : "·"}
+              {day.active ? (day.count > 2 ? "🌸" : day.count === 2 ? "🌿" : "🌱") : "·"}
             </span>
           </div>
         ))}

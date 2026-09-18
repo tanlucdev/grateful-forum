@@ -267,7 +267,7 @@ function MenuLink({
         }`}
         href={href}
       >
-        <MaterialSymbol className="h-4 w-4 text-lg" fill={active && icon === "person"} name={icon} />
+        <MaterialSymbol className="h-4 w-4 text-lg" name={icon} strokeWidth={1.6} />
         <span>{label}</span>
         {badge ? (
           <span className="ml-auto rounded-full bg-secondary-container px-2 py-0.5 text-[10px] font-semibold leading-none text-primary">

@@ -59,13 +59,13 @@ export function ProfileEditModalButton({
         aria-label="Chỉnh sửa hồ sơ"
         className={
           variant === "icon"
-            ? "inline-flex h-9 w-9 items-center justify-center rounded-full bg-muted text-primary shadow-sm transition-colors hover:bg-input"
-            : "inline-flex items-center gap-2 rounded-xl bg-secondary px-4 py-2.5 text-sm font-semibold leading-5 text-foreground shadow-sm transition-colors hover:bg-input"
+            ? "inline-flex h-[29px] w-[29px] items-center justify-center rounded-full bg-muted text-primary shadow-sm transition-colors hover:bg-input"
+            : "inline-flex items-center gap-1.5 rounded-[10px] bg-secondary px-[13px] py-2 text-[10px] font-semibold leading-[13px] text-foreground shadow-sm transition-colors hover:bg-input"
         }
         onClick={() => setOpen(true)}
         type="button"
       >
-        <MaterialSymbol className={variant === "icon" ? "text-lg" : "text-base"} name={variant === "icon" ? "edit_note" : "tune"} />
+        <MaterialSymbol className={variant === "icon" ? "text-[13px]" : "text-[12px]"} name={variant === "icon" ? "edit_note" : "tune"} />
         {variant === "icon" ? null : <span>Chỉnh sửa hồ sơ</span>}
       </button>
       {open && mounted

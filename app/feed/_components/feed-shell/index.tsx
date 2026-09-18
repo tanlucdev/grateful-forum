@@ -5,10 +5,13 @@ import Link from "next/link";
 import { useSyncExternalStore } from "react";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
 import { getCompanionTimeCopy } from "./companion-time";
+import { dailyReflectionQuotes, getDailyReflectionQuote } from "./daily-reflection-quotes";
 
 const subscribeToCompanionTime = () => () => {};
 const getClientHour = () => new Date().getHours();
 const getServerHour = () => 8;
+const getClientDailyReflectionQuote = () => getDailyReflectionQuote();
+const getServerDailyReflectionQuote = () => dailyReflectionQuotes[0];
 
 function useCompanionTimeCopy() {
   const hour = useSyncExternalStore(
@@ -18,6 +21,14 @@ function useCompanionTimeCopy() {
   );
 
   return getCompanionTimeCopy(hour);
+}
+
+function useDailyReflectionQuote() {
+  return useSyncExternalStore(
+    subscribeToCompanionTime,
+    getClientDailyReflectionQuote,
+    getServerDailyReflectionQuote,
+  );
 }
 
 export function MobileReflectionBanner() {
@@ -144,6 +155,7 @@ export function MobileFeedEnd({ status }: Readonly<{ status: string }>) {
 
 export function DesktopAside() {
   const copy = useCompanionTimeCopy();
+  const dailyQuote = useDailyReflectionQuote();
 
   return (
     <aside className="flex flex-col gap-6 md:col-span-5 lg:col-span-4">
@@ -222,10 +234,10 @@ export function DesktopAside() {
           Gieo Vào Tâm Thức
         </p>
         <blockquote className="mt-3 font-serif text-[15px] italic leading-relaxed text-foreground">
-          “Hạnh phúc không phải là có tất cả những gì bạn muốn, mà là trân trọng tất cả những gì bạn đang có.”
+          “{dailyQuote.text}”
         </blockquote>
         <div className="mt-4 flex items-center justify-between border-t border-border pt-2 text-xs text-muted-foreground">
-          <span className="font-medium">BeGrateful Radio</span>
+          <span className="font-medium">{dailyQuote.source}</span>
           <span className="rounded-full border border-border bg-card px-2 py-0.5 text-[11px] text-primary">
             Mỗi sớm mai
           </span>
