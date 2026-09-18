@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createEntry } from "@/lib/api/entries";
 import { uploadEntryMedia } from "@/lib/api/entry-media";
 import { DEFAULT_STICKER_ID, getStickerLabel } from "@/lib/entries/stickers";
@@ -37,9 +37,9 @@ export function EntryComposerClient() {
   const [reflection, setReflection] = useState(defaultReflection);
   const [quote, setQuote] = useState<WriteQuote>(writeQuotes[0]);
   const [sticker, setSticker] = useState<WriteSticker>(DEFAULT_STICKER_ID);
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
-  const [uploadStatus, setUploadStatus] = useState("");
+  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [imageStatus, setImageStatus] = useState("");
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState("");
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -64,22 +64,27 @@ export function EntryComposerClient() {
         `Không gian: ${space}`,
         `Sticker: ${getStickerLabel(sticker, "vi")}`,
         `Câu trích dẫn: ${quote}`,
-        imageUrl ? `Ảnh: ${imageUrl}` : "",
+        previewUrl ? "Ảnh: đã chọn" : "",
         ...filledGratitudes.map((item, index) => `${index + 1}. ${item}`),
         reflection.trim(),
         visibility === "private" ? "Riêng tư" : "Cộng đồng",
       ]
         .filter(Boolean)
         .join("\n"),
-    [filledGratitudes, imageUrl, mood, quote, reflection, space, sticker, visibility, washi],
+    [filledGratitudes, mood, previewUrl, quote, reflection, space, sticker, visibility, washi],
   );
   const canSubmit =
     reflection.trim().length > 0 &&
     space.trim().length > 0 &&
     quote.trim().length > 0 &&
     sticker.trim().length > 0 &&
-    !saving &&
-    !uploading;
+    !saving;
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
 
   function resetDraft() {
     setVisibility("private");
@@ -91,28 +96,22 @@ export function EntryComposerClient() {
     setReflection(defaultReflection);
     setQuote(writeQuotes[0]);
     setSticker(DEFAULT_STICKER_ID);
-    setImageUrl(null);
-    setUploadStatus("");
+    setSelectedImageFile(null);
+    setPreviewUrl(null);
+    setImageStatus("");
     setStatus("Khôi phục bản nháp hôm qua.");
   }
 
-  async function uploadImage(file: File) {
-    setUploading(true);
-    setUploadStatus("");
+  function selectImage(file: File) {
+    setSelectedImageFile(file);
+    setPreviewUrl(URL.createObjectURL(file));
+    setImageStatus("Đã chọn ảnh. Ảnh sẽ tải lên khi lưu.");
+  }
 
-    try {
-      const result = await uploadEntryMedia(file);
-      if (result.uploaded) {
-        setImageUrl(result.url);
-        setUploadStatus("Đã tải ảnh.");
-      } else {
-        setUploadStatus("Chưa cấu hình Supabase; ảnh chỉ giữ trên bản nháp.");
-      }
-    } catch (error) {
-      setUploadStatus(error instanceof Error ? error.message : "Không tải được ảnh.");
-    } finally {
-      setUploading(false);
-    }
+  function clearImage() {
+    setSelectedImageFile(null);
+    setPreviewUrl(null);
+    setImageStatus("");
   }
 
   async function submit() {
@@ -120,9 +119,28 @@ export function EntryComposerClient() {
 
     setSaving(true);
     setStatus("");
-    const local = addLocalEntry(entryText.trim(), visibility);
 
     try {
+      let imageUrl: string | null = null;
+      let imageUploadFailed = false;
+      if (selectedImageFile) {
+        setImageStatus("Đang lưu ảnh...");
+        try {
+          const media = await uploadEntryMedia(selectedImageFile);
+          imageUrl = media.uploaded ? media.url : null;
+        } catch (error) {
+          imageUploadFailed = true;
+          setImageStatus(error instanceof Error ? error.message : "Không tải được ảnh.");
+        }
+      }
+
+      const savedEntryText = imageUrl
+        ? entryText.replace("Ảnh: đã chọn", `Ảnh: ${imageUrl}`).trim()
+        : entryText.replace("\nẢnh: đã chọn\n", "\n").trim();
+      const local = addLocalEntry(
+        savedEntryText,
+        visibility,
+      );
       const result = await createEntry({
         visibility,
         gratitudes: filledGratitudes,
@@ -136,7 +154,7 @@ export function EntryComposerClient() {
       });
       if (result.saved) markLocalEntrySynced(local.id);
       resetDraft();
-      setStatus(result.saved ? "Đã lưu!" : "Đã lưu trên thiết bị này.");
+      setStatus(imageUploadFailed ? "Đã lưu, nhưng ảnh chưa tải được." : result.saved ? "Đã lưu!" : "Đã lưu trên thiết bị này.");
     } catch (error) {
       setStatus(
         error instanceof Error ? error.message : "Đã lưu trên thiết bị này.",
@@ -192,12 +210,11 @@ export function EntryComposerClient() {
               </div>
               {mode === "creative" ? (
                 <SideRail
-                  imageUrl={imageUrl}
-                  setImageUrl={setImageUrl}
+                  clearImage={clearImage}
+                  previewUrl={previewUrl}
                   setVisibility={setVisibility}
-                  uploadImage={uploadImage}
-                  uploading={uploading}
-                  uploadStatus={uploadStatus}
+                  imageStatus={imageStatus}
+                  selectImage={selectImage}
                   visibility={visibility}
                 />
               ) : null}
@@ -209,7 +226,7 @@ export function EntryComposerClient() {
         <PreviewModal
           close={() => setPreviewOpen(false)}
           gratitudes={filledGratitudes}
-          imageUrl={imageUrl}
+          imageUrl={previewUrl}
           mood={mood}
           quote={quote}
           reflection={reflection}

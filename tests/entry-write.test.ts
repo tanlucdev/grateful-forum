@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
+import { getGratitudeInputs, getGratitudeSummary } from "../app/write/_components/gratitude-disclosure-state.ts";
 import { createEntryRequestSchema } from "../lib/entries/schema.ts";
 import { getStickerLabel, STICKER_GROUPS, stickers } from "../lib/entries/stickers.ts";
+import { buildCloudinarySignature } from "../lib/entry-media/mutations.ts";
 import { validateEntryMediaFile } from "../lib/entry-media/validation.ts";
 
 assert.throws(() =>
@@ -63,6 +65,11 @@ for (const sticker of stickers) {
 assert.equal(getStickerLabel("sprout-calm", "vi"), "Bé Mầm an yên");
 assert.equal(getStickerLabel("Bé Mầm", "vi"), "Bé Mầm");
 
+assert.deepEqual(getGratitudeInputs([]), ["", "", ""]);
+assert.equal(getGratitudeSummary([]).text, "0/3");
+assert.equal(getGratitudeSummary(["  ", "Cơm tối", "Bạn gọi"]).text, "2/3 đã viết");
+assert.deepEqual(getGratitudeSummary(["Một", "Hai", "Ba"]), { complete: true, text: "Đủ 3 điều" });
+
 assert.throws(() =>
   validateEntryMediaFile(new File([new Uint8Array([1])], "note.txt", { type: "text/plain" })),
 );
@@ -71,6 +78,14 @@ assert.throws(() =>
   validateEntryMediaFile(
     new File([new Uint8Array(5 * 1024 * 1024 + 1)], "large.png", { type: "image/png" }),
   ),
+);
+
+assert.equal(
+  buildCloudinarySignature(
+    { timestamp: 1800000000, public_id: "abc-123", folder: "entries/2026" },
+    "secret",
+  ),
+  "1f4d2488242647133eab5e7b5014b1361d212bb8",
 );
 
 console.log("entry write checks passed");

@@ -1,5 +1,11 @@
+import { z } from "zod";
+
 const maxBytes = 5 * 1024 * 1024;
 const allowedMimeTypes = new Set(["image/jpeg", "image/png", "image/webp", "image/gif", "image/avif"]);
+
+export const entryMediaFormSchema = z.object({
+  file: z.instanceof(File),
+});
 
 export function validateEntryMediaFile(file: File) {
   if (!allowedMimeTypes.has(file.type) || file.size <= 0 || file.size > maxBytes) {

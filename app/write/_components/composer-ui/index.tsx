@@ -19,7 +19,7 @@ import {
   type WriteSticker,
   type WriteWashi,
 } from "../composer-data";
-import { SectionTitle } from "../composer-primitives";
+import { getGratitudeInputs, getGratitudeSummary, GRATITUDE_PLACEHOLDERS } from "../gratitude-disclosure-state";
 import { StickerPicker } from "../sticker-picker";
 import { QuotePicker } from "../sticker-quote-picker";
 
@@ -143,12 +143,15 @@ export function NotebookControls({ mode, mood, setMood, setSpace, setWashi, spac
     <div className="flex flex-col gap-3">
       {mode === "creative" ? (
         <div className="flex flex-col gap-2">
-          <SectionTitle helper="Chạm để đổi viền sổ" label="Băng dán Washi trang trí" />
+          <span className="inline-flex min-w-0 items-center gap-1.5 text-[10px] font-semibold uppercase leading-4 tracking-[0.16em] text-muted-foreground sm:text-[12px]">
+            <MaterialSymbol className="text-[14px]" fill name="drag_indicator" />
+            Băng dán Washi trang trí
+          </span>
           <div className="flex items-center gap-2.5 overflow-x-auto px-0.5 pb-2">
             {writeWashiOptions.map((option) => {
               const active = washi === option.label;
               return (
-                <button className={`inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[12px] font-semibold leading-4 ${active ? "text-primary" : "text-muted-foreground"}`} key={option.label} onClick={() => setWashi(option.label)} style={{ backgroundColor: active ? option.bg : "var(--secondary)" }} type="button">
+                <button className={`inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[10px] font-semibold leading-4 sm:text-[12px] ${active ? "text-primary" : "text-muted-foreground"}`} key={option.label} onClick={() => setWashi(option.label)} style={{ backgroundColor: active ? option.bg : "var(--secondary)" }} type="button">
                   <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: option.accent }} />
                   <span>{option.label}</span>
                 </button>
@@ -159,7 +162,7 @@ export function NotebookControls({ mode, mood, setMood, setSpace, setWashi, spac
       ) : null}
       <div className="flex flex-col gap-3.5 rounded-3xl border border-border bg-card p-4 shadow-sm sm:p-5">
         <div className="flex w-full min-w-0 flex-col gap-2.5">
-          <span className="text-[14px] font-semibold leading-5 text-foreground">Tâm trạng đón nhận lúc này:</span>
+          <span className="text-[12px] font-semibold leading-5 text-foreground sm:text-[14px]">Tâm trạng đón nhận lúc này:</span>
           <div className="flex flex-wrap items-center gap-2.5">
             {writeMoods.map((item) => {
               const active = mood === item.label;
@@ -170,7 +173,7 @@ export function NotebookControls({ mode, mood, setMood, setSpace, setWashi, spac
                 "Lắng đọng": "bg-muted-foreground",
               }[item.label];
               return (
-                <button className={`inline-flex min-h-9 items-center gap-2 rounded-full border px-3.5 text-[14px] font-semibold leading-5 outline-offset-2 transition-colors focus-visible:outline-2 focus-visible:outline-ring ${active ? "border-primary bg-accent text-[var(--leaf-deep)] shadow-sm" : "border-border bg-card text-muted-foreground hover:border-input hover:bg-card"}`} key={item.label} onClick={() => setMood(item.label)} type="button">
+                <button className={`inline-flex min-h-9 items-center gap-2 rounded-full border px-3.5 text-[12px] font-semibold leading-5 outline-offset-2 transition-colors focus-visible:outline-2 focus-visible:outline-ring sm:text-[14px] ${active ? "border-primary bg-accent text-[var(--leaf-deep)] shadow-sm" : "border-border bg-card text-muted-foreground hover:border-input hover:bg-card"}`} key={item.label} onClick={() => setMood(item.label)} type="button">
                   <span className={`h-2 w-2 rounded-full ${dotClass}`} />
                   <span>{item.label}</span>
                 </button>
@@ -179,13 +182,13 @@ export function NotebookControls({ mode, mood, setMood, setSpace, setWashi, spac
           </div>
         </div>
         <div className="flex w-full flex-col gap-2">
-          <Label className="text-[14px] font-semibold leading-5 text-foreground" htmlFor="space">Không gian ghi chép:</Label>
+          <Label className="text-[12px] font-semibold leading-5 text-foreground sm:text-[14px]" htmlFor="space">Không gian ghi chép:</Label>
           <div className="flex items-center gap-2.5">
             <div className="flex min-h-9 min-w-0 flex-1 items-center gap-2 rounded-2xl border border-border bg-card px-3.5 transition-colors focus-within:border-ring focus-within:bg-card focus-within:ring-2 focus-within:ring-primary/15">
               <MaterialSymbol className="text-[16px] text-muted-foreground" name="location_on" />
-              <input className="h-8 min-w-0 flex-1 border-0 bg-transparent px-0 py-0 text-[14px] font-semibold leading-5 text-foreground outline-none placeholder:text-muted-foreground focus-visible:!outline-none focus-visible:!outline-offset-0" id="space" onChange={(event) => setSpace(event.target.value)} placeholder="Ví dụ: Ban công góc nhỏ..." value={space} />
+              <input className="h-8 min-w-0 flex-1 border-0 bg-transparent px-0 py-0 text-[12px] font-semibold leading-5 text-foreground outline-none placeholder:text-muted-foreground focus-visible:!outline-none focus-visible:!outline-offset-0 sm:text-[14px]" id="space" onChange={(event) => setSpace(event.target.value)} placeholder="Ví dụ: Ban công góc nhỏ..." value={space} />
             </div>
-            <button className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-2xl border border-dashed border-input bg-card px-3 text-[14px] font-semibold leading-5 text-muted-foreground outline-offset-2 transition-colors hover:border-input hover:text-muted-foreground focus-visible:outline-2 focus-visible:outline-ring" onClick={() => document.getElementById("space")?.focus()} type="button">
+            <button className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-2xl border border-dashed border-input bg-card px-3 text-[12px] font-semibold leading-5 text-muted-foreground outline-offset-2 transition-colors hover:border-input hover:text-muted-foreground focus-visible:outline-2 focus-visible:outline-ring sm:text-[14px]" onClick={() => document.getElementById("space")?.focus()} type="button">
               + Đổi
             </button>
           </div>
@@ -198,51 +201,73 @@ export function NotebookControls({ mode, mood, setMood, setSpace, setWashi, spac
 export function WritingPanel({ gratitudes, gratitudesOpen, mode, noteLength, quote, reflection, setGratitudes, setGratitudesOpen, setQuote, setReflection, setSticker, sticker }: { gratitudes: string[]; gratitudesOpen: boolean; mode: "minimal" | "creative"; noteLength: number; quote: WriteQuote; reflection: string; setGratitudes: (items: string[]) => void; setGratitudesOpen: (open: boolean) => void; setQuote: (value: WriteQuote) => void; setReflection: (value: string) => void; setSticker: (value: WriteSticker) => void; sticker: WriteSticker }) {
   const showGratitudes = mode === "creative" && gratitudesOpen;
   const [quoteOpen, setQuoteOpen] = useState(false);
+  const gratitudeInputs = getGratitudeInputs(gratitudes);
+  const gratitudeSummary = getGratitudeSummary(gratitudes);
+  const gratitudeSummaryClass = gratitudeSummary.complete ? "bg-[var(--sprout)] text-[var(--leaf-deep)]" : "bg-secondary text-muted-foreground";
 
   function openGratitudes() {
-    if (gratitudes.length === 0) setGratitudes(["", "", ""]);
+    if (gratitudes.length < 3) setGratitudes(gratitudeInputs);
     setGratitudesOpen(true);
+  }
+
+  function updateGratitude(index: number, value: string) {
+    setGratitudes(gratitudeInputs.map((item, itemIndex) => itemIndex === index ? value : item));
   }
 
   return (
     <div className="flex flex-col gap-3">
       {mode === "creative" ? (
         <>
-          <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2">
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-[12px] font-bold text-primary-foreground">3</span>
-            <div className="min-w-0">
-              <h2 className="text-[18px] font-semibold leading-6 text-foreground sm:text-[20px] sm:leading-7">3 Điều biết ơn hôm nay</h2>
-            </div>
-            <button className="inline-flex min-h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-accent/50 px-3 text-[11px] font-semibold leading-4 text-primary" onClick={showGratitudes ? () => setGratitudesOpen(false) : openGratitudes} type="button">
-              <MaterialSymbol className="text-[15px]" name={showGratitudes ? "expand_less" : "expand_more"} />
-              <span className="sm:hidden">{showGratitudes ? "Gọn" : "Mở"}</span>
-              <span className="hidden sm:inline">{showGratitudes ? "Thu gọn" : "Mở phần này"}</span>
-            </button>
-          </div>
+          <button
+            aria-controls="gratitude-fields"
+            aria-expanded={showGratitudes}
+            className="flex min-h-11 w-full items-center gap-3 rounded-2xl border border-border bg-muted/55 p-3 text-left shadow-sm outline-offset-2 transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring sm:p-3.5"
+            onClick={showGratitudes ? () => setGratitudesOpen(false) : openGratitudes}
+            type="button"
+          >
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-accent/75 text-primary">
+              <MaterialSymbol className="text-[20px]" fill name="volunteer_activism" />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[15px] font-semibold leading-[22px] text-foreground sm:text-[16px] sm:leading-6">3 điều biết ơn</span>
+              <span className="mt-0.5 block text-[11px] font-medium leading-4 text-muted-foreground sm:text-[12px]">
+                Viết nhanh 3 điều nhỏ làm bạn thấy biết ơn
+              </span>
+            </span>
+            <span className="flex shrink-0 flex-col items-end gap-1 sm:flex-row sm:items-center sm:gap-2">
+              <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold leading-4 ${gratitudeSummaryClass}`}>{gratitudeSummary.text}</span>
+              <span className="inline-flex items-center gap-1 text-[12px] font-semibold leading-4 text-primary">
+                <span>{showGratitudes ? "Thu gọn" : "Nhập 3 điều"}</span>
+                <MaterialSymbol className="text-[18px]" name={showGratitudes ? "expand_less" : "expand_more"} />
+              </span>
+            </span>
+          </button>
           {showGratitudes ? (
-            <>
+            <div className="space-y-3" id="gratitude-fields">
               <div className="space-y-2.5">
-                {gratitudes.map((item, index) => (
+                {gratitudeInputs.map((item, index) => (
                   <div className="group flex items-start gap-3 rounded-2xl bg-muted/70 p-3.5" key={index}>
                     <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-accent/70 text-[14px] font-bold text-primary">{index + 1}</span>
-                    <AutoGrowTextarea className="w-full resize-none bg-transparent text-[14px] leading-6 text-foreground outline-none placeholder:text-muted-foreground/60" minRows={1} onChange={(event) => setGratitudes(gratitudes.map((value, itemIndex) => itemIndex === index ? event.target.value : value))} placeholder="Điều biết ơn của bạn..." value={item} />
-                    <button aria-label={`Xóa điều biết ơn ${index + 1}`} className="text-muted-foreground transition-colors hover:text-destructive md:opacity-0 md:group-hover:opacity-100" onClick={() => setGratitudes(gratitudes.filter((_, itemIndex) => itemIndex !== index))} type="button">
-                      <MaterialSymbol name="close" />
-                    </button>
+                    <AutoGrowTextarea className="w-full resize-none bg-transparent text-[16px] leading-6 text-foreground outline-none placeholder:text-muted-foreground/60" minRows={1} onChange={(event) => updateGratitude(index, event.target.value)} placeholder={GRATITUDE_PLACEHOLDERS[index] ?? "Một điều biết ơn khác..."} value={item} />
+                    {index >= 3 ? (
+                      <button aria-label={`Xóa điều biết ơn ${index + 1}`} className="text-muted-foreground transition-colors hover:text-destructive md:opacity-0 md:group-hover:opacity-100" onClick={() => setGratitudes(gratitudeInputs.filter((_, itemIndex) => itemIndex !== index))} type="button">
+                        <MaterialSymbol name="close" />
+                      </button>
+                    ) : null}
                   </div>
                 ))}
               </div>
-              <button className="self-start inline-flex items-center gap-2 rounded-xl bg-secondary px-4 py-2 text-[12px] font-semibold leading-4 text-primary disabled:opacity-45" disabled={gratitudes.length >= 10} onClick={() => setGratitudes([...gratitudes, ""])} type="button">
+              <button className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-secondary px-4 py-2 text-[12px] font-semibold leading-4 text-primary disabled:opacity-45" disabled={gratitudeInputs.length >= 10} onClick={() => setGratitudes([...gratitudeInputs, ""])} type="button">
                 <MaterialSymbol className="text-[16px]" name="add_circle" />
                 <span>Thêm điều biết ơn</span>
               </button>
-            </>
+            </div>
           ) : null}
         </>
       ) : null}
       <div className={`flex flex-col gap-2.5 ${mode === "creative" ? "mt-1" : ""}`}>
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
-          <h3 className="flex items-center gap-2 text-[20px] font-semibold leading-7 text-foreground">
+          <h3 className="flex items-center gap-2 text-[16px] font-semibold leading-6 text-foreground sm:text-[20px] sm:leading-7">
             <MaterialSymbol className="text-primary" fill={mode === "minimal"} name={mode === "minimal" ? "spa" : "edit_note"} />
             <span>{mode === "minimal" ? "Không gian tự do viết nên suy nghĩ của bạn" : "Khoảnh khắc tự sự & Tản văn trong ngày"}</span>
           </h3>

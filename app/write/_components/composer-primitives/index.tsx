@@ -8,14 +8,13 @@ export function Panel({
   return <section className={`rounded-2xl bg-card p-4 md:p-6 ${className}`}>{children}</section>;
 }
 
-export function SectionTitle({ label, helper }: Readonly<{ label: string; helper: string }>) {
+export function SectionTitle({ label }: Readonly<{ helper?: string; label: string }>) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-3">
       <span className="inline-flex min-w-0 items-center gap-1.5 text-[12px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
         <MaterialSymbol className="text-primary" name="texture" />
         {label}
       </span>
-      <span className="hidden shrink-0 text-[11px] font-medium text-muted-foreground sm:inline">{helper}</span>
     </div>
   );
 }
