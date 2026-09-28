@@ -15,4 +15,12 @@ export const createEntryRequestSchema = z.object({
   imageUrl: z.string().trim().url().max(2048).nullable().optional(),
 });
 
+export const entryRouteParamsSchema = z.object({
+  id: z.string().uuid(),
+});
+
+export const updateEntryRequestSchema = z.object({
+  visibility: z.enum(entryVisibilities),
+}).strict();
+
 export type CreateEntryRequestInput = z.infer<typeof createEntryRequestSchema>;

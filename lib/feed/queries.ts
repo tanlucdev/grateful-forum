@@ -19,6 +19,7 @@ export async function loadFeedPage(cursor?: string | null): Promise<FeedPage> {
     .from("entries")
     .select(entrySelect)
     .is("hidden_at", null)
+    .is("owner_deleted_at", null)
     .in("visibility", ["public", "anonymous"])
     .order("created_at", { ascending: false })
     .order("id", { ascending: false })

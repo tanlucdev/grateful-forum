@@ -26,6 +26,7 @@ export async function loadPublicProfile(id: string): Promise<PublicProfile | nul
     .eq("user_id", id)
     .in("visibility", ["public", "anonymous"])
     .eq("hidden_at", null)
+    .is("owner_deleted_at", null)
     .order("created_at", { ascending: false })
     .order("id", { ascending: false });
 
