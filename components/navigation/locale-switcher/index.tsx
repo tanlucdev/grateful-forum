@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useLocale } from "next-intl";
 import { useSearchParams } from "next/navigation";
 
@@ -7,6 +8,14 @@ import { Link, usePathname } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
 
 export function LocaleSwitcher({ className = "" }: Readonly<{ className?: string }>) {
+  return (
+    <Suspense fallback={<LocaleSwitcherFallback className={className} />}>
+      <LocaleSwitcherLinks className={className} />
+    </Suspense>
+  );
+}
+
+function LocaleSwitcherLinks({ className }: Readonly<{ className: string }>) {
   const locale = useLocale() as AppLocale;
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -32,4 +41,8 @@ export function LocaleSwitcher({ className = "" }: Readonly<{ className?: string
       ))}
     </div>
   );
+}
+
+function LocaleSwitcherFallback({ className }: Readonly<{ className: string }>) {
+  return <div aria-hidden className={`h-9 w-[77px] rounded-full bg-muted ${className}`} />;
 }
