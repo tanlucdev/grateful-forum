@@ -16,3 +16,4 @@
 - Do not create or push branches with unlisted prefixes such as `polish/`.
 
 - After creating or updating a branch and commit, push it to `https://github.com/tanlucdev/begrateful.git` using the GitHub account `tanlucdev`; do not push with another GitHub identity.
+- Before every `git push origin`, verify the GitHub credential owner through `https://api.github.com/user`; continue only when its `login` is exactly `tanlucdev`. Git `user.name` and `user.email` do not prove the pushing account.
