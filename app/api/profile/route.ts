@@ -7,7 +7,7 @@ export async function PUT(request: Request) {
   const { data: auth } = await supabase.auth.getUser();
 
   if (!auth.user) {
-    return NextResponse.json({ error: "Not signed in." }, { status: 401 });
+    return NextResponse.json({ code: "profile_failed", error: "Not signed in." }, { status: 401 });
   }
 
   const body = (await request.json()) as {
@@ -24,7 +24,7 @@ export async function PUT(request: Request) {
 
   if (username && !/^[a-z0-9_]{3,24}$/.test(username)) {
     return NextResponse.json(
-      { error: "Username must be 3-24 chars: lowercase letters, numbers, underscore." },
+      { code: "invalid_username", error: "Username must be 3-24 chars: lowercase letters, numbers, underscore." },
       { status: 400 },
     );
   }
@@ -32,7 +32,7 @@ export async function PUT(request: Request) {
   try {
     await updateOwnProfile(supabase, auth.user.id, { displayName, username: username ?? "", avatarUrl: avatarUrl ?? "", bio: bio ?? "" });
   } catch (error) {
-    return NextResponse.json({ error: error instanceof Error ? error.message : "Could not save profile." }, { status: 500 });
+    return NextResponse.json({ code: "profile_failed", error: error instanceof Error ? error.message : "Could not save profile." }, { status: 500 });
   }
 
   return NextResponse.json({ saved: true });

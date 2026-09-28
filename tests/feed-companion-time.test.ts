@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { getCompanionTimeCopy } from "../app/feed/_components/feed-shell/companion-time.ts";
+import { getCompanionTimeCopy } from "../app/[locale]/feed/_components/feed-shell/companion-time.ts";
 
 assert.equal(getCompanionTimeCopy(5).label, "Buổi sáng");
 assert.equal(getCompanionTimeCopy(11).label, "Buổi trưa");

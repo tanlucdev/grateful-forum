@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { reportEntry } from "@/lib/api/reports";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -8,6 +9,7 @@ import { MaterialSymbol } from "@/components/ui/material-symbol";
 import { Textarea } from "@/components/ui/textarea";
 
 export function ReportEntryButton({ entryId }: Readonly<{ entryId: string }>) {
+  const t = useTranslations("profile.report");
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState("");
   const [status, setStatus] = useState("");
@@ -20,10 +22,10 @@ export function ReportEntryButton({ entryId }: Readonly<{ entryId: string }>) {
     try {
       await reportEntry(entryId, reason);
       setReason("");
-      setStatus("Đã gửi báo cáo.");
+      setStatus(t("success"));
       setOpen(false);
     } catch (error) {
-      setStatus(error instanceof Error ? error.message : "Không thể gửi báo cáo.");
+      setStatus(error instanceof Error ? error.message : t("error"));
     } finally {
       setSaving(false);
     }
@@ -40,18 +42,18 @@ export function ReportEntryButton({ entryId }: Readonly<{ entryId: string }>) {
         variant="outline"
       >
         <MaterialSymbol className="text-[15px]" name="flag" />
-        Báo cáo
+        {t("action")}
       </Button>
       {open ? (
         <div className="mt-3 rounded-2xl bg-card p-3 shadow-sm ring-1 ring-border">
           <Label htmlFor={`reason-${entryId}`}>
-            Lý do
+            {t("reason")}
           </Label>
           <Textarea
             className="mt-2 min-h-24 resize-none rounded-xl bg-card"
             id={`reason-${entryId}`}
             onChange={(event) => setReason(event.target.value)}
-            placeholder="Spam, nội dung không an toàn, thông tin riêng tư..."
+            placeholder={t("placeholder")}
             value={reason}
           />
           <div className="mt-3 flex items-center gap-3">
@@ -60,14 +62,14 @@ export function ReportEntryButton({ entryId }: Readonly<{ entryId: string }>) {
               onClick={submit}
               type="button"
             >
-              Gửi
+              {saving ? t("sending") : t("send")}
             </Button>
             <Button
               onClick={() => setOpen(false)}
               type="button"
               variant="outline"
             >
-              Hủy
+              {t("cancel")}
             </Button>
             <p className="text-sm text-muted-foreground" role="status">
               {status}

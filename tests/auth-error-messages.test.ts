@@ -1,16 +1,16 @@
 import assert from "node:assert/strict";
-import { normalizeAuthErrorMessage } from "../lib/auth/errors.ts";
+import { normalizeAuthErrorCode } from "../lib/auth/errors.ts";
 
 assert.equal(
-  normalizeAuthErrorMessage("Email rate limit exceeded"),
-  "Bạn đã yêu cầu email quá nhanh. Chờ một lát rồi thử lại.",
+  normalizeAuthErrorCode("Email rate limit exceeded"),
+  "email_rate_limit",
 );
 
 assert.equal(
-  normalizeAuthErrorMessage("User already registered"),
-  "Email này đã được dùng.",
+  normalizeAuthErrorCode("User already registered"),
+  "email_already_registered",
 );
 
-assert.equal(normalizeAuthErrorMessage("Other error"), "Other error");
+assert.equal(normalizeAuthErrorCode("Other error"), "auth_failed");
 
 console.log("auth error checks passed");

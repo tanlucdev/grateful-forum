@@ -18,12 +18,8 @@ export const sampleCalendarOverview: CalendarOverview = {
     month,
     selectedDate,
     todayDate: selectedDate,
-    monthLabel: "Tháng 10, 2024",
-    selectedDateLabel: "Thứ Năm, 24 tháng 10, 2024",
-    gardenTitle: "Vườn hoa 2024 ngày gieo mầm",
-    gardenRangeLabel: "2024 • 214 đóa hoa",
   },
-  filters: [["year", "Năm 2024"], ["six-months", "6 tháng qua"], ["month", "Tháng này"], ["week", "Tuần này"]].map(([key, label]) => ({ key: key as CalendarOverview["view"], label, active: key === "year", href: calendarHref(year, month, selectedDate, key as CalendarOverview["view"]) })),
+  filters: ["year", "six-months", "month", "week"].map((key) => ({ key: key as CalendarOverview["view"], active: key === "year", href: calendarHref(year, month, selectedDate, key as CalendarOverview["view"]) })),
   stats: {
     currentStreak: 14,
     longestStreak: 28,
@@ -34,12 +30,12 @@ export const sampleCalendarOverview: CalendarOverview = {
     monthCompletionRate: 92,
     entriesDeltaFromPreviousMonth: 18,
   },
-  garden: { yearDays, visibleDays: visibleYearDays(yearDays, "year", year, month, selectedDate), totalFlowers: 214, todayCount: 2, todayStreakLabel: "14 ngày liên tiếp" },
+  garden: { yearDays, visibleDays: visibleYearDays(yearDays, "year", year, month, selectedDate), totalFlowers: 214, todayCount: 2 },
   monthDays: makeMonthDays(year, month, buckets, selectedDate, (date) => calendarHref(year, month, date, "year")),
   selectedEntries: [
     { id: "sample-1", content: "Biết ơn ly cà phê sáng mẹ pha thơm lừng.", createdAt: "2024-10-24T08:30:00+07:00", visibility: "private", metadata: { gratitudes: [], reflection: "Một buổi sáng thật dịu dàng.", mood: "Bình an", washi: null, space: null, quote: "Biết ơn những điều giản dị.", sticker: "#giadinh", imageUrl: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=160&q=80" } },
     { id: "sample-2", content: "Hoàn thành buổi chạy bộ 5km quanh công viên.", createdAt: "2024-10-24T21:15:00+07:00", visibility: "private", metadata: { gratitudes: [], reflection: "Cơ thể khỏe mạnh là món quà.", mood: "Phấn chấn", washi: null, space: null, quote: null, sticker: "#suckhoe", imageUrl: null } },
   ],
   badges,
-  mascot: { level: 3, maxLevel: 5, label: "Mầm Căng Tràn", progress: 0.65, daysToNextLevel: 8, whisper: "Hôm nay bạn đã hoàn thành xuất sắc mục tiêu nuôi dưỡng tâm hồn! Hãy ôm lấy giấc ngủ thật sâu và giữ nhịp điệu tươi vui này vào ngày mai nhé." },
+  mascot: { level: 3, maxLevel: 5, progress: 0.65, daysToNextLevel: 8 },
 };

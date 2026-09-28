@@ -15,14 +15,14 @@ export async function PATCH(request: Request) {
   try {
     input = validateModerationUpdate(body);
   } catch (error) {
-    return NextResponse.json({ error: error instanceof Error ? error.message : "Invalid moderation action." }, { status: 400 });
+    return NextResponse.json({ code: "moderation_failed", error: error instanceof Error ? error.message : "Invalid moderation action." }, { status: 400 });
   }
 
   const supabase = await createSupabaseServerClient();
   const { data: auth } = await supabase.auth.getUser();
 
   if (!auth.user) {
-    return NextResponse.json({ error: "Not signed in." }, { status: 401 });
+    return NextResponse.json({ code: "moderation_failed", error: "Not signed in." }, { status: 401 });
   }
 
   try {
@@ -30,7 +30,7 @@ export async function PATCH(request: Request) {
   } catch (error) {
     const message = error instanceof Error ? error.message : "Could not update moderation report.";
     const status = message === "Admin only." ? 403 : 500;
-    return NextResponse.json({ error: message }, { status });
+    return NextResponse.json({ code: "moderation_failed", error: message }, { status });
   }
 
   return NextResponse.json({ saved: true });

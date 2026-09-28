@@ -1,0 +1,27 @@
+{
+  "filters": { "year": "Năm {year}", "six-months": "6 tháng qua", "month": "Tháng này", "week": "Tuần này" },
+  "hero": { "tracker": "Theo dõi chánh niệm & thói quen", "rhythmJournal": "Nhật ký nhịp điệu", "title": "Nhịp điệu biết ơn", "description": "Mỗi ngày ghi lại một điều nhỏ bé để nuôi dưỡng tâm hồn bình an. Dõi theo hành trình gieo hạt cùng Bé Mầm." },
+  "mobile": { "tracker": "Theo dõi chánh niệm", "rhythmJournal": "Nhật ký nhịp điệu", "title": "Lịch biết ơn", "subtitle": "Vườn hoa 365 ngày chánh niệm", "streak": "{count} ngày" },
+  "actions": { "writeToday": "Viết nhật ký hôm nay", "today": "Hôm nay", "addMoment": "Ghi thêm điều biết ơn cho hôm nay" },
+  "a11y": { "filters": "Bộ lọc lịch biết ơn", "previousMonth": "Tháng trước", "nextMonth": "Tháng sau", "heatDay": "{date}: {count} lần ghi", "monthDay": "{date}: {count} lần ghi" },
+  "metrics": {
+    "streak": { "label": "Chuỗi hiện tại", "unit": "ngày liên tiếp", "hint": "Kỷ lục dài nhất: {count} ngày", "mobileHint": "🏆 Kỷ lục: {count} ngày" },
+    "entries": { "label": "Tổng khoảnh khắc", "unit": "hạt giống", "hint": "{delta} hạt so với tháng trước" },
+    "rate": { "label": "Tỷ lệ duy trì", "hint": "{active}/{total} ngày trong tháng", "mobileHint": "{active} ngày" }
+  },
+  "garden": {
+    "title": "Vườn hoa {year} ngày gieo mầm", "description": "Mỗi ngày một điều biết ơn là một mầm hoa được tưới tắm an lành cùng Bé Mầm.", "blooming": "Hành trình nở rộ", "flowers": "Đã tưới mát {count} đóa hoa tâm hồn", "today": "Hôm nay", "todaySummary": "{flowers} đóa hoa đang bung nở • Chuỗi {streak} ngày gieo mầm liên tục", "hover": "Rê chuột ngắm hoa từng ngày", "range": "{year} • {flowers} đóa hoa", "days": "{count} ngày", "seeds": "{count} hạt giống đã gieo", "legend": "Cùng Bé Mầm kiên trì gieo mầm mỗi ngày để cả khu vườn luôn ngát hương an lành.", "less": "Gieo ít", "more": "Nở rực rỡ (>2)", "most": "Nở rộ nhiều", "seasons": { "spring": "Mùa Xuân", "summer": "Mùa Hạ", "autumn": "Mùa Thu (hiện tại)", "winter": "Mùa Đông" }
+  },
+  "month": { "personal": "Ghi chép cá nhân", "streak": "🔥 Chuỗi {count} ngày đang kích hoạt" },
+  "moments": { "title": "Khoảnh khắc hôm nay", "count": "{count} điều đã gieo", "empty": "Chưa có điều biết ơn nào cho ngày này.", "fallbackImageAlt": "Cà phê buổi sáng", "imageSaved": "Ảnh lưu khoảnh khắc bình yên", "private": "Riêng tư" },
+  "visibility": { "private": "Riêng tư", "public": "Công khai", "anonymous": "Ẩn danh" },
+  "mascot": { "level": "Cấp Bé Mầm", "levelValue": "Cấp {level}/{maxLevel}", "growing": "Mầm đang lớn", "full": "Mầm căng tràn", "nextLevel": "Còn {count} ngày để nở hoa", "whisperTitle": "Lời thì thầm của Bé Mầm", "whisperEstablished": "Hôm nay bạn đang giữ nhịp thật đẹp. Một điều nhỏ bé cũng đủ tưới mát tâm hồn.", "whisperStarting": "Một điều biết ơn hôm nay là hạt mầm mới cho khu vườn của bạn." },
+  "badges": {
+    "heading": "Cột mốc & Huy hiệu đồng hành", "description": "Phần thưởng cho sự kiên trì gieo mầm hạnh phúc tự thân.", "all": "Tất cả {count} huy hiệu →", "unlocked": "Đã đạt", "progress": "{current}/{target}",
+    "firstWeek": { "title": "Khởi đầu an lành", "description": "Hoàn thành 7 ngày ghi nhật ký đầu tiên liên tục." },
+    "steadySprout": { "title": "Chiếc mầm kiên trì", "description": "Duy trì liên tục 21 ngày hình thành nếp sống chánh niệm." },
+    "morningSun": { "title": "Ánh dương ban mai", "description": "Gieo 10 khoảnh khắc trong tháng." },
+    "openHeart": { "title": "Trái tim rộng mở", "description": "Tạo 50 khoảnh khắc biết ơn." }
+  },
+  "footer": { "tagline": "Nuôi dưỡng tâm hồn an yên qua từng điều giản dị mỗi ngày.", "copyright": "© 2026 Grateful Forum. Cùng Bé Mầm gieo mầm hạnh phúc." }
+}

@@ -1,7 +1,7 @@
 export type AuthFieldErrors = {
-  displayName?: string;
-  email?: string;
-  password?: string;
+  displayName?: "displayNameRequired";
+  email?: "emailRequired";
+  password?: "passwordRequired" | "passwordShort";
 };
 
 export function validateAuthInput({
@@ -18,17 +18,17 @@ export function validateAuthInput({
   const errors: AuthFieldErrors = {};
 
   if (signingUp && !displayName.trim()) {
-    errors.displayName = "Nhập tên hiển thị để tạo tài khoản.";
+    errors.displayName = "displayNameRequired";
   }
 
   if (!email.trim()) {
-    errors.email = "Nhập email để tiếp tục.";
+    errors.email = "emailRequired";
   }
 
   if (!password) {
-    errors.password = "Nhập mật khẩu để tiếp tục.";
+    errors.password = "passwordRequired";
   } else if (password.length < 8) {
-    errors.password = "Mật khẩu cần có ít nhất 8 ký tự.";
+    errors.password = "passwordShort";
   }
 
   return errors;

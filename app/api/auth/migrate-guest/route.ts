@@ -10,7 +10,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 export async function POST(request: Request) {
   if (!hasSupabaseEnv()) {
     return NextResponse.json(
-      { error: "Supabase chưa được cấu hình." },
+      { code: "auth_unconfigured", error: "Supabase chưa được cấu hình." },
       { status: 503 },
     );
   }
@@ -20,7 +20,7 @@ export async function POST(request: Request) {
 
   if (!bearer.ok) {
     return NextResponse.json(
-      { error: "Phiên đăng nhập không hợp lệ." },
+      { code: "auth_invalid_session", error: "Phiên đăng nhập không hợp lệ." },
       { status: 401 },
     );
   }
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
 
   if (authError || !auth.user) {
     return NextResponse.json(
-      { error: "Phiên đăng nhập không hợp lệ." },
+      { code: "auth_invalid_session", error: "Phiên đăng nhập không hợp lệ." },
       { status: 401 },
     );
   }
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
     supabase = createSupabaseAdminClient();
   } catch {
     return NextResponse.json(
-      { error: "Supabase service role chưa được cấu hình." },
+      { code: "auth_unconfigured", error: "Supabase service role chưa được cấu hình." },
       { status: 503 },
     );
   }
@@ -60,7 +60,7 @@ export async function POST(request: Request) {
     });
   } catch {
     return NextResponse.json(
-      { error: "Không thể chuyển dữ liệu khách." },
+      { code: "guest_migration_failed", error: "Không thể chuyển dữ liệu khách." },
       { status: 500 },
     );
   }

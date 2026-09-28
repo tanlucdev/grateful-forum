@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { normalizeAuthErrorMessage } from "@/lib/auth/errors";
+import { normalizeAuthErrorCode } from "@/lib/auth/errors";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 
@@ -13,7 +13,7 @@ const bodySchema = z.object({
 export async function POST(request: Request) {
   if (!hasSupabaseEnv()) {
     return NextResponse.json(
-      { error: "Supabase chưa được cấu hình." },
+      { code: "auth_unconfigured", error: "Supabase chưa được cấu hình." },
       { status: 503 },
     );
   }
@@ -22,7 +22,7 @@ export async function POST(request: Request) {
 
   if (!parsed.success) {
     return NextResponse.json(
-      { error: "Thông tin đăng ký chưa hợp lệ." },
+      { code: "auth_invalid_input", error: "Thông tin đăng ký chưa hợp lệ." },
       { status: 400 },
     );
   }
@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     supabase = createSupabaseAdminClient();
   } catch {
     return NextResponse.json(
-      { error: "Supabase service role chưa được cấu hình." },
+      { code: "auth_unconfigured", error: "Supabase service role chưa được cấu hình." },
       { status: 503 },
     );
   }
@@ -47,7 +47,7 @@ export async function POST(request: Request) {
 
   if (error) {
     return NextResponse.json(
-      { error: normalizeAuthErrorMessage(error.message) },
+      { code: normalizeAuthErrorCode(error.message), error: error.message },
       { status: 400 },
     );
   }

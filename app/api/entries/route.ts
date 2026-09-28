@@ -11,7 +11,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     input = createEntryRequestSchema.parse(body);
   } catch (error) {
-    return NextResponse.json({ error: error instanceof Error ? error.message : "Invalid entry." }, { status: 400 });
+    return NextResponse.json({ code: "entry_failed", error: error instanceof Error ? error.message : "Invalid entry." }, { status: 400 });
   }
 
   if (!hasSupabaseEnv()) {
@@ -25,7 +25,7 @@ export async function POST(request: Request) {
     const entry = await createEntry(supabase, input, data.user?.id ?? null);
     return NextResponse.json({ saved: true, entry });
   } catch (error) {
-    return NextResponse.json({ error: error instanceof Error ? error.message : "Could not save entry." }, { status: 500 });
+    return NextResponse.json({ code: "entry_failed", error: error instanceof Error ? error.message : "Could not save entry." }, { status: 500 });
   }
 
 }

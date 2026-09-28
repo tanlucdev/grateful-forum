@@ -1,0 +1,7 @@
+{
+  "locale": { "vi": "Tiếng Việt", "en": "English" },
+  "actions": { "cancel": "Hủy", "close": "Đóng", "delete": "Xóa", "edit": "Chỉnh sửa", "save": "Lưu", "send": "Gửi", "share": "Chia sẻ", "retry": "Thử lại" },
+  "navigation": { "feed": "Bảng tin", "write": "Viết", "writeMobile": "Ghi chép", "calendar": "Lịch", "history": "Lịch sử", "profile": "Cá nhân", "reward": "Khám phá", "signIn": "Đăng nhập", "signOut": "Đăng xuất", "account": "Tài khoản", "main": "Điều hướng chính", "streak": "ngày liên tiếp", "garden": "Vườn ươm Bé Mầm", "milestones": "Bộ sưu tập huy hiệu & cột mốc", "myProfile": "Hồ sơ của tôi", "settings": "Cài đặt & Quyền riêng tư" },
+  "a11y": { "accountMenu": "Menu tài khoản", "showPassword": "Hiện mật khẩu", "hidePassword": "Ẩn mật khẩu" },
+  "errors": { "generic": "Đã xảy ra lỗi. Vui lòng thử lại.", "network": "Không thể kết nối. Vui lòng thử lại." }
+}

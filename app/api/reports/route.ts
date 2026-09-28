@@ -12,10 +12,10 @@ export async function POST(request: Request) {
     input = validateCreateReport(body);
   } catch (error) {
     if (error instanceof SyntaxError) {
-      return NextResponse.json({ error: "Invalid report." }, { status: 400 });
+      return NextResponse.json({ code: "report_failed", error: "Invalid report." }, { status: 400 });
     }
 
-    return NextResponse.json({ error: error instanceof Error ? error.message : "Invalid report." }, { status: 400 });
+    return NextResponse.json({ code: "report_failed", error: error instanceof Error ? error.message : "Invalid report." }, { status: 400 });
   }
 
   if (!hasSupabaseEnv()) {
@@ -30,14 +30,14 @@ export async function POST(request: Request) {
     await createReport(userId ? serverSupabase : createSupabaseAdminClient(), input, userId);
   } catch (error) {
     if (error instanceof ReportForbiddenError) {
-      return NextResponse.json({ error: error.message }, { status: 403 });
+      return NextResponse.json({ code: "report_failed", error: error.message }, { status: 403 });
     }
 
     if (error instanceof Error && error.message.includes("service role")) {
-      return NextResponse.json({ error: "Report is unavailable." }, { status: 503 });
+      return NextResponse.json({ code: "report_failed", error: "Report is unavailable." }, { status: 503 });
     }
 
-    return NextResponse.json({ error: error instanceof Error ? error.message : "Could not report entry." }, { status: 500 });
+    return NextResponse.json({ code: "report_failed", error: error instanceof Error ? error.message : "Could not report entry." }, { status: 500 });
   }
 
   return NextResponse.json({ saved: true });

@@ -1,0 +1,7 @@
+{
+  "actions": { "review": "Review", "dismiss": "Dismiss", "hide": "Hide", "delete": "Delete" },
+  "empty": "No reports need review.",
+  "title": "Moderation queue",
+  "description": "Review reports, dismiss noise, hide entries, or delete severe content.",
+  "adminRequired": "Admin access required."
+}

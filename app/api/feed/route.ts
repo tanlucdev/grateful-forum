@@ -10,9 +10,9 @@ export async function GET(request: Request) {
     return NextResponse.json(page);
   } catch (error) {
     if (error instanceof ZodError) {
-      return NextResponse.json({ error: "Invalid feed params." }, { status: 400 });
+      return NextResponse.json({ code: "feed_failed", error: "Invalid feed params." }, { status: 400 });
     }
 
-    return NextResponse.json({ error: "Could not load feed." }, { status: 500 });
+    return NextResponse.json({ code: "feed_failed", error: "Could not load feed." }, { status: 500 });
   }
 }
