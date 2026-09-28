@@ -122,6 +122,7 @@ async function assertVisibleEntry(supabase: SupabaseClient, entryId: string) {
     .select("id")
     .eq("id", entryId)
     .is("hidden_at", null)
+    .is("owner_deleted_at", null)
     .in("visibility", ["public", "anonymous"])
     .maybeSingle();
 

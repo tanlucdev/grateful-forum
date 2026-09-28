@@ -15,3 +15,5 @@ export type CreateEntryRequest = {
 export type CreateEntryResponse =
   | { saved: true; entry: { id: string; created_at: string } }
   | { saved: false; reason: string };
+
+export type UpdateEntryResponse = { entry: { id: string; visibility: EntryVisibility } };

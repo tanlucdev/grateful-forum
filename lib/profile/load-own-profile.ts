@@ -28,6 +28,7 @@ export async function loadOwnProfileDashboard(): Promise<ProfileDashboard | null
       .select(entrySelect)
       .eq("user_id", auth.user.id)
       .is("hidden_at", null)
+      .is("owner_deleted_at", null)
       .order("created_at", { ascending: false })
       .order("id", { ascending: false }),
     queryCalendarTimezone(supabase, auth.user.id),
@@ -88,6 +89,7 @@ export async function loadOwnShellProfile() {
       .select("created_at")
       .eq("user_id", auth.user.id)
       .is("hidden_at", null)
+      .is("owner_deleted_at", null)
       .order("created_at", { ascending: false }),
   ]);
 

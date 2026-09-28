@@ -24,11 +24,11 @@ export async function queryCalendarData(
   previousEnd: string,
 ) {
   const [year, history, selected, total, previous] = await Promise.all([
-    supabase.from("entries").select("id, created_at").eq("user_id", userId).is("hidden_at", null).gte("created_at", yearStart).lt("created_at", yearEnd),
-    supabase.from("entries").select("created_at").eq("user_id", userId).is("hidden_at", null).order("created_at", { ascending: true }),
-    supabase.from("entries").select(entrySelect).eq("user_id", userId).is("hidden_at", null).gte("created_at", selectedStart).lt("created_at", selectedEnd).order("created_at", { ascending: false }).limit(10),
-    supabase.from("entries").select("id", { count: "exact", head: true }).eq("user_id", userId).is("hidden_at", null),
-    supabase.from("entries").select("id", { count: "exact", head: true }).eq("user_id", userId).is("hidden_at", null).gte("created_at", previousStart).lt("created_at", previousEnd),
+    supabase.from("entries").select("id, created_at").eq("user_id", userId).is("hidden_at", null).is("owner_deleted_at", null).gte("created_at", yearStart).lt("created_at", yearEnd),
+    supabase.from("entries").select("created_at").eq("user_id", userId).is("hidden_at", null).is("owner_deleted_at", null).order("created_at", { ascending: true }),
+    supabase.from("entries").select(entrySelect).eq("user_id", userId).is("hidden_at", null).is("owner_deleted_at", null).gte("created_at", selectedStart).lt("created_at", selectedEnd).order("created_at", { ascending: false }).limit(10),
+    supabase.from("entries").select("id", { count: "exact", head: true }).eq("user_id", userId).is("hidden_at", null).is("owner_deleted_at", null),
+    supabase.from("entries").select("id", { count: "exact", head: true }).eq("user_id", userId).is("hidden_at", null).is("owner_deleted_at", null).gte("created_at", previousStart).lt("created_at", previousEnd),
   ]);
   const error = [year, history, selected, total, previous].find((result) => result.error)?.error;
   if (error) throw new Error(error.message);
