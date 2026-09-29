@@ -68,9 +68,9 @@ export function monthCompletion(activeDays: number, year: number, month: number,
 
 export function makeBadges(totalEntries: number, longestStreak: number, activeDays: number, monthEntries: number): CalendarBadge[] {
   return [
-    { emoji: "🌱", title: "Khởi đầu an lành", description: "Hoàn thành 7 ngày ghi nhật ký đầu tiên liên tục.", status: activeDays >= 7 ? "✓ Đã đạt" : `${activeDays}/7 ngày`, progress: Math.min(activeDays / 7, 1), unlockedAt: activeDays >= 7 ? "Đã mở khóa" : null },
-    { emoji: "🔥", title: "Chiếc mầm kiên trì", description: "Duy trì liên tục 21 ngày hình thành nếp sống chánh niệm.", status: longestStreak >= 21 ? "✓ Đã đạt" : `${longestStreak}/21 ngày`, progress: Math.min(longestStreak / 21, 1), unlockedAt: longestStreak >= 21 ? "Đã mở khóa" : null },
-    { emoji: "☀️", title: "Ánh dương ban mai", description: "Gieo 10 khoảnh khắc trong tháng.", status: monthEntries >= 10 ? "✓ Đã đạt" : `${monthEntries}/10`, progress: Math.min(monthEntries / 10, 1), unlockedAt: monthEntries >= 10 ? "Đã mở khóa" : null },
-    { emoji: "💚", title: "Trái tim rộng mở", description: "Tạo 50 khoảnh khắc biết ơn.", status: totalEntries >= 50 ? "✓ Đã đạt" : `${totalEntries}/50`, progress: Math.min(totalEntries / 50, 1), unlockedAt: totalEntries >= 50 ? "Đã mở khóa" : null },
+    { id: "firstWeek", emoji: "🌱", current: activeDays, target: 7, progress: Math.min(activeDays / 7, 1), unlocked: activeDays >= 7 },
+    { id: "steadySprout", emoji: "🔥", current: longestStreak, target: 21, progress: Math.min(longestStreak / 21, 1), unlocked: longestStreak >= 21 },
+    { id: "morningSun", emoji: "☀️", current: monthEntries, target: 10, progress: Math.min(monthEntries / 10, 1), unlocked: monthEntries >= 10 },
+    { id: "openHeart", emoji: "💚", current: totalEntries, target: 50, progress: Math.min(totalEntries / 50, 1), unlocked: totalEntries >= 50 },
   ];
 }

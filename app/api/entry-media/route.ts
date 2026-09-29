@@ -11,11 +11,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ uploaded: true, ...media });
   } catch (error) {
     if (error instanceof ZodError) {
-      return NextResponse.json({ error: "Invalid image." }, { status: 400 });
+      return NextResponse.json({ code: "invalid_image", error: "Invalid image." }, { status: 400 });
     }
 
     const message = error instanceof Error ? error.message : "Could not upload image.";
     const status = message === "Missing Cloudinary environment variables." ? 503 : message === "Invalid image." ? 400 : 502;
-    return NextResponse.json({ error: message }, { status });
+    return NextResponse.json({ code: status === 503 ? "media_unavailable" : status === 400 ? "invalid_image" : "media_upload_failed", error: message }, { status });
   }
 }

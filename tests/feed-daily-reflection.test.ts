@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import {
   dailyReflectionQuotes,
   getDailyReflectionQuote,
-} from "../app/feed/_components/feed-shell/daily-reflection-quotes.ts";
+} from "../app/[locale]/feed/_components/feed-shell/daily-reflection-quotes.ts";
 
 assert.equal(dailyReflectionQuotes.length, 100);
 assert.equal(new Set(dailyReflectionQuotes.map((quote) => quote.text)).size, 100);

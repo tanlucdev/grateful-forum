@@ -1,0 +1,27 @@
+{
+  "filters": { "year": "{year}", "six-months": "Last 6 months", "month": "This month", "week": "This week" },
+  "hero": { "tracker": "Mindfulness and habit tracking", "rhythmJournal": "Rhythm journal", "title": "A gratitude rhythm", "description": "Record one small thing each day to nurture a peaceful mind. Follow your planting journey with Sprout." },
+  "mobile": { "tracker": "Mindfulness tracker", "rhythmJournal": "Rhythm journal", "title": "Gratitude calendar", "subtitle": "A 365-day mindful garden", "streak": "{count} days" },
+  "actions": { "writeToday": "Write today's journal", "today": "Today", "addMoment": "Add another grateful moment today" },
+  "a11y": { "filters": "Gratitude calendar filters", "previousMonth": "Previous month", "nextMonth": "Next month", "heatDay": "{date}: {count} entries", "monthDay": "{date}: {count} entries" },
+  "metrics": {
+    "streak": { "label": "Current streak", "unit": "day streak", "hint": "Longest streak: {count} days", "mobileHint": "🏆 Best: {count} days" },
+    "entries": { "label": "Total moments", "unit": "seeds", "hint": "{delta} seeds from last month" },
+    "rate": { "label": "Rhythm rate", "hint": "{active}/{total} days this month", "mobileHint": "{active} days" }
+  },
+  "garden": {
+    "title": "{year}-day planted garden", "description": "Every grateful note is a flower gently tended with Sprout.", "blooming": "Blooming journey", "flowers": "{count} soul flowers tended", "today": "Today", "todaySummary": "{flowers} flowers blooming • {streak}-day planting streak", "hover": "Hover to see each day", "range": "{year} • {flowers} flowers", "days": "{count} days", "seeds": "{count} seeds planted", "legend": "Keep planting with Sprout each day so the garden can stay fragrant and bright.", "less": "Less", "more": "Blooming (>2)", "most": "More bloom", "seasons": { "spring": "Spring", "summer": "Summer", "autumn": "Autumn (current)", "winter": "Winter" }
+  },
+  "month": { "personal": "Personal journal", "streak": "🔥 {count}-day streak active" },
+  "moments": { "title": "Today's moments", "count": "{count} planted", "empty": "No grateful moments for this day yet.", "fallbackImageAlt": "Morning coffee", "imageSaved": "A photo saving a peaceful moment", "private": "Private" },
+  "visibility": { "private": "Private", "public": "Public", "anonymous": "Anonymous" },
+  "mascot": { "level": "Sprout level", "levelValue": "Level {level}/{maxLevel}", "growing": "Growing sprout", "full": "Flourishing sprout", "nextLevel": "{count} days to bloom", "whisperTitle": "A whisper from Sprout", "whisperEstablished": "You are keeping a beautiful rhythm today. One small thing is enough to refresh the heart.", "whisperStarting": "One grateful note today is a new seed for your garden." },
+  "badges": {
+    "heading": "Milestones and companion badges", "description": "Rewards for patiently planting your own happiness.", "all": "All {count} badges →", "unlocked": "Unlocked", "progress": "{current}/{target}",
+    "firstWeek": { "title": "Gentle beginning", "description": "Complete your first 7 consecutive journal days." },
+    "steadySprout": { "title": "Steady sprout", "description": "Keep a mindful rhythm for 21 consecutive days." },
+    "morningSun": { "title": "Morning sun", "description": "Plant 10 moments this month." },
+    "openHeart": { "title": "Open heart", "description": "Create 50 gratitude moments." }
+  },
+  "footer": { "tagline": "Nurture a peaceful mind through ordinary moments each day.", "copyright": "© 2026 Grateful Forum. Planting happiness with Sprout." }
+}

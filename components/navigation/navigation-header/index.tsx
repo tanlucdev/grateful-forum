@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 
+import { LocaleSwitcher } from "@/components/navigation/locale-switcher";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,6 +14,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
+import { Link } from "@/i18n/navigation";
+import type { AppLocale } from "@/i18n/routing";
 import { logout } from "@/lib/api/auth";
 import { loginHref } from "@/lib/auth/redirects";
 
@@ -25,34 +28,38 @@ export type NavigationHeaderProfile = {
 };
 
 const navItems = [
-  { href: "/feed", icon: "grid_view", label: "Feed", protected: false },
-  { href: "/write", icon: "eco", label: "Viết", protected: false },
-  { href: "/calendar", icon: "calendar_today", label: "Lịch", protected: true },
-  { href: "/profile", icon: "person", label: "Cá nhân", protected: true },
+  { href: "/feed", icon: "grid_view", protected: false },
+  { href: "/write", icon: "eco", protected: false },
+  { href: "/calendar", icon: "calendar_today", protected: true },
+  { href: "/profile", icon: "person", protected: true },
 ] as const;
 
 const mobileNavItems = [
-  { href: "/feed", icon: "home", label: "Bảng tin", protected: false, primary: false },
-  { href: "/calendar", icon: "calendar_today", label: "Lịch sử", protected: true, primary: false },
-  { href: "/write", icon: "eco", label: "Ghi chép", protected: false, primary: true },
-  { href: "/reward", icon: "explore", label: "Khám phá", protected: false, primary: false },
-  { href: "/profile", icon: "person", label: "Cá nhân", protected: true, primary: false },
+  { href: "/feed", icon: "home", protected: false, primary: false },
+  { href: "/calendar", icon: "calendar_today", protected: true, primary: false },
+  { href: "/write", icon: "eco", protected: false, primary: true },
+  { href: "/reward", icon: "explore", protected: false, primary: false },
+  { href: "/profile", icon: "person", protected: true, primary: false },
 ] as const;
 
 export function NavigationHeader({
+  locale,
   onSignedOut,
   pathname,
   profile,
 }: Readonly<{
+  locale: AppLocale;
   onSignedOut: () => void;
   pathname: string;
   profile: NavigationHeaderProfile;
 }>) {
   const [pendingPath, setPendingPath] = useState("");
   const activePath = pendingPath || pathname;
+  const t = useTranslations("common");
+  const copy = navigationCopy(t);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-[80] hidden bg-transparent pt-[calc(env(safe-area-inset-top)+8px)] md:block">
+    <header className="fixed inset-x-0 top-0 z-[80] hidden bg-transparent pt-[calc(env(safe-area-inset-top)+8px)] lg:block">
       <div className="mx-auto grid h-[60px] max-w-7xl grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 rounded-[20px] border border-border bg-card/90 px-4 shadow-sm backdrop-blur-xl lg:px-5">
         <div className="flex min-w-0 items-center justify-start gap-2.5">
           <Link aria-label="Grateful Forum" className="flex min-w-0 items-center gap-2" href="/feed" onClick={() => setPendingPath("/feed")}>
@@ -69,7 +76,7 @@ export function NavigationHeader({
           </Link>
           <span className="hidden h-8 items-center gap-1.5 rounded-full bg-[var(--fire-soft)]/60 px-2.5 text-[11px] font-semibold leading-4 text-[var(--fire)] lg:inline-flex">
             <MaterialSymbol className="text-[14px] text-[var(--fire)]" fill name="local_fire_department" />
-            <span className="whitespace-nowrap">{profile.streak} ngày liên tiếp</span>
+            <span className="whitespace-nowrap">{profile.streak} {copy.streak}</span>
           </span>
         </div>
 
@@ -78,7 +85,8 @@ export function NavigationHeader({
             const targetPath = item.href;
             const active = activePath === targetPath || activePath.startsWith(`${targetPath}/`);
             const pending = pendingPath === targetPath;
-            const href = item.protected && !profile.signedIn ? loginHref(item.href) : item.href;
+            const href = item.protected && !profile.signedIn ? loginHref(item.href, locale) : item.href;
+            const label = item.href === "/write" ? copy.write : item.href === "/calendar" ? copy.calendar : item.href === "/profile" ? copy.personal : copy.feed;
             return (
               <Link
                 aria-current={active ? "page" : undefined}
@@ -92,14 +100,17 @@ export function NavigationHeader({
                 onClick={() => setPendingPath(targetPath)}
               >
                 <MaterialSymbol className="text-[14px]" name={item.icon} strokeWidth={active ? 2 : 1.7} />
-                <span className="whitespace-nowrap">{item.label}</span>
+                <span className="whitespace-nowrap">{label}</span>
               </Link>
             );
           })}
         </nav>
 
         <div className="flex min-w-0 items-center justify-end">
-          {profile.signedIn ? <AvatarMenu profile={profile} onSignedOut={onSignedOut} /> : <LoginButton />}
+          <div className="flex h-10 shrink-0 items-center gap-1 rounded-full border border-border bg-background/65 p-1 shadow-xs backdrop-blur-md">
+            <LocaleSwitcher />
+            {profile.signedIn ? <AvatarMenu copy={copy} profile={profile} onSignedOut={onSignedOut} /> : <LoginButton copy={copy} locale={locale} />}
+          </div>
         </div>
       </div>
     </header>
@@ -107,31 +118,36 @@ export function NavigationHeader({
 }
 
 export function MobileBottomNavigation({
+  locale,
   pathname,
   profile,
 }: Readonly<{
+  locale: AppLocale;
   pathname: string;
   profile: NavigationHeaderProfile;
 }>) {
   const [pendingPath, setPendingPath] = useState("");
   const activePath = pendingPath || pathname;
+  const t = useTranslations("common");
+  const copy = navigationCopy(t);
 
   return (
     <nav
-      aria-label="Điều hướng chính"
-      className="fixed inset-x-0 bottom-0 z-[80] border-t border-border bg-card/95 pb-[calc(env(safe-area-inset-bottom)+8px)] shadow-sm backdrop-blur-xl md:hidden"
+      aria-label={copy.mainNavigation}
+      className="fixed inset-x-0 bottom-0 z-[80] border-t border-border bg-card/95 pb-[calc(env(safe-area-inset-bottom)+8px)] shadow-sm backdrop-blur-xl lg:hidden"
     >
       <div className="mx-auto grid h-[72px] w-full max-w-[430px] grid-cols-5 items-end px-3 pt-1.5">
         {mobileNavItems.map((item) => {
           const targetPath = item.href;
           const active = activePath === targetPath || activePath.startsWith(`${targetPath}/`);
-          const href = item.protected && !profile.signedIn ? loginHref(item.href) : item.href;
+          const href = item.protected && !profile.signedIn ? loginHref(item.href, locale) : item.href;
+          const label = item.href === "/write" ? copy.writeMobile : item.href === "/calendar" ? copy.history : item.href === "/profile" ? copy.personal : item.href === "/reward" ? copy.discover : copy.feed;
 
           if (item.primary) {
             return (
               <Link
                 aria-current={active ? "page" : undefined}
-                aria-label={item.label}
+                aria-label={label}
                 className="-mt-8 flex min-h-[82px] flex-col items-center justify-start gap-0.5 text-primary outline-offset-4"
                 href={href}
                 key={item.href}
@@ -142,7 +158,7 @@ export function MobileBottomNavigation({
                     <MaterialSymbol className="text-[28px]" name={item.icon} strokeWidth={2.2} />
                   </span>
                 </span>
-                <span className="text-[12px] font-bold leading-4">{item.label}</span>
+                <span className="text-[12px] font-bold leading-4">{label}</span>
               </Link>
             );
           }
@@ -160,7 +176,7 @@ export function MobileBottomNavigation({
               <span className={`flex h-8 w-11 items-center justify-center rounded-full ${active ? "bg-accent/75" : ""}`}>
                 <MaterialSymbol className="text-[22px]" name={item.icon} strokeWidth={active ? 2 : 1.7} />
               </span>
-              <span className="max-w-full truncate">{item.label}</span>
+              <span className="max-w-full truncate">{label}</span>
             </Link>
           );
         })}
@@ -169,21 +185,23 @@ export function MobileBottomNavigation({
   );
 }
 
-function LoginButton() {
+function LoginButton({ copy, locale }: Readonly<{ copy: ReturnType<typeof navigationCopy>; locale: AppLocale }>) {
   return (
-    <Button asChild size="sm">
-      <Link href={loginHref("/profile")}>
+    <Button asChild className="h-8 rounded-full" size="sm">
+      <Link href={loginHref("/profile", locale)}>
         <MaterialSymbol className="text-[15px]" name="login" />
-        <span className="hidden sm:inline">Đăng nhập</span>
+        <span className="hidden sm:inline">{copy.login}</span>
       </Link>
     </Button>
   );
 }
 
 function AvatarMenu({
+  copy,
   onSignedOut,
   profile,
 }: Readonly<{
+  copy: ReturnType<typeof navigationCopy>;
   onSignedOut: () => void;
   profile: NavigationHeaderProfile;
 }>) {
@@ -196,12 +214,11 @@ function AvatarMenu({
 
     onSignedOut();
   }
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
-          aria-label="Menu tài khoản"
+          aria-label={copy.accountMenu}
           className="flex cursor-pointer items-center justify-center rounded-full p-0.5 ring-2 ring-primary/20 transition-all hover:ring-primary/40"
           type="button"
         >
@@ -217,16 +234,16 @@ function AvatarMenu({
             </div>
           </div>
         <div className="space-y-0.5 text-sm">
-          <MenuLink active href="/profile" icon="person" label="Hồ sơ của tôi" />
-          <MenuLink href="/calendar" icon="potted_plant" label="Vườn ươm Bé Mầm" />
-          <MenuLink href="/profile?tab=moments" icon="military_tech" label="Bộ sưu tập huy hiệu & cột mốc" />
-          <MenuLink href="/profile?tab=all" icon="settings" label="Cài đặt & Quyền riêng tư" />
+          <MenuLink active href="/profile" icon="person" label={copy.myProfile} />
+          <MenuLink href="/calendar" icon="potted_plant" label={copy.calendarGarden} />
+          <MenuLink href="/profile?tab=moments" icon="military_tech" label={copy.milestones} />
+          <MenuLink href="/profile?tab=all" icon="settings" label={copy.settings} />
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild variant="destructive">
           <button className="flex w-full items-center gap-2.5 rounded-2xl px-3 py-2 text-left text-sm font-medium" onClick={signOut} type="button">
             <MaterialSymbol className="h-4 w-4 text-lg" name="logout" />
-            <span>Đăng xuất</span>
+            <span>{copy.logout}</span>
           </button>
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -277,4 +294,25 @@ function MenuLink({
       </Link>
     </DropdownMenuItem>
   );
+}
+
+function navigationCopy(t: ReturnType<typeof useTranslations<"common">>) {
+  return {
+    accountMenu: t("a11y.accountMenu"),
+    calendar: t("navigation.calendar"),
+    calendarGarden: t("navigation.garden"),
+    discover: t("navigation.reward"),
+    feed: t("navigation.feed"),
+    history: t("navigation.history"),
+    login: t("navigation.signIn"),
+    logout: t("navigation.signOut"),
+    mainNavigation: t("navigation.main"),
+    milestones: t("navigation.milestones"),
+    myProfile: t("navigation.myProfile"),
+    personal: t("navigation.profile"),
+    settings: t("navigation.settings"),
+    streak: t("navigation.streak"),
+    write: t("navigation.write"),
+    writeMobile: t("navigation.writeMobile"),
+  };
 }

@@ -9,7 +9,7 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
-  const safeNext = safeAuthRedirect(url.searchParams.get("next"));
+  const safeNext = safeAuthRedirect(url.searchParams.get("next"), "/vi/feed");
 
   if (!code) {
     return NextResponse.redirect(new URL("/?auth=missing-code", url.origin));

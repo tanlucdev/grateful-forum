@@ -1,0 +1,7 @@
+{
+  "actions": { "review": "Duyệt", "dismiss": "Bỏ qua", "hide": "Ẩn", "delete": "Xóa" },
+  "empty": "Không có báo cáo cần xử lý.",
+  "title": "Hàng đợi kiểm duyệt",
+  "description": "Duyệt báo cáo, bỏ qua nội dung nhiễu, ẩn bài viết hoặc xóa nội dung nghiêm trọng.",
+  "adminRequired": "Cần quyền quản trị."
+}

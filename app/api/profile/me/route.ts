@@ -5,7 +5,7 @@ export async function GET() {
   const dashboard = await loadOwnProfileDashboard();
 
   if (!dashboard) {
-    return NextResponse.json({ error: "Not signed in." }, { status: 401 });
+    return NextResponse.json({ code: "profile_failed", error: "Not signed in." }, { status: 401 });
   }
 
   return NextResponse.json(dashboard);

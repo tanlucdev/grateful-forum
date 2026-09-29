@@ -9,9 +9,9 @@ assert.deepEqual(
     signingUp: true,
   }),
   {
-    displayName: "Nhập tên hiển thị để tạo tài khoản.",
-    email: "Nhập email để tiếp tục.",
-    password: "Nhập mật khẩu để tiếp tục.",
+    displayName: "displayNameRequired",
+    email: "emailRequired",
+    password: "passwordRequired",
   },
 );
 
@@ -22,7 +22,7 @@ assert.deepEqual(
     password: "1234567",
     signingUp: true,
   }),
-  { password: "Mật khẩu cần có ít nhất 8 ký tự." },
+  { password: "passwordShort" },
 );
 
 assert.equal(

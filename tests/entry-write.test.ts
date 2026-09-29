@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { getGratitudeInputs, getGratitudeSummary } from "../app/write/_components/gratitude-disclosure-state.ts";
+import { getGratitudeInputs, getGratitudeSummary } from "../app/[locale]/write/_components/gratitude-disclosure-state.ts";
 import { createEntryRequestSchema } from "../lib/entries/schema.ts";
 import { getStickerLabel, STICKER_GROUPS, stickers } from "../lib/entries/stickers.ts";
 import { buildCloudinarySignature } from "../lib/entry-media/mutations.ts";

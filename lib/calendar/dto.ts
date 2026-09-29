@@ -12,7 +12,14 @@ export type CalendarEntry = {
 
 export type CalendarYearDay = { count: number; date: string; inYear: boolean; isToday: boolean };
 export type CalendarMonthDay = { count: number; date: string; day: number; inMonth: boolean; isToday: boolean; href: string };
-export type CalendarBadge = { emoji: string; title: string; description: string; status: string; progress: number; unlockedAt: string | null };
+export type CalendarBadge = {
+  id: "firstWeek" | "steadySprout" | "morningSun" | "openHeart";
+  emoji: string;
+  progress: number;
+  current: number;
+  target: number;
+  unlocked: boolean;
+};
 
 export type CalendarOverview = {
   timezone: string;
@@ -22,12 +29,8 @@ export type CalendarOverview = {
     month: number;
     selectedDate: string;
     todayDate: string;
-    monthLabel: string;
-    selectedDateLabel: string;
-    gardenTitle: string;
-    gardenRangeLabel: string;
   };
-  filters: { key: CalendarView; label: string; active: boolean; href: string }[];
+  filters: { key: CalendarView; active: boolean; href: string }[];
   stats: {
     currentStreak: number;
     longestStreak: number;
@@ -38,9 +41,9 @@ export type CalendarOverview = {
     monthCompletionRate: number;
     entriesDeltaFromPreviousMonth: number;
   };
-  garden: { yearDays: CalendarYearDay[]; visibleDays: CalendarYearDay[]; totalFlowers: number; todayCount: number; todayStreakLabel: string };
+  garden: { yearDays: CalendarYearDay[]; visibleDays: CalendarYearDay[]; totalFlowers: number; todayCount: number };
   monthDays: CalendarMonthDay[];
   selectedEntries: CalendarEntry[];
   badges: CalendarBadge[];
-  mascot: { level: number; maxLevel: number; label: string; progress: number; daysToNextLevel: number; whisper: string };
+  mascot: { level: number; maxLevel: number; progress: number; daysToNextLevel: number };
 };

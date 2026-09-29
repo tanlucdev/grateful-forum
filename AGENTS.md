@@ -16,3 +16,11 @@
 - Do not create or push branches with unlisted prefixes such as `polish/`.
 
 - After creating or updating a branch and commit, push it to `https://github.com/tanlucdev/begrateful.git` using the GitHub account `tanlucdev`; do not push with another GitHub identity.
+- Before every `git push origin`, verify the GitHub credential owner through `https://api.github.com/user`; continue only when its `login` is exactly `tanlucdev`. Git `user.name` and `user.email` do not prove the pushing account.
+
+## I18n
+
+- New or changed UI requires symmetric `vi/en` catalog keys. Do not add raw user-facing copy.
+- Format dates, times, and numbers with the active locale. Keep API contracts and error codes locale-neutral.
+- Do not translate user-generated content.
+- Before handoff, run catalog parity through `npm run test:logic`, then `npm run typecheck`, `npm run lint`, and `npm run build`.
