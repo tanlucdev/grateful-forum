@@ -6,7 +6,7 @@
   "relative": { "minute": "{count}m ago", "hour": "{count}h ago", "yesterday": "Yesterday", "day": "{count}d ago" },
   "filters": { "all": "All seeds", "ordinary": "Everyday moments", "polaroid": "With Polaroids" },
   "empty": { "ordinaryTitle": "No everyday moments yet", "ordinaryDescription": "Shares without Polaroid photos will appear here.", "polaroidTitle": "No Polaroids yet", "polaroidDescription": "Shares with attached photos will appear here.", "publicTitle": "No public shares yet", "publicDescription": "Public or anonymous posts will appear here." },
-  "loading": "Loading more...", "done": "You have reached the end.", "noPublic": "No public shares yet.", "eyebrow": "Gentle Stream", "title": "Seeds planted today", "description": "Read one grateful note from someone else and remember the quiet happiness nearby.", "showAll": "Show all",
+  "loading": "Loading more...", "done": "You have reached the end.", "noPublic": "No public shares yet.", "eyebrow": "Gentle Stream", "title": "Seeds planted today", "description": "Read one grateful note from someone else and remember the quiet happiness nearby.", "showAll": "Show all", "scrollToTop": "Back to top",
   "companion": {},
   "quotes": []
 }
