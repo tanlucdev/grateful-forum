@@ -41,6 +41,7 @@ export function PublicFeedClient({
   const [done, setDone] = useState(!initialPage.nextCursor);
   const [error, setError] = useState("");
   const [filter, setFilter] = useState<FeedFilter>("all");
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   const loadMore = useCallback(async () => {
@@ -77,6 +78,14 @@ export function PublicFeedClient({
     observer.observe(sentinel);
     return () => observer.disconnect();
   }, [cursor, done, loadMore, loading]);
+
+  useEffect(() => {
+    const updateScrollTopVisibility = () => setShowScrollTop(window.scrollY > 640);
+
+    updateScrollTopVisibility();
+    window.addEventListener("scroll", updateScrollTopVisibility, { passive: true });
+    return () => window.removeEventListener("scroll", updateScrollTopVisibility);
+  }, []);
 
   const filteredItems = items.filter((item) => {
     if (filter === "polaroid") {
@@ -171,6 +180,17 @@ export function PublicFeedClient({
         </section>
       </main>
       <DesktopFooter />
+      {showScrollTop ? (
+        <button
+          aria-label={t("scrollToTop")}
+          className="fixed bottom-[calc(6rem+env(safe-area-inset-bottom))] right-5 z-[70] flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-[var(--primary-shadow-md)] outline-offset-4 transition hover:-translate-y-0.5 hover:bg-primary-hover focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:translate-y-0 md:bottom-8 md:right-8"
+          onClick={() => window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" })}
+          title={t("scrollToTop")}
+          type="button"
+        >
+          <MaterialSymbol className="text-2xl" name="keyboard_arrow_up" />
+        </button>
+      ) : null}
     </div>
   );
 }
