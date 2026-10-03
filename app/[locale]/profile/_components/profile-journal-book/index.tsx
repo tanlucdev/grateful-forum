@@ -1,5 +1,11 @@
+"use client";
+/* eslint-disable @next/next/no-img-element */
+
 import type { JournalEntry } from "@/lib/profile/types";
+import { HandwritingViewer } from "@/components/entries/handwriting-viewer";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { formatRelative, profileAssets, type ProfileView, visibilityLabel } from "../profile-view";
 import { EntryActionsClient } from "../entry-actions-client";
 
@@ -47,10 +53,12 @@ function NotebookPage({
   entry,
   index,
 }: Readonly<{ entry: JournalEntry; index: number }>) {
-  const gratitudeItems = entry.metadata.gratitudes.length
+  const t = useTranslations("profile");
+  const handwritten = entry.entryKind === "handwritten";
+  const gratitudeItems = handwritten ? [] : entry.metadata.gratitudes.length
     ? entry.metadata.gratitudes.slice(0, 3)
     : [entry.content];
-  const quote = entry.metadata.quote || entry.metadata.reflection || entry.content;
+  const quote = handwritten ? "" : entry.metadata.quote || entry.metadata.reflection || entry.content;
   const date = formatRelative(entry.createdAt, "vi");
 
   return (
@@ -80,9 +88,10 @@ function NotebookPage({
             </span>
             <span className="text-[10px] text-muted-foreground">{index === 0 ? "06:45 AM" : visibilityLabel(entry.visibility)}</span>
           </div>
-          <p className="mt-1.5 line-clamp-4 whitespace-pre-wrap text-xs italic leading-relaxed text-muted-foreground">“{quote}”</p>
+          {quote ? <p className="mt-1.5 line-clamp-4 whitespace-pre-wrap text-xs italic leading-relaxed text-muted-foreground">“{quote}”</p> : null}
         </div>
-        <div className="flex flex-col gap-2">
+        {entry.entryKind === "handwritten" ? <Link aria-label={t("actions.viewEntry")} className="mt-3 flex h-36 items-center justify-center overflow-hidden rounded-xl border border-[#ede5d8] bg-[#fffdf8] p-2 shadow-sm" href={`/entries/${entry.id}`}>{entry.handwritingData ? <HandwritingViewer className="h-32 w-auto max-w-full rounded-lg" document={entry.handwritingData} label={t("actions.viewEntry")} /> : entry.handwritingPreviewUrl ? <img alt="" className="h-32 w-full rounded-lg object-cover" src={entry.handwritingPreviewUrl} /> : <span className="flex h-32 items-center justify-center gap-2 text-xs font-semibold text-primary"><MaterialSymbol name="edit" />{t("actions.viewEntry")}</span>}</Link> : null}
+        {!handwritten ? <div className="flex flex-col gap-2">
           <div className="flex items-center gap-1.5 text-primary">
             <MaterialSymbol className="text-lg" name="favorite" />
             <span className="text-xs font-bold">3 Điều biết ơn hôm nay</span>
@@ -95,19 +104,17 @@ function NotebookPage({
               <p className="line-clamp-3 flex-1 text-xs leading-snug text-foreground">{item}</p>
             </div>
           ))}
-        </div>
-        {entry.metadata.imageUrl ? (
+        </div> : null}
+        {!handwritten && entry.metadata.imageUrl ? (
           <div className="mt-3 overflow-hidden rounded-xl border border-[#ede5d8] bg-card p-2 shadow-sm">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img alt="" className="h-32 w-full rounded-lg object-cover" src={entry.metadata.imageUrl} />
           </div>
-        ) : index === 0 ? (
+        ) : !handwritten && index === 0 ? (
           <div className="mt-3 overflow-hidden rounded-xl border border-[#ede5d8] bg-card p-2 shadow-sm">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img alt="" className="h-32 w-full rounded-lg object-cover" src={profileAssets.coffeeDesktop} />
           </div>
         ) : null}
-        {index === 0 ? (
+        {!handwritten && index === 0 ? (
           <div className="mt-3 flex items-center gap-2.5 rounded-xl border border-[#cbe1d5] bg-[#dbeee5] p-2.5 shadow-sm">
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#c2dcd0] bg-card text-base shadow-sm">🌱</span>
             <p className="text-[11px] leading-tight text-muted-foreground">

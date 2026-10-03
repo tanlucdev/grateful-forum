@@ -20,6 +20,8 @@ export type DisplayItem = {
   content: string;
   detail: string;
   metadata: EntryMetadata;
+  entryKind: FeedItem["entryKind"];
+  handwritingPreviewUrl: string | null;
   initial?: string;
   isAnonymous: boolean;
   profileHref?: string;
@@ -45,6 +47,8 @@ export function toDisplayItem(item: FeedItem, index: number, locale: AppLocale, 
     initial: author?.displayName?.trim().charAt(0).toUpperCase(),
     isAnonymous: !author,
     metadata: item.metadata,
+    entryKind: item.entryKind,
+    handwritingPreviewUrl: item.handwritingPreviewUrl,
     profileHref: author ? `/profile/${author.id}` : undefined,
     reactions: item.reactions,
     time: formatRelative(item.createdAt, locale, copy),

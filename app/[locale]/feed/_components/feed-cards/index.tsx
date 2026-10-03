@@ -1,4 +1,5 @@
 import Image from "next/image";
+/* eslint-disable @next/next/no-img-element */
 import { Link } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
@@ -85,6 +86,9 @@ export function DesktopFeedCard({ item, locale, priorityImage = false }: Readonl
 }
 
 function EntryBody({ item, locale, mobile = false, priorityImage = false }: Readonly<{ item: DisplayItem; locale: AppLocale; mobile?: boolean; priorityImage?: boolean }>) {
+  if (item.entryKind === "handwritten" && item.handwritingPreviewUrl) {
+    return <Link aria-label={item.detail} className="mt-4 block overflow-hidden rounded-2xl border border-border bg-[#fffdf8] p-2 shadow-sm" href={`/entries/${item.id}`}><img alt="" className="aspect-[4/3] w-full rounded-xl object-cover" src={item.handwritingPreviewUrl} /></Link>;
+  }
   const hasMetadata = item.metadata.gratitudes.length || item.metadata.reflection || item.metadata.quote || item.metadata.imageUrl;
 
   if (!hasMetadata) {

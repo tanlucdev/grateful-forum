@@ -48,6 +48,9 @@ export async function loadPublicProfile(id: string): Promise<PublicProfile | nul
       visibility: entry.visibility,
       createdAt: entry.created_at,
       metadata: toEntryMetadata(entry),
+      entryKind: entry.entry_kind,
+      handwritingData: null,
+      handwritingPreviewUrl: entry.handwriting_preview_url,
     })),
   };
 }

@@ -1,7 +1,7 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { queryCalendarTimezone } from "@/lib/calendar/queries";
-import { entrySelect, toEntryMetadata } from "@/lib/entries/records";
+import { entryDetailSelect, toEntryMetadata } from "@/lib/entries/records";
 import { getStreak } from "./streak";
 import type { ProfileDashboard } from "./types";
 
@@ -25,7 +25,7 @@ export async function loadOwnProfileDashboard(): Promise<ProfileDashboard | null
       .single(),
     supabase
       .from("entries")
-      .select(entrySelect)
+      .select(entryDetailSelect)
       .eq("user_id", auth.user.id)
       .is("hidden_at", null)
       .is("owner_deleted_at", null)
@@ -62,6 +62,9 @@ export async function loadOwnProfileDashboard(): Promise<ProfileDashboard | null
       visibility: entry.visibility,
       createdAt: entry.created_at,
       metadata: toEntryMetadata(entry),
+      entryKind: entry.entry_kind,
+      handwritingData: entry.handwriting_data,
+      handwritingPreviewUrl: entry.handwriting_preview_url,
     })),
   };
 }

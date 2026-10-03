@@ -3,5 +3,47 @@
   "moods": [],
   "quotes": [],
   "privacy": [],
-  "stickers": { "categories": {}, "labels": {} }
+  "stickers": { "categories": {}, "labels": {} },
+  "handwriting": {
+    "methodLabel": "Cách viết nhật ký",
+    "type": "Gõ chữ",
+    "handwrite": "Viết tay",
+    "canvasLabel": "Trang viết tay",
+    "paperStyleLabel": "Kiểu giấy",
+    "ruled": "Có dòng",
+    "blank": "Trống",
+    "dot": "Chấm bi",
+    "grid": "Ô lưới",
+    "paperStyleHelp": "Nền giấy chỉ để hướng dẫn, không làm thay đổi nét viết.",
+    "stampLabel": "Dấu góc",
+    "stamp": { "none": "Không dùng", "sprout": "Mầm", "heart": "Tim", "star": "Sao", "sun": "Mặt trời", "moon": "Mặt trăng", "flower": "Hoa" },
+    "toolLabel": "Dụng cụ viết",
+    "colorLabel": "Màu mực",
+    "color": "Màu mực {color}",
+    "pen": "Bút",
+    "eraser": "Tẩy nét",
+    "undo": "Hoàn tác",
+    "redo": "Làm lại",
+    "clear": "Xóa trang",
+    "clearConfirm": "Xóa toàn bộ nét viết trên trang này?",
+    "empty": "Dùng Apple Pencil, ngón tay hoặc chuột để viết điều bạn biết ơn.",
+    "help": "Nét viết được lưu nguyên bản. Tẩy sẽ xóa cả nét chạm vào.",
+    "previewUnavailable": "Không thể tạo ảnh xem trước.",
+    "mediaUnavailable": "Tính năng tải ảnh xem trước hiện chưa được cấu hình. Vui lòng thử lại sau.",
+    "previewUploadFailed": "Không thể tải ảnh xem trước. Nét viết vẫn được giữ nguyên, vui lòng thử lại.",
+    "saved": "Đã lưu trang viết tay.",
+    "savedLocal": "Đã lưu trên thiết bị này.",
+    "saveFailed": "Không thể lưu trang viết tay. Vui lòng thử lại.",
+    "back": "Về hồ sơ"
+  },
+  "toast": {
+    "textSaved": "Đã lưu bài viết.",
+    "textSavedLocal": "Đã lưu bài viết trên thiết bị này.",
+    "textSavedWithoutImage": "Bài viết đã lưu nhưng ảnh chưa có.",
+    "handwritingSaved": "Đã lưu trang viết tay.",
+    "handwritingSavedLocal": "Đã lưu trang viết tay trên thiết bị này."
+  },
+  "errors": {
+    "saveFailed": "Không thể lưu bài viết. Vui lòng thử lại."
+  }
 }

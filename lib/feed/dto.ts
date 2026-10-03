@@ -1,4 +1,4 @@
-import type { EntryMetadata, EntryVisibility } from "@/lib/entries/types";
+import type { EntryKind, EntryMetadata, EntryVisibility } from "@/lib/entries/types";
 import type { FeedReactionCounts } from "./engagement-state.ts";
 import type { FeedReactionType } from "./validation.ts";
 
@@ -16,6 +16,8 @@ export type FeedItem = {
   createdAt: string;
   author: FeedAuthor | null;
   metadata: EntryMetadata;
+  entryKind: EntryKind;
+  handwritingPreviewUrl: string | null;
   reactions: FeedReactionCounts;
   viewerReaction: FeedReactionType | null;
   viewerBookmarked: boolean;

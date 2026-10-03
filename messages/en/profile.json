@@ -9,7 +9,7 @@
   "filters": { "label": "Filter:", "all": "All", "family": "#family", "work": "#work", "nature": "#nature", "newest": "Newest" },
   "visibility": { "private": "Private", "public": "Public", "anonymous": "Anonymous" },
   "empty": { "journalTitle": "No journal entries yet", "journalDescription": "Your grateful notes will appear here.", "momentsTitle": "No moments yet", "momentsDescription": "Photos from your journal will appear here." },
-  "actions": { "deleteEntry": "Delete entry", "deleting": "Deleting..." },
+  "actions": { "deleteEntry": "Delete entry", "deleting": "Deleting...", "viewEntry": "View journal page" },
   "toasts": { "visibilityChanged": "Changed to {visibility}.", "deleted": "Entry deleted." },
   "errors": { "visibility": "Could not change visibility.", "delete": "Could not delete entry." },
   "deleteDialog": { "title": "Delete entry?", "description": "This entry will no longer appear in your journal, calendar, feed, or public profile. Version 1 does not support recovery." },

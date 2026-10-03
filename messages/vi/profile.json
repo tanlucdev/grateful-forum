@@ -9,7 +9,7 @@
   "filters": { "label": "Lọc theo:", "all": "Tất cả", "family": "#gia đình", "work": "#công việc", "nature": "#thiên nhiên", "newest": "Mới nhất" },
   "visibility": { "private": "Riêng tư", "public": "Công khai", "anonymous": "Ẩn danh" },
   "empty": { "journalTitle": "Chưa có nhật ký", "journalDescription": "Những điều biết ơn của bạn sẽ xuất hiện ở đây.", "momentsTitle": "Chưa có khoảnh khắc", "momentsDescription": "Ảnh từ nhật ký của bạn sẽ xuất hiện ở đây." },
-  "actions": { "deleteEntry": "Xóa bài viết", "deleting": "Đang xóa..." },
+  "actions": { "deleteEntry": "Xóa bài viết", "deleting": "Đang xóa...", "viewEntry": "Xem trang nhật ký" },
   "toasts": { "visibilityChanged": "Đã đổi thành {visibility}.", "deleted": "Đã xóa bài viết." },
   "errors": { "visibility": "Không thể đổi quyền riêng tư.", "delete": "Không thể xóa bài viết." },
   "deleteDialog": { "title": "Xóa bài viết?", "description": "Bài viết sẽ không còn xuất hiện trong nhật ký, lịch, feed hoặc hồ sơ công khai. Phiên bản 1 chưa hỗ trợ khôi phục." },

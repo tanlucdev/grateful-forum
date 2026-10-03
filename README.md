@@ -10,7 +10,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Set the Supabase values in `.env.local` before using auth or database-backed flows.
+Set the Supabase and Cloudinary values in `.env.local` before using auth, database-backed flows, or image uploads. Configure the same three `CLOUDINARY_*` variables separately for Preview and Production in the deployment provider; never commit real values.
 
 ## Scripts
 

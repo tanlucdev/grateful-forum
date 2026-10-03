@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { entryVisibilities } from "./types.ts";
+import { inkDocumentSchema } from "./ink.ts";
 
 const gratitudeSchema = z.string().trim().min(1).max(1000);
 
@@ -24,3 +25,8 @@ export const updateEntryRequestSchema = z.object({
 }).strict();
 
 export type CreateEntryRequestInput = z.infer<typeof createEntryRequestSchema>;
+
+export const createHandwrittenEntryRequestSchema = z.object({
+  visibility: z.enum(entryVisibilities),
+  document: inkDocumentSchema,
+}).strict();

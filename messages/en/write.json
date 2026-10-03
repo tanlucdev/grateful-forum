@@ -3,5 +3,47 @@
   "moods": [],
   "quotes": [],
   "privacy": [],
-  "stickers": { "categories": {}, "labels": {} }
+  "stickers": { "categories": {}, "labels": {} },
+  "handwriting": {
+    "methodLabel": "Journal input method",
+    "type": "Type",
+    "handwrite": "Handwrite",
+    "canvasLabel": "Handwritten page",
+    "paperStyleLabel": "Paper style",
+    "ruled": "Ruled",
+    "blank": "Blank",
+    "dot": "Dot",
+    "grid": "Grid",
+    "paperStyleHelp": "Paper guides are visual only; they never alter your strokes.",
+    "stampLabel": "Corner stamp",
+    "stamp": { "none": "No stamp", "sprout": "Sprout", "heart": "Heart", "star": "Star", "sun": "Sun", "moon": "Moon", "flower": "Flower" },
+    "toolLabel": "Writing tools",
+    "colorLabel": "Ink color",
+    "color": "Ink color {color}",
+    "pen": "Pen",
+    "eraser": "Erase stroke",
+    "undo": "Undo",
+    "redo": "Redo",
+    "clear": "Clear page",
+    "clearConfirm": "Clear every stroke on this page?",
+    "empty": "Use Apple Pencil, a finger, or a mouse to write what you are grateful for.",
+    "help": "Your original strokes are saved. Erase removes a touched stroke.",
+    "previewUnavailable": "Could not create a preview.",
+    "mediaUnavailable": "Preview uploads are not configured yet. Please try again later.",
+    "previewUploadFailed": "Could not upload the preview. Your strokes are still here; please try again.",
+    "saved": "Handwritten page saved.",
+    "savedLocal": "Saved on this device.",
+    "saveFailed": "Could not save the handwritten page. Please try again.",
+    "back": "Back to profile"
+  },
+  "toast": {
+    "textSaved": "Entry saved.",
+    "textSavedLocal": "Entry saved on this device.",
+    "textSavedWithoutImage": "Entry saved, but the image is unavailable.",
+    "handwritingSaved": "Handwritten page saved.",
+    "handwritingSavedLocal": "Handwritten page saved on this device."
+  },
+  "errors": {
+    "saveFailed": "Could not save the entry. Please try again."
+  }
 }

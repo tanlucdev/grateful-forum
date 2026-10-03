@@ -1,6 +1,8 @@
 "use client";
+/* eslint-disable @next/next/no-img-element */
 
 import { MaterialSymbol } from "@/components/ui/material-symbol";
+import { Link } from "@/i18n/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { getStickerLabel } from "@/lib/entries/stickers";
 import type { JournalEntry } from "@/lib/profile/types";
@@ -52,11 +54,12 @@ function LiveEntryCard({ entry, grid }: Readonly<{ entry: JournalEntry; grid: bo
           <EntryActionsClient entry={entry} />
         </div>
       </div>
-      {hasMetadata ? (
+      {entry.entryKind === "handwritten" ? (
+        <Link aria-label={t("actions.viewEntry")} className="overflow-hidden rounded-xl border border-border bg-[#fffdf8] p-2" href={`/entries/${entry.id}`}>{entry.handwritingPreviewUrl ? <img alt="" className="h-40 w-full rounded-lg object-cover" src={entry.handwritingPreviewUrl} /> : <span className="flex min-h-28 items-center justify-center gap-2 text-sm font-semibold text-primary"><MaterialSymbol name="edit" />{t("actions.viewEntry")}</span>}</Link>
+      ) : hasMetadata ? (
         <div className="flex flex-col gap-3">
           {entry.metadata.quote ? <p className="whitespace-pre-wrap text-sm italic leading-5 text-muted-foreground">{"“"}{entry.metadata.quote}{"”"}</p> : null}
           {entry.metadata.imageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
             <img alt="" className="h-40 w-full rounded-xl object-cover" src={entry.metadata.imageUrl} />
           ) : null}
           {entry.metadata.gratitudes.length ? (

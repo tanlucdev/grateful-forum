@@ -1,4 +1,4 @@
-import type { EntryVisibility } from "./types";
+import type { EntryVisibility, InkDocument } from "./types";
 
 export type CreateEntryRequest = {
   visibility: EntryVisibility;
@@ -17,3 +17,12 @@ export type CreateEntryResponse =
   | { saved: false; reason: string };
 
 export type UpdateEntryResponse = { entry: { id: string; visibility: EntryVisibility } };
+
+export type CreateHandwrittenEntryResponse =
+  | { saved: true; entry: { id: string; created_at: string } }
+  | { saved: false; reason: string };
+
+export type CreateHandwrittenEntryRequest = {
+  document: InkDocument;
+  visibility: EntryVisibility;
+};

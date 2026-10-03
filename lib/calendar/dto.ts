@@ -1,4 +1,4 @@
-import type { EntryMetadata, EntryVisibility } from "@/lib/entries/types";
+import type { EntryKind, EntryMetadata, EntryVisibility } from "@/lib/entries/types";
 
 export type CalendarView = "year" | "six-months" | "month" | "week";
 
@@ -8,6 +8,8 @@ export type CalendarEntry = {
   createdAt: string;
   visibility: EntryVisibility;
   metadata: EntryMetadata;
+  entryKind: EntryKind;
+  handwritingPreviewUrl: string | null;
 };
 
 export type CalendarYearDay = { count: number; date: string; inYear: boolean; isToday: boolean };

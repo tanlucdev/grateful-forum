@@ -1,9 +1,10 @@
 import type { CreateEntryRequest } from "./dto.ts";
 import { getStickerLabel } from "./stickers.ts";
-import type { EntryMetadata, EntryVisibility } from "./types.ts";
+import type { EntryKind, EntryMetadata, EntryVisibility, InkDocument } from "./types.ts";
 
 export const entrySelect =
-  "id, content, visibility, created_at, user_id, gratitudes, reflection, mood, washi, space, quote, sticker, image_url";
+  "id, content, visibility, created_at, user_id, gratitudes, reflection, mood, washi, space, quote, sticker, image_url, entry_kind, handwriting_preview_url";
+export const entryDetailSelect = `${entrySelect}, handwriting_data, handwriting_orientation`;
 
 export type EntryRow = {
   id: string;
@@ -19,6 +20,13 @@ export type EntryRow = {
   quote: string | null;
   sticker: string | null;
   image_url: string | null;
+  entry_kind: EntryKind;
+  handwriting_preview_url: string | null;
+};
+
+export type EntryDetailRow = EntryRow & {
+  handwriting_data: InkDocument | null;
+  handwriting_orientation: InkDocument["orientation"] | null;
 };
 
 export function composeEntryContent(input: CreateEntryRequest) {
@@ -38,8 +46,9 @@ export function composeEntryContent(input: CreateEntryRequest) {
   ].join("\n");
 }
 
-export function toEntryMetadata(row: Pick<EntryRow, "gratitudes" | "reflection" | "mood" | "washi" | "space" | "quote" | "sticker" | "image_url">): EntryMetadata {
+export function toEntryMetadata(row: Pick<EntryRow, "entry_kind" | "gratitudes" | "reflection" | "mood" | "washi" | "space" | "quote" | "sticker" | "image_url" | "handwriting_preview_url">): EntryMetadata {
   return {
+    entryKind: row.entry_kind,
     gratitudes: row.gratitudes ?? [],
     reflection: row.reflection,
     mood: row.mood,
@@ -48,5 +57,6 @@ export function toEntryMetadata(row: Pick<EntryRow, "gratitudes" | "reflection" 
     quote: row.quote,
     sticker: row.sticker,
     imageUrl: row.image_url,
+    handwritingPreviewUrl: row.handwriting_preview_url,
   };
 }
