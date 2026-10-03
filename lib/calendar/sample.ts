@@ -33,8 +33,8 @@ export const sampleCalendarOverview: CalendarOverview = {
   garden: { yearDays, visibleDays: visibleYearDays(yearDays, "year", year, month, selectedDate), totalFlowers: 214, todayCount: 2 },
   monthDays: makeMonthDays(year, month, buckets, selectedDate, (date) => calendarHref(year, month, date, "year")),
   selectedEntries: [
-    { id: "sample-1", content: "Biết ơn ly cà phê sáng mẹ pha thơm lừng.", createdAt: "2024-10-24T08:30:00+07:00", visibility: "private", metadata: { gratitudes: [], reflection: "Một buổi sáng thật dịu dàng.", mood: "Bình an", washi: null, space: null, quote: "Biết ơn những điều giản dị.", sticker: "#giadinh", imageUrl: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=160&q=80" } },
-    { id: "sample-2", content: "Hoàn thành buổi chạy bộ 5km quanh công viên.", createdAt: "2024-10-24T21:15:00+07:00", visibility: "private", metadata: { gratitudes: [], reflection: "Cơ thể khỏe mạnh là món quà.", mood: "Phấn chấn", washi: null, space: null, quote: null, sticker: "#suckhoe", imageUrl: null } },
+    { id: "sample-1", content: "Biết ơn ly cà phê sáng mẹ pha thơm lừng.", createdAt: "2024-10-24T08:30:00+07:00", visibility: "private", entryKind: "text", handwritingPreviewUrl: null, metadata: { entryKind: "text", gratitudes: [], reflection: "Một buổi sáng thật dịu dàng.", mood: "Bình an", washi: null, space: null, quote: "Biết ơn những điều giản dị.", sticker: "#giadinh", imageUrl: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=160&q=80", handwritingPreviewUrl: null } },
+    { id: "sample-2", content: "Hoàn thành buổi chạy bộ 5km quanh công viên.", createdAt: "2024-10-24T21:15:00+07:00", visibility: "private", entryKind: "text", handwritingPreviewUrl: null, metadata: { entryKind: "text", gratitudes: [], reflection: "Cơ thể khỏe mạnh là món quà.", mood: "Phấn chấn", washi: null, space: null, quote: null, sticker: "#suckhoe", imageUrl: null, handwritingPreviewUrl: null } },
   ],
   badges,
   mascot: { level: 3, maxLevel: 5, progress: 0.65, daysToNextLevel: 8 },

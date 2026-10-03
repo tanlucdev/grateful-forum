@@ -89,7 +89,7 @@ export function ModeSwitcher({
   );
 }
 
-export function WriteIntro({ setPreviewOpen, setStatus, ...props }: BaseProps & { setPreviewOpen: (open: boolean) => void; setStatus: (status: string) => void }) {
+export function WriteIntro({ setPreviewOpen, showPreview = true, ...props }: BaseProps & { setPreviewOpen: (open: boolean) => void; showPreview?: boolean }) {
   const mobileDate = `Nhật ký hôm nay • ${props.today}`;
   const desktopDate = `Soạn thảo nhật ký hôm nay • ${props.today}`;
 
@@ -120,15 +120,15 @@ export function WriteIntro({ setPreviewOpen, setStatus, ...props }: BaseProps & 
         </div>
       </div>
       <div className="flex flex-wrap items-center justify-end gap-2.5 md:flex-nowrap">
-        {props.status ? <span className="shrink-0 text-[12px] font-semibold leading-4 text-primary">{props.status}</span> : null}
-        <Button variant="outline" onClick={() => setStatus("Đã lưu nháp.")} type="button">
+        {props.status ? <span className="shrink-0 text-[12px] font-semibold leading-4 text-destructive">{props.status}</span> : null}
+        <Button disabled variant="outline" type="button">
           <MaterialSymbol className="text-[17px]" name="history" />
           <span>Bản nháp</span>
         </Button>
-        <Button variant="outline" onClick={() => setPreviewOpen(true)} type="button">
+        {showPreview ? <Button variant="outline" onClick={() => setPreviewOpen(true)} type="button">
           <MaterialSymbol className="text-[17px]" name="auto_stories" />
           <span>Xem trước sổ</span>
-        </Button>
+        </Button> : null}
         <Button className="shadow-sm hover:shadow-sm" disabled={!props.canSubmit} onClick={props.submit} type="button">
           <MaterialSymbol className="text-[17px]" fill name="eco" />
           <span>{props.saving ? "Đang lưu..." : "Lưu trang nhật ký"}</span>

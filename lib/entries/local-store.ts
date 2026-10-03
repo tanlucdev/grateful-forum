@@ -1,9 +1,10 @@
 "use client";
 
-import type { EntryVisibility, LocalDraft, LocalEntry } from "./types";
+import type { EntryVisibility, InkDocument, LocalDraft, LocalEntry, LocalHandwrittenEntry } from "./types";
 
 const KEY = "begrateful.entries";
 const DRAFT_KEY = "begrateful.drafts";
+const HANDWRITTEN_KEY = "begrateful.handwritten-entries";
 
 export function getLocalEntries() {
   try {
@@ -31,6 +32,25 @@ export function addLocalEntry(content: string, visibility: EntryVisibility) {
   };
   localStorage.setItem(KEY, JSON.stringify([entry, ...getLocalEntries()]));
   return entry;
+}
+
+export function addLocalHandwrittenEntry(document: InkDocument, visibility: EntryVisibility) {
+  const entry: LocalHandwrittenEntry = {
+    id: crypto.randomUUID(),
+    document,
+    visibility,
+    createdAt: new Date().toISOString(),
+  };
+  localStorage.setItem(HANDWRITTEN_KEY, JSON.stringify([entry, ...getLocalHandwrittenEntries()]));
+  return entry;
+}
+
+export function getLocalHandwrittenEntries() {
+  try {
+    return JSON.parse(localStorage.getItem(HANDWRITTEN_KEY) ?? "[]") as LocalHandwrittenEntry[];
+  } catch {
+    return [];
+  }
 }
 
 export function addLocalDraft(content: string, mood: string) {

@@ -14,7 +14,7 @@ import type { AppLocale } from "@/i18n/routing";
 
 export type AppShellProfile = NavigationHeaderProfile;
 
-const appRoutes = ["/feed", "/write", "/calendar", "/profile", "/reward", "/moderation"] as const;
+const appRoutes = ["/feed", "/write", "/calendar", "/profile", "/reward", "/moderation", "/entries"] as const;
 
 export function AppShell({
   children,

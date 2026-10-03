@@ -4,7 +4,7 @@ import { ENTRY_LIMIT } from "./types.ts";
 import type { CreateEntryRequest } from "./dto.ts";
 import { composeEntryContent } from "./records.ts";
 import { entrySelect } from "./records.ts";
-import type { EntryVisibility } from "./types.ts";
+import type { EntryVisibility, InkDocument } from "./types.ts";
 import { softDeleteEntryData } from "./ownership.ts";
 
 export async function createEntry(
@@ -50,6 +50,27 @@ export async function createEntry(
   return result.data;
 }
 
+export async function createHandwrittenEntry(
+  supabase: SupabaseClient,
+  input: { document: InkDocument; visibility: EntryVisibility; previewUrl: string | null },
+  userId: string | null,
+) {
+  const data = {
+    content: "[Handwritten journal entry]",
+    visibility: input.visibility,
+    entry_kind: "handwritten" as const,
+    handwriting_data: input.document,
+    handwriting_orientation: input.document.orientation,
+    handwriting_preview_url: input.previewUrl,
+  };
+  const result = userId
+    ? await supabase.from("entries").insert({ ...data, user_id: userId }).select("id, created_at").single()
+    : await supabase.from("entries").insert({ ...data, guest_id: await ensureGuestId() }).select("id, created_at").single();
+
+  if (result.error) throw new Error(result.error.message);
+  return result.data;
+}
+
 export async function updateOwnEntryVisibility(
   supabase: SupabaseClient,
   entryId: string,
@@ -61,6 +82,7 @@ export async function updateOwnEntryVisibility(
     .update({ visibility })
     .eq("id", entryId)
     .eq("user_id", userId)
+    .eq("entry_kind", "text")
     .is("owner_deleted_at", null)
     .select(entrySelect)
     .maybeSingle();

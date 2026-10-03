@@ -81,7 +81,7 @@ export function EntryActionsClient({ entry }: Readonly<{ entry: JournalEntry }>)
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48 p-1.5">
-          {visibilityActions.map(([value, icon]) => (
+          {entry.entryKind === "text" ? visibilityActions.map(([value, icon]) => (
             <DropdownMenuItem
               className="min-h-11 gap-2 px-2.5 text-sm"
               disabled={saving || value === entry.visibility}
@@ -91,7 +91,7 @@ export function EntryActionsClient({ entry }: Readonly<{ entry: JournalEntry }>)
               <MaterialSymbol className="text-base" name={icon} />
               {t(`visibility.${value}`)}
             </DropdownMenuItem>
-          ))}
+          )) : null}
           <DropdownMenuSeparator />
           <DropdownMenuItem
             className="min-h-11 gap-2 px-2.5 text-sm"

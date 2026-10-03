@@ -73,7 +73,7 @@ export async function loadCalendarOverview(input: CalendarQuery): Promise<Calend
     stats: { ...streaks, totalEntries: raw.total, monthEntries, activeDaysThisMonth, ...completion, entriesDeltaFromPreviousMonth: monthEntries - raw.previous },
     garden: { yearDays, visibleDays: visibleYearDays(yearDays, view, year, month, selectedDate), totalFlowers, todayCount: yearBuckets.get(actualToday) ?? 0 },
     monthDays: makeMonthDays(year, month, yearBuckets, actualToday, href),
-    selectedEntries: raw.selected.map((entry) => ({ id: entry.id, content: entry.content, createdAt: entry.created_at, visibility: entry.visibility, metadata: toEntryMetadata(entry) })),
+    selectedEntries: raw.selected.map((entry) => ({ id: entry.id, content: entry.content, createdAt: entry.created_at, visibility: entry.visibility, metadata: toEntryMetadata(entry), entryKind: entry.entry_kind, handwritingPreviewUrl: entry.handwriting_preview_url })),
     badges: makeBadges(raw.total, streaks.longestStreak, activeDaysThisMonth, monthEntries),
     mascot: { level, maxLevel: 5, progress, daysToNextLevel: Math.ceil((1 - progress) * 25) },
   };

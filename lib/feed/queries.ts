@@ -117,6 +117,8 @@ export async function loadFeedPage(cursor?: string | null): Promise<FeedPage> {
         visibility: row.visibility,
         createdAt: row.created_at,
         metadata: toEntryMetadata(row),
+        entryKind: row.entry_kind,
+        handwritingPreviewUrl: row.handwriting_preview_url,
         reactions: reactionsByEntry.get(row.id) ?? emptyFeedReactionCounts(),
         viewerReaction: viewerReactionByEntry.get(row.id) ?? null,
         viewerBookmarked: bookmarkedEntryIds.has(row.id),

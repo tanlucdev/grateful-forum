@@ -1,4 +1,5 @@
 import { Link } from "@/i18n/navigation";
+/* eslint-disable @next/next/no-img-element */
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { ReportEntryButton } from "@/components/moderation/report-entry-button";
@@ -23,7 +24,6 @@ export default async function PublicProfilePage({
         <div className="flex items-center gap-4">
           <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-lg border border-border bg-background">
             {profile.profile.avatarUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
               <img alt="" className="h-full w-full object-cover" src={profile.profile.avatarUrl} />
             ) : (
               <span className="text-sm font-semibold text-primary">
@@ -75,11 +75,12 @@ export default async function PublicProfilePage({
                 </span>
                 <span className="text-xs text-muted-foreground">{formatDate(entry.createdAt, locale)}</span>
               </div>
-              {entry.metadata.gratitudes.length || entry.metadata.reflection || entry.metadata.quote || entry.metadata.imageUrl ? (
+              {entry.entryKind === "handwritten" ? (
+                <Link aria-label={t("actions.viewEntry")} className="mt-3 block overflow-hidden rounded-xl border border-border bg-[#fffdf8] p-2" href={`/entries/${entry.id}`}>{entry.handwritingPreviewUrl ? <img alt="" className="h-44 w-full rounded-lg object-cover" src={entry.handwritingPreviewUrl} /> : <span className="flex h-32 items-center justify-center text-sm font-semibold text-primary">{t("actions.viewEntry")}</span>}</Link>
+              ) : entry.metadata.gratitudes.length || entry.metadata.reflection || entry.metadata.quote || entry.metadata.imageUrl ? (
                 <>
                   {entry.metadata.quote ? <p className="mt-3 whitespace-pre-wrap text-sm italic leading-6 text-muted-foreground">“{entry.metadata.quote}”</p> : null}
                   {entry.metadata.imageUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
                     <img alt="" className="mt-3 h-44 w-full rounded-lg object-cover" src={entry.metadata.imageUrl} />
                   ) : null}
                   {entry.metadata.gratitudes.length ? (
