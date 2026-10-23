@@ -2,7 +2,7 @@ import { toEntryMetadata } from "@/lib/entries/records";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { CalendarOverview, CalendarView } from "./dto.ts";
-import { queryCalendarData, queryCalendarTimezone } from "./queries.ts";
+import { queryCalendarData, queryCalendarProfile } from "./queries.ts";
 import { bucketDates, getCalendarStreaks, localDateKey, makeBadges, makeMonthDays, makeYearDays, monthCompletion, visibleYearDays } from "./stats.ts";
 import { calendarHref, resolveCalendarQueryDefaults, type CalendarQuery } from "./validation.ts";
 
@@ -33,7 +33,7 @@ export async function loadCalendarOverview(input: CalendarQuery): Promise<Calend
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) throw new CalendarAuthError("Not signed in.");
 
-  const timezone = await queryCalendarTimezone(supabase, auth.user.id);
+  const { calendarTourAvailable, calendarTourSeenAt, timezone } = await queryCalendarProfile(supabase, auth.user.id);
   const { year, month, selectedDate } = resolveCalendarQueryDefaults(input, timezone);
   const viewedMonth = monthKey(year, month);
   const raw = await queryCalendarData(
@@ -61,6 +61,7 @@ export async function loadCalendarOverview(input: CalendarQuery): Promise<Calend
   const progress = Math.min(1, (raw.total % 25) / 25);
 
   return {
+    onboarding: { calendarTourAvailable, calendarTourSeenAt },
     timezone,
     view,
     period: {

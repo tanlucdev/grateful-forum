@@ -1,4 +1,5 @@
 import { MaterialSymbol } from "@/components/ui/material-symbol";
+import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { ProfileEditModalButton } from "../profile-modals-client";
 import { ProfileJournalBook } from "../profile-journal-book";
@@ -44,7 +45,12 @@ function ProfileBrief({ view }: Readonly<{ view: ProfileView }>) {
           </div>
           <p className="mt-0.5 line-clamp-1 text-xs leading-4 text-muted-foreground">{view.bio || t("defaultBio")}</p>
         </div>
-        <ProfileEditModalButton variant="icon" view={view} />
+        <div className="flex items-center gap-1">
+          <Link aria-label={t("onboarding.replay")} className="inline-flex min-h-11 items-center rounded-xl bg-muted px-3 text-xs font-semibold text-primary" href="/write?tour=first-entry">
+            {t("onboarding.replay")}
+          </Link>
+          <ProfileEditModalButton variant="icon" view={view} />
+        </div>
       </div>
       <div className="flex items-center justify-between gap-1.5 pt-1">
         <MobileStat value={view.entryCount} label={t("mobile.entries")} tone="primary" />

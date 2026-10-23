@@ -19,6 +19,7 @@
   "share": { "button": "Chia sẻ", "title": "Chia sẻ khoảnh khắc biết ơn", "close": "Đóng", "badge": "Đồng hành {count} ngày", "mascotAlt": "Linh vật Bé Mầm", "quote": "“Mầm đang lớn lên từng ngày nhờ những suy nghĩ tích cực của bạn! 🌱”", "entries": "{count} điều biết ơn đã ghi", "copyLink": "Sao chép liên kết", "copy": "Chép", "copied": "Đã chép", "feed": "Chia sẻ lên Feed", "download": "Tải ảnh kỷ niệm" },
   "footer": { "tagline": "Nuôi dưỡng tâm hồn an yên", "copyright": "© 2026 Grateful Forum. Lan tỏa lòng biết ơn mỗi ngày." },
   "commonCancel": "Hủy",
+  "onboarding": { "replay": "Xem hướng dẫn" },
   "public": { "back": "Quay lại", "entries": "Bài viết công khai", "streak": "Chuỗi ngày", "streakValue": "{count} ngày", "journal": "Nhật ký công khai", "empty": "Hồ sơ này chưa có bài viết công khai." },
   "report": { "action": "Báo cáo", "reason": "Lý do", "placeholder": "Spam, nội dung không an toàn, thông tin riêng tư...", "send": "Gửi", "sending": "Đang gửi...", "cancel": "Hủy", "success": "Đã gửi báo cáo.", "error": "Không thể gửi báo cáo." }
 }

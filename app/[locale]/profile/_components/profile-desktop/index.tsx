@@ -1,4 +1,5 @@
 import { MaterialSymbol } from "@/components/ui/material-symbol";
+import { Link } from "@/i18n/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { ProfileEditModalButton } from "../profile-modals-client";
 import { Avatar, MilestoneCard, Pill } from "../profile-desktop-cards";
@@ -11,7 +12,7 @@ export function DesktopProfile({
 }: Readonly<{ initialTab: "all" | "public" | "moments"; view: ProfileView }>) {
   return (
     <div className="hidden min-h-svh flex-col md:flex">
-      <main className="mx-auto w-full max-w-[1200px] flex-1 px-6 pt-20">
+      <main className="mx-auto w-full max-w-[1200px] flex-1 px-6">
         <div className="flex w-full flex-col space-y-8 py-8">
           <DesktopHero view={view} />
           <ProfileDesktopTabs initialTab={initialTab} view={view} />
@@ -28,11 +29,11 @@ function DesktopHero({ view }: Readonly<{ view: ProfileView }>) {
   const t = useTranslations("profile");
   const number = new Intl.NumberFormat(useLocale());
   return (
-    <section className="relative overflow-hidden rounded-xl bg-card p-8 shadow-sm">
+    <section className="relative overflow-hidden rounded-xl bg-card p-6 shadow-sm lg:p-8">
       <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-accent/40 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-12 -left-12 h-48 w-48 rounded-full bg-accent/30 blur-2xl" />
-      <div className="relative z-10 flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
-        <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
+      <div className="relative z-10 flex flex-col items-start justify-between gap-6 md:flex-row md:items-start lg:items-center">
+        <div className="flex min-w-0 flex-col items-start gap-6 sm:flex-row sm:items-start lg:items-center">
           <div className="relative">
             <div className="h-24 w-24 rounded-full bg-gradient-to-tr from-primary to-accent p-1 shadow-md">
               <Avatar className="h-full w-full" src={view.avatarDesktop} />
@@ -41,7 +42,7 @@ function DesktopHero({ view }: Readonly<{ view: ProfileView }>) {
               <MaterialSymbol className="text-sm" fill name="eco" />
             </span>
           </div>
-          <div className="flex flex-col space-y-2">
+          <div className="flex min-w-0 flex-1 flex-col space-y-2">
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-semibold leading-8 text-foreground">
                 {view.displayName}
@@ -59,7 +60,10 @@ function DesktopHero({ view }: Readonly<{ view: ProfileView }>) {
             <WeeklyRhythm compact={false} view={view} />
           </div>
         </div>
-        <div className="self-end md:self-center">
+        <div className="flex self-end gap-2 md:self-start lg:self-center">
+          <Link className="inline-flex min-h-11 items-center rounded-xl bg-muted px-4 text-sm font-semibold text-primary" href="/write?tour=first-entry">
+            {t("onboarding.replay")}
+          </Link>
           <ProfileEditModalButton view={view} />
         </div>
       </div>

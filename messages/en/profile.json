@@ -19,6 +19,7 @@
   "share": { "button": "Share", "title": "Share a grateful moment", "close": "Close", "badge": "Together for {count} days", "mascotAlt": "Sprout mascot", "quote": "“Sprout grows each day with your positive thoughts! 🌱”", "entries": "{count} grateful notes recorded", "copyLink": "Copy link", "copy": "Copy", "copied": "Copied", "feed": "Share to Feed", "download": "Download keepsake image" },
   "footer": { "tagline": "Nurturing a peaceful mind", "copyright": "© 2026 Grateful Forum. Sharing gratitude every day." },
   "commonCancel": "Cancel",
+  "onboarding": { "replay": "View guide" },
   "public": { "back": "Back", "entries": "Public entries", "streak": "Streak", "streakValue": "{count} days", "journal": "Public journal", "empty": "This profile has no public entries yet." },
   "report": { "action": "Report", "reason": "Reason", "placeholder": "Spam, unsafe content, private information...", "send": "Send", "sending": "Sending...", "cancel": "Cancel", "success": "Report sent.", "error": "Could not send report." }
 }

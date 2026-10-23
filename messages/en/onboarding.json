@@ -1,0 +1,41 @@
+{
+  "card": {
+    "label": "Tour guide",
+    "progress": "Step {current} of {total}",
+    "back": "Back",
+    "next": "Next",
+    "skip": "Skip"
+  },
+  "replay": {
+    "calendar": "Replay calendar guide",
+    "firstEntry": "Replay writing guide"
+  },
+  "firstEntry": {
+    "gratitude": {
+      "title": "Start with one grateful thought",
+      "content": "Write a small moment you appreciate today."
+    },
+    "visibility": {
+      "title": "Choose who can see it",
+      "content": "Private keeps this note only for you."
+    },
+    "save": {
+      "title": "Save your first note",
+      "content": "Your first saved entry completes onboarding."
+    }
+  },
+  "calendar": {
+    "desktop": {
+      "filter": { "title": "Choose your time range", "content": "Switch between year, six months, month, or week to review your rhythm." },
+      "garden": { "title": "Watch your garden grow", "content": "Colors and symbols show how often you wrote on each day." },
+      "month": { "title": "Explore a month", "content": "Move between months, then select a day to focus your view." },
+      "moments": { "title": "Return to a day's moments", "content": "Read the notes from the selected day, or add another moment." }
+    },
+    "mobile": {
+      "filter": { "title": "Choose your time range", "content": "Switch between year, six months, month, or week to review your rhythm." },
+      "garden": { "title": "Watch your garden grow", "content": "Colors and symbols show how often you wrote on each day." },
+      "month": { "title": "Explore a month", "content": "Move between months, then select a day to focus your view." },
+      "moments": { "title": "Return to a day's moments", "content": "Read the notes from the selected day, or add another moment." }
+    }
+  }
+}

@@ -36,6 +36,7 @@ export function FilterPills({ compact = false, filters }: Readonly<{ compact?: b
     <nav
       aria-label={t("a11y.filters")}
       className={`${compact ? "mt-4 text-[11px]" : "text-sm"} flex min-h-12 items-center gap-1 rounded-[14px] bg-secondary p-1 font-semibold text-muted-foreground`}
+      data-tour={compact ? "calendar-mobile-filter" : "calendar-desktop-filter"}
     >
       {filters.map((item) => (
         <Link

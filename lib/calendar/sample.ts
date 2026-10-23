@@ -11,6 +11,7 @@ const yearDays = makeYearDays(year, buckets, selectedDate);
 const badges = makeBadges(128, 28, 24, 26);
 
 export const sampleCalendarOverview: CalendarOverview = {
+  onboarding: { calendarTourAvailable: true, calendarTourSeenAt: null },
   timezone: "Asia/Ho_Chi_Minh",
   view: "year",
   period: {

@@ -60,7 +60,7 @@ export function ProfileEditModalButton({
         className={
           variant === "icon"
             ? "inline-flex h-[29px] w-[29px] items-center justify-center rounded-full bg-muted text-primary shadow-sm transition-colors hover:bg-input"
-            : "inline-flex items-center gap-1.5 rounded-[10px] bg-secondary px-[13px] py-2 text-[10px] font-semibold leading-[13px] text-foreground shadow-sm transition-colors hover:bg-input"
+            : "inline-flex h-11 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-[10px] bg-secondary px-[13px] text-xs font-semibold leading-4 text-foreground shadow-sm transition-colors hover:bg-input"
         }
         onClick={() => setOpen(true)}
         type="button"
