@@ -1,4 +1,4 @@
-import { getSticker, stickers, type StickerId } from "@/lib/entries/stickers";
+import { getSticker, type StickerIconKey, type StickerId } from "@/lib/entries/stickers";
 
 type StickerIconProps = {
   id: StickerId | string;
@@ -12,14 +12,7 @@ const palettes = {
   badge: { bg: "#f2ead7", fg: "#7b5d24", accent: "#e8c96b" },
 } as const;
 
-function hashId(id: string) {
-  return Array.from(id).reduce((sum, char) => sum + char.charCodeAt(0), 0);
-}
-
-function variantFor(id: string, group: keyof typeof palettes) {
-  const groupIndex = stickers.filter((sticker) => sticker.group === group).findIndex((sticker) => sticker.id === id);
-  return groupIndex >= 0 ? groupIndex : hashId(id) % 18;
-}
+const motifs: Record<StickerIconKey, number> = { heart: 0, star: 1, book: 2, tea: 3, coffee: 3, sun: 4, moon: 5, sprout: 6, flower: 7, mountain: 8, cloud: 9, leaf: 10, mail: 11, check: 12, home: 13, music: 14, flag: 15, drop: 16, plant: 17 };
 
 function Motif({ color, variant }: Readonly<{ color: string; variant: number }>) {
   const stroke = { stroke: color, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, strokeWidth: 2.4 };
@@ -69,14 +62,13 @@ export function StickerIcon({ className = "h-10 w-10", id }: Readonly<StickerIco
   const sticker = getSticker(id);
   const group = sticker?.group ?? "sprout";
   const palette = palettes[group];
-  const seed = hashId(id) % 5;
-  const variant = variantFor(id, group);
+  const variant = motifs[sticker?.icon ?? "sprout"];
 
   return (
     <svg aria-hidden="true" className={className} fill="none" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
       <rect fill={palette.bg} height="58" rx="18" width="58" x="3" y="3" />
-      <circle cx={46 - seed} cy={17 + seed} fill={palette.accent} opacity="0.75" r="7" />
-      <circle cx={18 + seed} cy={48 - seed} fill="#fff" opacity="0.7" r="4" />
+      <circle cx={46} cy={17} fill={palette.accent} opacity="0.75" r="7" />
+      <circle cx={18} cy={48} fill="#fff" opacity="0.7" r="4" />
       <Motif color={palette.fg} variant={variant} />
     </svg>
   );

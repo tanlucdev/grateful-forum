@@ -11,10 +11,14 @@ export type Locale = "vi" | "en";
 export type Sticker = {
   id: string;
   group: StickerGroup;
+  icon: StickerIconKey;
   labels: Record<Locale, string>;
   alts: Record<Locale, string>;
   tags: Record<Locale, readonly string[]>;
 };
+
+export const stickerIconKeys = ["heart", "star", "book", "tea", "coffee", "sun", "moon", "sprout", "flower", "mountain", "cloud", "leaf", "mail", "check", "home", "music", "flag", "drop", "plant"] as const;
+export type StickerIconKey = (typeof stickerIconKeys)[number];
 
 const groupTags: Record<StickerGroup, Record<Locale, readonly string[]>> = {
   sprout: { vi: ["be mam", "ban dong hanh"], en: ["sprout buddy", "companion"] },
@@ -27,6 +31,7 @@ function makeSticker(group: StickerGroup, slug: string, vi: string, en: string, 
   return {
     id: `${group}-${slug}`,
     group,
+    icon: stickerIconFor(slug),
     labels: { vi, en },
     alts: { vi: `Sticker ${vi}`, en: `${en} sticker` },
     tags: {
@@ -34,6 +39,27 @@ function makeSticker(group: StickerGroup, slug: string, vi: string, en: string, 
       en: [...groupTags[group].en, ...enTags],
     },
   };
+}
+
+function stickerIconFor(slug: string): StickerIconKey {
+  if (/(coffee)/.test(slug)) return "coffee";
+  if (/(tea|cup|meal)/.test(slug)) return "tea";
+  if (/(read|note|page)/.test(slug)) return "book";
+  if (/(sun|light|lantern)/.test(slug)) return "sun";
+  if (/(moon|night|sleep)/.test(slug)) return "moon";
+  if (/(heart|hug|kind|care)/.test(slug)) return "heart";
+  if (/(star|firefly)/.test(slug)) return "star";
+  if (/(mail|message|call)/.test(slug)) return "mail";
+  if (/(rain|dew|river|ocean)/.test(slug)) return "drop";
+  if (/(mountain|pine|bamboo)/.test(slug)) return "mountain";
+  if (/(cloud|mist)/.test(slug)) return "cloud";
+  if (/(flower|lotus|bloom|meadow|wildflower)/.test(slug)) return "flower";
+  if (/(garden|seed|sprout|pot|root|fern|leaf)/.test(slug)) return "plant";
+  if (/(home|desk)/.test(slug)) return "home";
+  if (/(music)/.test(slug)) return "music";
+  if (/(task|win|first|seven|streak|champion|medal|badge)/.test(slug)) return "check";
+  if (/(brave|flag)/.test(slug)) return "flag";
+  return "sprout";
 }
 
 export const stickers = [

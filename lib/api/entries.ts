@@ -15,6 +15,10 @@ export function createEntry(payload: CreateEntryRequest) {
   );
 }
 
+export function getRecentSpaces() {
+  return fetchJson<{ spaces: string[] }>("/api/entries/recent-spaces", { method: "GET" }, "Could not load recent spaces.");
+}
+
 export function updateEntryVisibility(id: string, visibility: EntryVisibility) {
   return fetchJson<UpdateEntryResponse>(
     `/api/entries/${id}`,

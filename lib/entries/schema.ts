@@ -6,13 +6,13 @@ const gratitudeSchema = z.string().trim().min(1).max(1000);
 
 export const createEntryRequestSchema = z.object({
   visibility: z.enum(entryVisibilities),
-  gratitudes: z.array(gratitudeSchema).max(10),
-  reflection: z.string().trim().min(1).max(5000),
-  mood: z.string().trim().min(1).max(80),
-  washi: z.string().trim().min(1).max(80),
-  space: z.string().trim().min(1).max(160),
-  quote: z.string().trim().min(1).max(240),
-  sticker: z.string().trim().min(1).max(120),
+  gratitudes: z.array(gratitudeSchema).min(1).max(10),
+  reflection: z.string().trim().max(5000).optional().nullable(),
+  mood: z.string().trim().max(80).optional().nullable(),
+  washi: z.string().trim().max(80).optional().nullable(),
+  space: z.string().trim().max(160).optional().nullable(),
+  quote: z.string().trim().max(240).optional().nullable(),
+  sticker: z.string().trim().max(120).optional().nullable(),
   imageUrl: z.string().trim().url().max(2048).nullable().optional(),
 });
 

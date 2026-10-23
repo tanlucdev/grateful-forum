@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { createPortal } from "react-dom";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
 import { getStickerLabel, STICKER_GROUPS, stickers, type StickerGroup, type StickerId } from "@/lib/entries/stickers";
@@ -14,14 +15,13 @@ type StickerPickerProps = {
 
 type Category = "all" | StickerGroup;
 
-const categories: readonly { id: Category; label: string }[] = [
-  { id: "all", label: "Tất cả" },
-  ...STICKER_GROUPS,
-];
+const categories: readonly Category[] = ["all", ...STICKER_GROUPS.map((item) => item.id)];
 
 export function StickerPicker({ compact = false, onSelect, sticker }: Readonly<StickerPickerProps>) {
   const [open, setOpen] = useState(false);
-  const label = getStickerLabel(sticker, "vi") ?? sticker;
+  const locale = useLocale() as "vi" | "en";
+  const t = useTranslations("write.picker");
+  const label = getStickerLabel(sticker, locale) ?? sticker;
 
   return (
     <>
@@ -34,8 +34,8 @@ export function StickerPicker({ compact = false, onSelect, sticker }: Readonly<S
       >
         <StickerIcon className={`${compact ? "h-7 w-7" : "h-10 w-10"} shrink-0`} id={sticker} />
         <span className="min-w-0 flex-1">
-          {compact ? null : <span className="block text-xs font-semibold leading-4 text-muted-foreground">Sticker hiện tại</span>}
-          <span className={`${compact ? "text-xs leading-4" : "text-sm leading-5"} block truncate font-bold text-foreground`}>{compact ? `Sticker: ${label}` : label}</span>
+          {compact ? null : <span className="block text-xs font-semibold leading-4 text-muted-foreground">{t("current")}</span>}
+          <span className={`${compact ? "text-xs leading-4" : "text-sm leading-5"} block truncate font-bold text-foreground`}>{compact ? t("currentValue", { value: label }) : label}</span>
         </span>
         <MaterialSymbol className="text-lg text-primary" name="keyboard_arrow_down" />
       </button>
@@ -58,6 +58,8 @@ function StickerPickerModal({
   onSelect,
   sticker,
 }: Readonly<StickerPickerProps & { close: () => void }>) {
+  const locale = useLocale() as "vi" | "en";
+  const t = useTranslations("write.picker");
   const [category, setCategory] = useState<Category>("all");
   const [query, setQuery] = useState("");
   const normalizedQuery = query.trim().toLowerCase();
@@ -69,6 +71,8 @@ function StickerPickerModal({
           item.id,
           item.labels.vi,
           item.labels.en,
+          item.alts.vi,
+          item.alts.en,
           ...item.tags.vi,
           ...item.tags.en,
         ].join(" ").toLowerCase();
@@ -114,28 +118,28 @@ function StickerPickerModal({
   }, [close]);
 
   return createPortal(
-    <div aria-label="Chọn sticker" aria-modal="true" className="fixed inset-0 z-[100] flex items-end justify-center bg-foreground/35 px-3 py-4 backdrop-blur-sm sm:items-center sm:px-5 sm:py-8" data-sticker-picker-modal onClick={close} role="dialog">
+    <div aria-label={t("dialog")} aria-modal="true" className="fixed inset-0 z-[100] flex items-end justify-center bg-foreground/35 px-3 py-4 backdrop-blur-sm sm:items-center sm:px-5 sm:py-8" data-sticker-picker-modal onClick={close} role="dialog">
       <div className="flex max-h-[calc(100dvh-32px)] w-full max-w-3xl flex-col rounded-3xl bg-card shadow-2xl ring-1 ring-border" onClick={(event) => event.stopPropagation()}>
         <div className="flex items-start justify-between gap-4 border-b border-border p-4 sm:p-5">
           <div className="min-w-0">
-            <h4 className="text-xl font-semibold leading-7 text-foreground">Chọn sticker Bé Mầm</h4>
-            <p className="mt-1 text-xs font-medium leading-4 text-muted-foreground">{stickers.length} sticker native SVG</p>
+            <h4 className="text-xl font-semibold leading-7 text-foreground">{t("title")}</h4>
+            <p className="mt-1 text-xs font-medium leading-4 text-muted-foreground">{t("count", { count: stickers.length })}</p>
           </div>
-          <button aria-label="Đóng popup" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground outline-offset-2 transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-ring" data-sticker-picker-close onClick={close} type="button">
+          <button aria-label={t("close")} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground outline-offset-2 transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-ring" data-sticker-picker-close onClick={close} type="button">
             <MaterialSymbol name="close" />
           </button>
         </div>
         <div className="space-y-3 border-b border-border p-4 sm:p-5">
           <label className="flex min-h-11 items-center gap-2 rounded-2xl bg-muted px-3 text-muted-foreground focus-within:bg-card focus-within:ring-2 focus-within:ring-primary/25">
             <MaterialSymbol className="text-lg text-primary" name="search" />
-            <input className="min-w-0 flex-1 bg-transparent text-sm font-medium leading-5 outline-none placeholder:text-muted-foreground" onChange={(event) => setQuery(event.target.value)} placeholder="Tìm theo id, nhãn, tag..." value={query} />
+            <input className="min-w-0 flex-1 bg-transparent text-sm font-medium leading-5 outline-none placeholder:text-muted-foreground" onChange={(event) => setQuery(event.target.value)} placeholder={t("search")} value={query} />
           </label>
           <div className="flex gap-2 overflow-x-auto pb-1">
             {categories.map((item) => {
-              const active = item.id === category;
+              const active = item === category;
               return (
-                <button className={`h-9 shrink-0 rounded-full px-3 text-xs font-bold outline-offset-2 transition-colors focus-visible:outline-2 focus-visible:outline-ring ${active ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:bg-accent"}`} key={item.id} onClick={() => setCategory(item.id)} type="button">
-                  {item.label}
+                <button className={`h-9 shrink-0 rounded-full px-3 text-xs font-bold outline-offset-2 transition-colors focus-visible:outline-2 focus-visible:outline-ring ${active ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:bg-accent"}`} key={item} onClick={() => setCategory(item)} type="button">
+                  {t(`groups.${item}`)}
                 </button>
               );
             })}
@@ -156,13 +160,13 @@ function StickerPickerModal({
                   type="button"
                 >
                   <StickerIcon className="h-12 w-12" id={item.id} />
-                  <span className="line-clamp-2 text-xs font-bold leading-4">{item.labels.vi}</span>
+                  <span className="line-clamp-2 text-xs font-bold leading-4">{item.labels[locale]}</span>
                   {active ? <MaterialSymbol className="absolute right-2 top-2 text-lg" fill name="check_circle" /> : null}
                 </button>
               );
             })}
           </div>
-          {results.length ? null : <p className="py-8 text-center text-sm font-semibold text-muted-foreground">Không tìm thấy sticker phù hợp.</p>}
+          {results.length ? null : <p className="py-8 text-center text-sm font-semibold text-muted-foreground">{t("empty")}</p>}
         </div>
       </div>
     </div>,

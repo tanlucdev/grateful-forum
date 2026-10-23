@@ -45,6 +45,17 @@ export function addLocalHandwrittenEntry(document: InkDocument, visibility: Entr
   return entry;
 }
 
+export function upsertLocalHandwrittenEntry(id: string | null, document: InkDocument, visibility: EntryVisibility) {
+  const entry = { id: id ?? crypto.randomUUID(), document, visibility, createdAt: new Date().toISOString() };
+  const entries = getLocalHandwrittenEntries();
+  localStorage.setItem(HANDWRITTEN_KEY, JSON.stringify([entry, ...entries.filter((item) => item.id !== entry.id)]));
+  return entry;
+}
+
+export function removeLocalHandwrittenEntry(id: string) {
+  localStorage.setItem(HANDWRITTEN_KEY, JSON.stringify(getLocalHandwrittenEntries().filter((entry) => entry.id !== id)));
+}
+
 export function getLocalHandwrittenEntries() {
   try {
     return JSON.parse(localStorage.getItem(HANDWRITTEN_KEY) ?? "[]") as LocalHandwrittenEntry[];

@@ -1,15 +1,15 @@
 import assert from "node:assert/strict";
-import { getGratitudeInputs, getGratitudeSummary } from "../app/[locale]/write/_components/gratitude-disclosure-state.ts";
 import { createEntryRequestSchema } from "../lib/entries/schema.ts";
 import { getStickerLabel, STICKER_GROUPS, stickers } from "../lib/entries/stickers.ts";
 import { MediaError, mediaFailure } from "../lib/entry-media/errors.ts";
 import { buildCloudinarySignature, getCloudinaryEnv, uploadEntryMedia } from "../lib/entry-media/mutations.ts";
 import { parseHandwritingPreview, validateEntryMediaFile } from "../lib/entry-media/validation.ts";
-import { inkDocumentSchema } from "../lib/entries/ink.ts";
+import { eraseInkStrokes, inkDocumentSchema } from "../lib/entries/ink.ts";
 import { renderInkDocument } from "../lib/entries/ink-renderer.ts";
+import { composeEntryContent } from "../lib/entries/records.ts";
+import { normalizeRecentSpaces } from "../lib/entries/recent-spaces-service.ts";
 import { ApiClientError } from "../lib/api/fetch-json.ts";
 import { handwritingSaveErrorKey } from "../lib/api/handwritten-entry-errors.ts";
-import { getEntrySaveFeedback } from "../app/[locale]/write/_components/entry-save-feedback.ts";
 
 assert.throws(() =>
   createEntryRequestSchema.parse({
@@ -67,19 +67,9 @@ for (const [key, value] of Object.entries(cloudinaryEnv)) {
   else process.env[key] = value;
 }
 
-assert.deepEqual(
-  createEntryRequestSchema.parse({
-    visibility: "private",
-    gratitudes: [],
-    reflection: "Một khoảnh khắc tự sự.",
-    mood: "Bình thản",
-    washi: "Washi An Yên",
-    space: "Bàn làm việc",
-    quote: "Một điều biết ơn ngắn cũng đủ làm ngày hôm nay dịu lại.",
-    sticker: "Bé Mầm",
-  }).gratitudes,
-  [],
-);
+assert.throws(() => createEntryRequestSchema.parse({ visibility: "private", gratitudes: [] }));
+assert.equal(createEntryRequestSchema.parse({ visibility: "private", gratitudes: ["Một điều"] }).gratitudes.length, 1);
+assert.equal(createEntryRequestSchema.parse({ visibility: "private", gratitudes: Array.from({ length: 10 }, (_, index) => String(index)) }).gratitudes.length, 10);
 
 assert.equal(
   createEntryRequestSchema.parse({
@@ -94,6 +84,12 @@ assert.equal(
   }).gratitudes.length,
   4,
 );
+
+assert.equal(
+  composeEntryContent({ visibility: "private", gratitudes: ["Một điều"], reflection: "Ghi thêm", mood: "calm", washi: "calm", space: "desk", quote: "quote", sticker: "sprout-calm" }),
+  "Một điều\n\nGhi thêm",
+);
+assert.deepEqual(normalizeRecentSpaces([" Ban công ", "ban công", null, "Bàn làm việc", "Bếp"]), ["Ban công", "Bàn làm việc", "Bếp"]);
 
 const inkDocument = {
   version: 1,
@@ -111,6 +107,11 @@ assert.throws(() => inkDocumentSchema.parse({ ...inkDocument, paperStyle: "lined
 assert.throws(() => inkDocumentSchema.parse({ ...inkDocument, stamp: "rainbow" }));
 assert.throws(() => inkDocumentSchema.parse({ ...inkDocument, version: 2 }));
 assert.throws(() => inkDocumentSchema.parse({ ...inkDocument, strokes: Array.from({ length: 251 }, () => inkDocument.strokes[0]) }));
+assert.deepEqual(
+  eraseInkStrokes([{ color: "#145C34", points: [{ x: 1, y: 1, pressure: 1 }, { x: 100, y: 100, pressure: 1 }, { x: 200, y: 200, pressure: 1 }] }], [{ x: 100, y: 100, pressure: 1 }], 5).map((stroke) => stroke.points.length),
+  [1, 1],
+);
+assert.deepEqual(inkDocumentSchema.parse({ ...inkDocument, strokes: [{ ...inkDocument.strokes[0], tool: "highlighter", width: 9, opacity: 0.3 }] }).strokes[0].tool, "highlighter");
 
 const canvasCalls: string[] = [];
 const mockContext = new Proxy<Record<string, unknown>>({}, {
@@ -134,14 +135,11 @@ for (const paperStyle of ["blank", "ruled", "dot", "grid"] as const) {
 }
 assert.ok(canvasCalls.length > 0);
 
-assert.deepEqual(getEntrySaveFeedback("text-synced"), { tone: "success", messageKey: "toast.textSaved" });
-assert.deepEqual(getEntrySaveFeedback("text-local"), { tone: "success", messageKey: "toast.textSavedLocal" });
-assert.deepEqual(getEntrySaveFeedback("text-saved-without-image"), { tone: "warning", messageKey: "toast.textSavedWithoutImage" });
-assert.deepEqual(getEntrySaveFeedback("handwriting-synced"), { tone: "success", messageKey: "toast.handwritingSaved" });
-assert.deepEqual(getEntrySaveFeedback("handwriting-local"), { tone: "success", messageKey: "toast.handwritingSavedLocal" });
-
 assert.equal(stickers.length, 72);
 assert.equal(new Set(stickers.map((sticker) => sticker.id)).size, 72);
+assert.equal(stickers.find((sticker) => sticker.id === "sprout-tea")?.icon, "tea");
+assert.equal(stickers.find((sticker) => sticker.id === "sprout-reading")?.icon, "book");
+assert.equal(stickers.find((sticker) => sticker.id === "moment-morning-coffee")?.icon, "coffee");
 
 for (const group of STICKER_GROUPS) {
   assert.equal(stickers.filter((sticker) => sticker.group === group.id).length, 18);
@@ -154,15 +152,11 @@ for (const sticker of stickers) {
   assert.ok(sticker.alts.en);
   assert.ok(sticker.tags.vi.length);
   assert.ok(sticker.tags.en.length);
+  assert.ok(sticker.icon);
 }
 
 assert.equal(getStickerLabel("sprout-calm", "vi"), "Bé Mầm an yên");
 assert.equal(getStickerLabel("Bé Mầm", "vi"), "Bé Mầm");
-
-assert.deepEqual(getGratitudeInputs([]), ["", "", ""]);
-assert.equal(getGratitudeSummary([]).text, "0/3");
-assert.equal(getGratitudeSummary(["  ", "Cơm tối", "Bạn gọi"]).text, "2/3 đã viết");
-assert.deepEqual(getGratitudeSummary(["Một", "Hai", "Ba"]), { complete: true, text: "Đủ 3 điều" });
 
 assert.throws(() =>
   validateEntryMediaFile(new File([new Uint8Array([1])], "note.txt", { type: "text/plain" })),

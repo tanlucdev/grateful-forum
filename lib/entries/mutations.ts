@@ -22,12 +22,12 @@ export async function createEntry(
     content,
     visibility: input.visibility,
     gratitudes: input.gratitudes,
-    reflection: input.reflection,
-    mood: input.mood,
-    washi: input.washi,
-    space: input.space,
-    quote: input.quote,
-    sticker: input.sticker,
+    reflection: optional(input.reflection),
+    mood: optional(input.mood),
+    washi: optional(input.washi),
+    space: optional(input.space),
+    quote: optional(input.quote),
+    sticker: optional(input.sticker),
     image_url: input.imageUrl ?? null,
   };
 
@@ -48,6 +48,11 @@ export async function createEntry(
   }
 
   return result.data;
+}
+
+function optional(value: string | null | undefined) {
+  const trimmed = value?.trim();
+  return trimmed || null;
 }
 
 export async function createHandwrittenEntry(
