@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { loadMoreFeed } from "@/lib/api/feed";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
+import { LocaleSwitcher } from "@/components/navigation/locale-switcher";
 import type { FeedPage } from "@/lib/feed/types";
 import type { AppLocale } from "@/i18n/routing";
 import {
@@ -110,8 +111,9 @@ export function PublicFeedClient({
 
   return (
     <div className="app-garden-bg w-screen max-w-[100vw] min-h-svh overflow-x-hidden font-[family-name:var(--font-quicksand)] text-foreground">
-      <main className="w-full max-w-full min-h-svh overflow-x-hidden md:mx-auto md:max-w-7xl md:px-6 md:pt-[92px]">
+      <main className="w-full max-w-full min-h-svh overflow-x-hidden md:mx-auto md:max-w-7xl md:px-6">
         <section className="flex w-full max-w-full min-w-0 flex-col gap-5 overflow-hidden px-5 pt-5 md:hidden">
+          <LocaleSwitcher className="self-end" />
           <MobileReflectionBanner />
           <div className="flex flex-col gap-4">
             {feedItems.length ? feedItems.map((item, index) => (
@@ -126,17 +128,20 @@ export function PublicFeedClient({
           <div className="grid grid-cols-1 items-start gap-8 md:grid-cols-12">
             <div className="flex flex-col gap-6 md:col-span-7 lg:col-span-8">
               <div className="flex flex-col items-start justify-between gap-4 pb-3">
-                <div>
-                  <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary">
-                    <span className="h-2 w-2 rounded-full bg-primary" />
-                    {copy.eyebrow}
-                  </p>
-                  <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground">
-                    {copy.title}
-                  </h1>
-                  <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-                    {copy.description}
-                  </p>
+                <div className="flex w-full items-start justify-between gap-4">
+                  <div>
+                    <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary">
+                      <span className="h-2 w-2 rounded-full bg-primary" />
+                      {copy.eyebrow}
+                    </p>
+                    <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground">
+                      {copy.title}
+                    </h1>
+                    <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                      {copy.description}
+                    </p>
+                  </div>
+                  <LocaleSwitcher className="hidden shrink-0 md:grid lg:hidden" />
                 </div>
                 <div className="grid w-full grid-cols-1 items-center gap-1 rounded-[24px] border border-border bg-card/90 p-1 text-xs font-bold text-muted-foreground shadow-card backdrop-blur-md lg:grid-cols-3 lg:rounded-full">
                   {filters.map((item) => {

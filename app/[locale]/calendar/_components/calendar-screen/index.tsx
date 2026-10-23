@@ -23,7 +23,7 @@ function DesktopCalendar({ overview }: Readonly<{ overview: CalendarOverview }>)
   const number = new Intl.NumberFormat(useLocale());
   return (
     <div className="hidden min-h-dvh md:block">
-      <main className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-6 pb-10 pt-24 lg:px-16">
+      <main className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-6 pb-10 pt-6 lg:px-16 lg:pt-8">
         <HeroActions overview={overview} />
         <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Metric label={t("metrics.streak.label")} icon="local_fire_department" value={number.format(overview.stats.currentStreak)} unit={t("metrics.streak.unit")} hint={t("metrics.streak.hint", { count: number.format(overview.stats.longestStreak) })} tone="rose" progress={Math.min(overview.stats.currentStreak * 4, 100)} />
