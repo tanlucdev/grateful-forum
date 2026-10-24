@@ -3,6 +3,8 @@ import { localizedLoginHref } from "@/lib/auth/redirects";
 import { CalendarAuthError, loadCalendarOverview } from "@/lib/calendar/service";
 import { calendarQuerySchema } from "@/lib/calendar/validation";
 import { CalendarScreen } from "./_components/calendar-screen";
+import { CalendarTourStarterClient } from "./_components/calendar-tour-starter-client";
+import { OnboardingTourReplayButton } from "@/components/onboarding-tour-replay-button";
 
 export default async function CalendarPage({
   params,
@@ -20,5 +22,5 @@ export default async function CalendarPage({
     if (error instanceof CalendarAuthError) redirect(localizedLoginHref("/calendar", locale));
     throw error;
   }
-  return <CalendarScreen overview={overview} />;
+  return <>{overview.onboarding.calendarTourAvailable ? <CalendarTourStarterClient tourSeenAt={overview.onboarding.calendarTourSeenAt} /> : null}<CalendarScreen overview={overview} />{overview.onboarding.calendarTourAvailable ? <OnboardingTourReplayButton tour="calendar" /> : null}</>;
 }

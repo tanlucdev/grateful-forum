@@ -36,8 +36,9 @@ type AuthApiMessageKey =
 
 export function AuthPanelClient({
   configured,
+  locale,
   returnTo,
-}: Readonly<{ configured: boolean; returnTo: string }>) {
+}: Readonly<{ configured: boolean; locale: string; returnTo: string }>) {
   const router = useRouter();
   const t = useTranslations("auth");
   const [view, setView] = useState<AuthView>("signin");
@@ -142,7 +143,7 @@ export function AuthPanelClient({
         return;
       }
       toast.success(t(view === "signup" ? "toasts.signupSuccess" : "toasts.signinSuccess"));
-      router.replace(returnTo);
+      router.replace(view === "signup" ? `/${locale}/write?tour=first-entry` : returnTo);
       router.refresh();
     } catch {
       showFailure(t("banners.processingFailed"), "auth_failed");

@@ -1,16 +1,34 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { entrySelect } from "@/lib/entries/records";
-import { isMissingTimezoneColumn } from "./errors.ts";
+import { isMissingTimezoneColumn, shouldFallbackCalendarTour } from "./errors.ts";
+
+export async function queryCalendarProfile(supabase: SupabaseClient, userId: string) {
+  const profile = await supabase.from("profiles").select("timezone, calendar_tour_seen_at").eq("id", userId).maybeSingle();
+  let timezoneValue: string | null | undefined = profile.data?.timezone;
+  const calendarTourSeenAt: string | null = profile.data?.calendar_tour_seen_at ?? null;
+  let calendarTourAvailable = !profile.error;
+
+  if (shouldFallbackCalendarTour(profile.error)) {
+    const fallback = await supabase.from("profiles").select("timezone").eq("id", userId).maybeSingle();
+    if (fallback.error && !isMissingTimezoneColumn(fallback.error.message)) throw new Error(fallback.error.message);
+    timezoneValue = fallback.data?.timezone;
+    calendarTourAvailable = false;
+  } else if (profile.error && !isMissingTimezoneColumn(profile.error.message)) {
+    throw new Error(profile.error.message);
+  }
+
+  let timezone = "Asia/Ho_Chi_Minh";
+  try {
+    new Intl.DateTimeFormat("en-US", { timeZone: timezoneValue ?? "Asia/Ho_Chi_Minh" });
+    timezone = timezoneValue ?? "Asia/Ho_Chi_Minh";
+  } catch {
+    // Keep the calendar usable when a stored timezone is no longer valid.
+  }
+  return { calendarTourAvailable, calendarTourSeenAt, timezone };
+}
 
 export async function queryCalendarTimezone(supabase: SupabaseClient, userId: string) {
-  const { data, error } = await supabase.from("profiles").select("timezone").eq("id", userId).maybeSingle();
-  if (error && !isMissingTimezoneColumn(error.message)) throw new Error(error.message);
-  try {
-    new Intl.DateTimeFormat("en-US", { timeZone: data?.timezone ?? "Asia/Ho_Chi_Minh" });
-    return data?.timezone ?? "Asia/Ho_Chi_Minh";
-  } catch {
-    return "Asia/Ho_Chi_Minh";
-  }
+  return (await queryCalendarProfile(supabase, userId)).timezone;
 }
 
 export async function queryCalendarData(

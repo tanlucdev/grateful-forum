@@ -24,6 +24,7 @@ export type CalendarBadge = {
 };
 
 export type CalendarOverview = {
+  onboarding: { calendarTourAvailable: boolean; calendarTourSeenAt: string | null };
   timezone: string;
   view: CalendarView;
   period: {

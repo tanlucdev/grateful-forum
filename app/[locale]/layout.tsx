@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { AppShell } from "@/components/app-shell";
+import { OnboardingTourProviderClient } from "@/components/onboarding-tour-provider-client";
 import { isAppLocale, routing } from "@/i18n/routing";
 import { loadOwnShellProfile } from "@/lib/profile/load-own-profile";
 
@@ -29,18 +30,20 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider>
-      <AppShell
-        locale={locale}
-        profile={{
-          avatarUrl: profile?.avatarUrl || "",
-          displayName: profile?.displayName || t("navigation.account"),
-          email: profile?.email || "",
-          signedIn: authenticated,
-          streak: profile?.streak || 0,
-        }}
-      >
-        {children}
-      </AppShell>
+      <OnboardingTourProviderClient>
+        <AppShell
+          locale={locale}
+          profile={{
+            avatarUrl: profile?.avatarUrl || "",
+            displayName: profile?.displayName || t("navigation.account"),
+            email: profile?.email || "",
+            signedIn: authenticated,
+            streak: profile?.streak || 0,
+          }}
+        >
+          {children}
+        </AppShell>
+      </OnboardingTourProviderClient>
     </NextIntlClientProvider>
   );
 }
