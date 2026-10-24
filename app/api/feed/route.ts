@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 import { loadFeedPage } from "@/lib/feed/load-feed";
+import { FeedLoginRequiredError } from "@/lib/feed/access";
 import { feedPageQuerySchema } from "@/lib/feed/validation";
 
 export async function GET(request: Request) {
@@ -9,6 +10,10 @@ export async function GET(request: Request) {
     const page = await loadFeedPage(cursor);
     return NextResponse.json(page);
   } catch (error) {
+    if (error instanceof FeedLoginRequiredError) {
+      return NextResponse.json({ code: "auth_required", error: error.message }, { status: 401 });
+    }
+
     if (error instanceof ZodError) {
       return NextResponse.json({ code: "feed_failed", error: "Invalid feed params." }, { status: 400 });
     }

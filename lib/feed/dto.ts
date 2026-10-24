@@ -26,4 +26,5 @@ export type FeedItem = {
 export type FeedPage = {
   items: FeedItem[];
   nextCursor: string | null;
+  requiresLogin: boolean;
 };

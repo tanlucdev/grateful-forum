@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useEffect, useState } from "react";
 
@@ -52,6 +52,7 @@ const landingTopCopy = {
 
 export function LandingHeader() {
   const locale = useLocale() as "vi" | "en";
+  const t = useTranslations("landing");
   const copy = landingTopCopy[locale];
   const localizedNavItems = locale === "en" ? navItemsEn : navItems;
   const [activeNav, setActiveNav] = useState(0);
@@ -93,18 +94,18 @@ export function LandingHeader() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-card/60 bg-background/85 px-4 py-3 shadow-sm backdrop-blur-xl lg:fixed lg:left-0 lg:right-0 lg:w-full lg:px-0 lg:py-0">
-      <div className="mx-auto flex max-w-md items-center justify-between gap-3 lg:h-20 lg:max-w-7xl lg:px-margin-desktop">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 lg:h-20 lg:px-margin-desktop">
         <Link className="flex shrink-0 items-center gap-3" href="#home">
           <Image alt="" className="h-9 w-9 object-cover lg:h-10 lg:w-10 " height={40} src="/stitch/landing/mascot.png" width={40} />
-          <div className="flex flex-col">
+          <div className="sr-only sm:not-sr-only sm:flex sm:flex-col">
             <span className="text-lg font-bold leading-tight tracking-tight text-primary lg:text-xl">Grateful Forum</span>
             <span className="text-[10px] font-semibold uppercase tracking-wide text-primary lg:text-on-surface-variant">{copy.tagline}</span>
           </div>
         </Link>
-        <nav className="relative hidden items-center gap-1.5 rounded-2xl border border-card/80 bg-card/70 p-1 shadow-sm lg:flex" onMouseLeave={() => setHoveredNav(null)}>
+        <nav className="relative hidden items-center gap-1.5 rounded-2xl border border-card/80 bg-card/70 p-1 shadow-sm xl:flex" onMouseLeave={() => setHoveredNav(null)}>
           {localizedNavItems.map(({ href, label }, index) => (
             <motion.a
-              className={`relative rounded-xl px-3.5 py-1.5 text-sm font-bold transition-colors ${
+              className={`relative whitespace-nowrap rounded-xl px-2.5 py-2 text-sm font-bold transition-colors ${
                 visibleNav === index ? "text-primary" : "text-on-surface-variant"
               }`}
               aria-current={activeNav === index ? "location" : undefined}
@@ -124,10 +125,13 @@ export function LandingHeader() {
             </motion.a>
           ))}
         </nav>
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           <LocaleSwitcher />
+          <Link aria-label={t("preview")} className="inline-flex min-h-11 shrink-0 items-center justify-center whitespace-nowrap rounded-full bg-primary px-4 py-2 text-xs font-bold text-primary-foreground transition hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary lg:text-sm" href="/feed/preview">
+            {t("previewShort")}
+          </Link>
           <ShimmerCTA className="inline-flex shrink-0 items-center gap-2 rounded-full border border-primary/30 bg-accent/50 px-3.5 py-1.5 text-xs font-bold text-primary shadow-sm transition-all hover:-translate-y-0.5 active:scale-95 lg:rounded-full lg:px-5 lg:py-2.5 lg:text-sm" href={loginHref("/feed", locale)}>
-            <span className="hidden min-[360px]:inline">{copy.login}</span>
+            <span className="sr-only sm:not-sr-only">{copy.login}</span>
             <MaterialSymbol className="text-[18px]" name="eco" />
           </ShimmerCTA>
         </div>
@@ -158,7 +162,7 @@ export function HeroSection() {
           {copy.description}
         </p>
         <div className="mb-6 flex w-full flex-col gap-2.5 px-2 sm:flex-row lg:mb-8 lg:w-auto lg:px-0">
-          <ShimmerCTA className="inline-flex w-full items-center justify-center gap-2.5 rounded-2xl bg-gradient-to-r from-gradient-start to-gradient-end px-6 py-3.5 text-sm font-bold text-on-primary shadow-[var(--primary-shadow-md)] transition-all hover:-translate-y-0.5 active:scale-95 lg:w-auto lg:text-base" href="/feed">
+          <ShimmerCTA className="inline-flex w-full items-center justify-center gap-2.5 rounded-2xl bg-gradient-to-r from-gradient-start to-gradient-end px-6 py-3.5 text-sm font-bold text-on-primary shadow-[var(--primary-shadow-md)] transition-all hover:-translate-y-0.5 active:scale-95 lg:w-auto lg:text-base" href="/feed/preview">
             <span>{copy.explore}</span>
             <MaterialSymbol className="text-[20px]" name="arrow_forward" />
           </ShimmerCTA>

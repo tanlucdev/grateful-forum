@@ -7,6 +7,8 @@
   "filters": { "all": "All seeds", "ordinary": "Everyday moments", "polaroid": "With Polaroids" },
   "empty": { "ordinaryTitle": "No everyday moments yet", "ordinaryDescription": "Shares without Polaroid photos will appear here.", "polaroidTitle": "No Polaroids yet", "polaroidDescription": "Shares with attached photos will appear here.", "publicTitle": "No public shares yet", "publicDescription": "Public or anonymous posts will appear here." },
   "loading": "Loading more...", "done": "You have reached the end.", "noPublic": "No public shares yet.", "eyebrow": "Gentle Stream", "title": "Seeds planted today", "description": "Read one grateful note from someone else and remember the quiet happiness nearby.", "showAll": "Show all",
+  "rhythm": {"title": "This week’s rhythm", "garden": "365 flower garden", "habit": "Keep writing so your mind feels steadier:", "watered": "Watered this week:", "days": "{count, number} days", "rate": "Rate: {rate}", "day": "{date}, {count, number} gratitude entries"},
+  "preview": {"title": "Sign in to read more", "description": "You can preview up to 5 posts. Sign in to keep exploring the forum.", "login": "Sign in to continue"},
   "companion": {},
   "quotes": []
 }

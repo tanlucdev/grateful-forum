@@ -2,10 +2,13 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
+import { loginHref } from "@/lib/auth/redirects";
 import { loadMoreFeed } from "@/lib/api/feed";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
 import { LocaleSwitcher } from "@/components/navigation/locale-switcher";
 import type { FeedPage } from "@/lib/feed/types";
+import type { WeeklyRhythmDay } from "@/lib/profile/weekly-rhythm";
 import type { AppLocale } from "@/i18n/routing";
 import {
   DesktopAside,
@@ -26,7 +29,8 @@ const feedFilters: { key: FeedFilter; icon: string }[] = [
 
 export function PublicFeedClient({
   initialPage,
-}: Readonly<{ initialPage: FeedPage }>) {
+  weeklyRhythm,
+}: Readonly<{ initialPage: FeedPage; weeklyRhythm: WeeklyRhythmDay[] }>) {
   const locale = useLocale() as AppLocale;
   const t = useTranslations("feed");
   const copy = {
@@ -36,6 +40,7 @@ export function PublicFeedClient({
     loading: t("loading"), done: t("done"), noPublic: t("noPublic"), eyebrow: t("eyebrow"),
     title: t("title"), description: t("description"), showAll: t("showAll"),
   };
+  const [requiresLogin, setRequiresLogin] = useState(initialPage.requiresLogin);
   const [items, setItems] = useState(initialPage.items);
   const [cursor, setCursor] = useState(initialPage.nextCursor);
   const [loading, setLoading] = useState(false);
@@ -45,7 +50,7 @@ export function PublicFeedClient({
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   const loadMore = useCallback(async () => {
-    if (!cursor || loading || done) {
+    if (requiresLogin || !cursor || loading || done) {
       return;
     }
 
@@ -54,6 +59,7 @@ export function PublicFeedClient({
     try {
       const page = await loadMoreFeed(cursor);
       setItems((current) => [...current, ...page.items]);
+      setRequiresLogin(page.requiresLogin);
       setCursor(page.nextCursor);
       setDone(!page.nextCursor);
     } catch (loadError) {
@@ -61,7 +67,7 @@ export function PublicFeedClient({
     } finally {
       setLoading(false);
     }
-  }, [cursor, done, loading]);
+  }, [cursor, done, loading, requiresLogin]);
 
   useEffect(() => {
     const sentinel = sentinelRef.current;
@@ -103,11 +109,21 @@ export function PublicFeedClient({
     },
   };
   const feedItems: DisplayItem[] = filteredItems.map((item, index) => toDisplayItem(item, index, locale, displayCopy));
-  const status = error || (loading ? copy.loading : done && items.length ? copy.done : "");
-  const showMobileEnd = !loading && !error && done && items.length > 0;
+  const status = error || (loading ? copy.loading : !requiresLogin && done && items.length ? copy.done : "");
+  const showMobileEnd = !requiresLogin && !loading && !error && done && items.length > 0;
   const sentinelStatus = showMobileEnd ? "" : status;
   const filters = feedFilters.map((item) => ({ ...item, label: copy[item.key] }));
   const emptyState = filter === "all" ? <FeedEmptyState locale={locale} /> : <FilteredFeedEmptyState filter={filter} onReset={() => setFilter("all")} />;
+
+  const loginPrompt = requiresLogin && items.length > 0 ? (
+    <section className="space-y-3 border-t border-border py-6 text-center">
+      <h2 className="text-lg font-bold text-foreground">{t("preview.title")}</h2>
+      <p className="text-sm leading-relaxed text-muted-foreground">{t("preview.description")}</p>
+      <Link className="inline-flex min-h-11 items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary" href={loginHref("/feed", locale)}>
+        {t("preview.login")}
+      </Link>
+    </section>
+  ) : null;
 
   return (
     <div className="app-garden-bg w-screen max-w-[100vw] min-h-svh overflow-x-hidden font-[family-name:var(--font-quicksand)] text-foreground">
@@ -121,6 +137,7 @@ export function PublicFeedClient({
             )) : emptyState}
           </div>
           <FeedSentinel refEl={sentinelRef} status={sentinelStatus} />
+          {loginPrompt}
           {showMobileEnd ? <MobileFeedEnd status={items.length ? "" : copy.noPublic} /> : null}
         </section>
 
@@ -169,9 +186,10 @@ export function PublicFeedClient({
                   <DesktopFeedCard item={item} key={item.id} locale={locale} priorityImage={index === 0} />
                 )) : emptyState}
                 <FeedSentinel refEl={sentinelRef} status={status} />
+                {loginPrompt}
               </div>
             </div>
-            <DesktopAside />
+            <DesktopAside weeklyRhythm={weeklyRhythm} />
           </div>
         </section>
       </main>
