@@ -3,7 +3,7 @@
   "stats": { "entries": "{count} grateful notes", "streak": "{count}-day streak", "companion": "With Sprout for {count} days" },
   "mobile": { "entries": "Grateful notes", "streak": "Day streak", "companion": "With Sprout" },
   "rhythm": { "title": "This week's rhythm", "active": "{count}/7 green shoots lit", "written": "You wrote in your journal {count} days this week", "none": "No journal days yet this week" },
-  "monthRhythm": { "title": "This month's gratitude rhythm", "description": "You completed 85% of this month's goal" },
+  "monthRhythm": { "title": "This month's gratitude rhythm", "description": "You wrote on {count, number}/{total, number} days this month ({rate})" },
   "tabs": { "all": "All ({count})", "journal": "Memory book", "public": "Public ({count})", "moments": "Moments ({count})" },
   "desktopTabs": { "all": "All journal entries", "public": "Public", "moments": "Moment collection", "new": "New", "readingMode": "Page-turn reading mode" },
   "filters": { "label": "Filter:", "all": "All", "family": "#family", "work": "#work", "nature": "#nature", "newest": "Newest" },

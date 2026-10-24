@@ -1,6 +1,6 @@
 import { MaterialSymbol } from "@/components/ui/material-symbol";
 import { Link } from "@/i18n/navigation";
-import { useLocale, useTranslations } from "next-intl";
+import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { ProfileEditModalButton } from "../profile-modals-client";
 import { Avatar, MilestoneCard, Pill } from "../profile-desktop-cards";
 import { ProfileDesktopTabs } from "../profile-desktop-tabs-client";
@@ -17,7 +17,7 @@ export function DesktopProfile({
           <DesktopHero view={view} />
           <ProfileDesktopTabs initialTab={initialTab} view={view} />
           <MilestoneCard view={view} />
-          <RhythmCard />
+          <RhythmCard view={view} />
         </div>
       </main>
       <DesktopFooter />
@@ -106,8 +106,10 @@ function WeeklyRhythm({ compact, view }: Readonly<{ compact: boolean; view: Prof
   );
 }
 
-function RhythmCard() {
+function RhythmCard({ view }: Readonly<{ view: ProfileView }>) {
   const t = useTranslations("profile");
+  const format = useFormatter();
+  const locale = useLocale();
   return (
     <section className="flex items-center justify-between gap-4 rounded-xl bg-card p-6 shadow-sm">
       <div className="flex items-center gap-3">
@@ -117,17 +119,23 @@ function RhythmCard() {
         <div>
           <h3 className="text-xl font-semibold leading-7 text-foreground">{t("monthRhythm.title")}</h3>
           <p className="text-xs font-medium leading-4 text-muted-foreground">
-            {t("monthRhythm.description")}
+            {t("monthRhythm.description", {
+              count: view.monthlyRhythm.activeDays,
+              total: view.monthlyRhythm.totalDays,
+              rate: format.number(view.monthlyRhythm.completionRate, { style: "percent", maximumFractionDigits: 0 }),
+            })}
           </p>
         </div>
       </div>
-      <div className="flex items-center gap-1.5">
-        {["T2", "T3", "T4", "T5", "T6", "T7", "CN"].map((day, index) => (
+      <div aria-label={t("rhythm.title")} className="flex shrink-0 items-center gap-1.5" role="group">
+        {view.weeklyRhythm.map((day) => (
           <span
-            className={`flex h-6 w-6 items-center justify-center rounded-md text-[10px] ${index < 3 ? "bg-primary font-bold text-primary-foreground" : "bg-input text-muted-foreground"}`}
-            key={day}
+            aria-label={t("a11y.rhythmDay", { day: format.dateTime(new Date(`${day.date}T12:00:00Z`), { dateStyle: "medium", timeZone: "UTC" }), count: day.count })}
+            aria-current={day.isToday ? "date" : undefined}
+            className={`flex h-6 w-6 shrink-0 items-center justify-center whitespace-nowrap rounded-md text-[10px] ${day.active ? "bg-primary font-bold text-primary-foreground" : "bg-input text-muted-foreground"}`}
+            key={day.date}
           >
-            {day}
+            {format.dateTime(new Date(`${day.date}T12:00:00Z`), { weekday: locale === "vi" ? "narrow" : "short", timeZone: "UTC" })}
           </span>
         ))}
       </div>

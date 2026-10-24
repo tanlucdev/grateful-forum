@@ -1,5 +1,6 @@
 import type { JournalEntry, ProfileDashboard } from "@/lib/profile/types";
 import { makeWeeklyRhythm, type WeeklyRhythmDay } from "@/lib/profile/weekly-rhythm";
+import { makeMonthlyRhythm } from "@/lib/profile/monthly-rhythm";
 
 export const profileAssets = {
   avatarDesktop: "/stitch/profile/avatar-desktop.jpg",
@@ -23,11 +24,13 @@ export type ProfileView = {
   shareUrl: string;
   streak: number;
   weeklyRhythm: WeeklyRhythmDay[];
+  monthlyRhythm: ReturnType<typeof makeMonthlyRhythm>;
   username: string;
 };
 
 export function toProfileView(dashboard: ProfileDashboard): ProfileView {
   const entries = dashboard.entries;
+  const now = new Date();
   const displayName =
     dashboard.profile.displayName ||
     dashboard.profile.email?.split("@")[0] ||
@@ -46,7 +49,8 @@ export function toProfileView(dashboard: ProfileDashboard): ProfileView {
     publicCount: entries.filter((entry) => entry.visibility === "public" || entry.visibility === "anonymous").length,
     shareUrl: `begrateful.app/share/${shareSlug}`,
     streak: dashboard.streak,
-    weeklyRhythm: makeWeeklyRhythm(entries, dashboard.timezone),
+    weeklyRhythm: makeWeeklyRhythm(entries, dashboard.timezone, now),
+    monthlyRhythm: makeMonthlyRhythm(entries, dashboard.timezone, now),
     username,
   };
 }
