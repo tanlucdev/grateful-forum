@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function FeedLoading() {
   return (
     <div className="app-garden-bg min-h-svh text-foreground">
-      <main className="min-h-svh md:mx-auto md:max-w-[1200px] md:px-6 md:pt-20">
+      <main className="min-h-svh md:mx-auto md:max-w-[1200px] md:px-6">
         <section className="flex w-full min-w-0 flex-col gap-5 px-5 pt-4 md:hidden">
           <Skeleton className="h-24 rounded-[24px]" />
           <Skeleton className="h-24 rounded-[24px]" />

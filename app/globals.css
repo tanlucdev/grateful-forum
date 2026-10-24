@@ -196,6 +196,17 @@ a {
     transform 160ms ease;
 }
 
+button:not(:disabled),
+a[href],
+[role="button"]:not([aria-disabled="true"]) {
+  cursor: pointer;
+}
+
+button:disabled,
+[role="button"][aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
 button:not(:disabled):active,
 a:active {
   transform: translateY(1px);

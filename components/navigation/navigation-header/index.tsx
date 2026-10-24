@@ -136,7 +136,7 @@ export function MobileBottomNavigation({
       aria-label={copy.mainNavigation}
       className="fixed inset-x-0 bottom-0 z-[80] border-t border-border bg-card/95 pb-[calc(env(safe-area-inset-bottom)+8px)] shadow-sm backdrop-blur-xl lg:hidden"
     >
-      <div className="mx-auto grid h-[72px] w-full max-w-[430px] grid-cols-5 items-end px-3 pt-1.5">
+      <div className="mx-auto grid h-[72px] w-full max-w-[430px] grid-cols-5 items-end px-3 pt-1.5 sm:max-w-[600px] sm:px-6 md:max-w-3xl md:px-8">
         {mobileNavItems.map((item) => {
           const targetPath = item.href;
           const active = activePath === targetPath || activePath.startsWith(`${targetPath}/`);
