@@ -6,7 +6,7 @@
   "relative": { "minute": "{count} phút trước", "hour": "{count} giờ trước", "yesterday": "Hôm qua", "day": "{count} ngày trước" },
   "filters": { "all": "Tất cả hạt mầm", "ordinary": "Khoảnh khắc đời thường", "polaroid": "Có ảnh Polaroid" },
   "empty": { "ordinaryTitle": "Chưa có khoảnh khắc đời thường", "ordinaryDescription": "Các chia sẻ không kèm ảnh Polaroid sẽ xuất hiện tại đây.", "polaroidTitle": "Chưa có ảnh Polaroid", "polaroidDescription": "Các chia sẻ có ảnh đính kèm sẽ xuất hiện tại đây.", "publicTitle": "Chưa có chia sẻ công khai", "publicDescription": "Các bài viết public hoặc anonymous sẽ xuất hiện tại đây." },
-  "loading": "Đang tải thêm...", "done": "Bạn đã xem hết.", "noPublic": "Chưa có chia sẻ công khai.", "eyebrow": "Dòng Chảy Lành", "title": "Những hạt mầm được gieo hôm nay", "description": "Đọc một điều biết ơn của người khác để nhắc nhở chính mình về hạnh phúc bình dị.", "showAll": "Xem tất cả",
+  "loading": "Đang tải thêm...", "done": "Bạn đã xem hết.", "noPublic": "Chưa có chia sẻ công khai.", "eyebrow": "Dòng Chảy Lành", "title": "Những hạt mầm được gieo hôm nay", "description": "Đọc một điều biết ơn của người khác để nhắc nhở chính mình về hạnh phúc bình dị.", "showAll": "Xem tất cả", "scrollToTop": "Lên đầu trang",
   "rhythm": {"title": "Nhịp điệu tuần này", "garden": "Vườn hoa 365", "habit": "Duy trì thói quen viết để tâm trí thêm vững vàng:", "watered": "Tuần này đã tưới:", "days": "{count, number} ngày", "rate": "Tỷ lệ: {rate}", "day": "{date}, {count, number} bài biết ơn"},
   "preview": {"title": "Đăng nhập để xem thêm", "description": "Bạn có thể xem trước tối đa 5 bài chia sẻ. Đăng nhập để tiếp tục khám phá diễn đàn.", "login": "Đăng nhập và xem tiếp"},
   "companion": {},
