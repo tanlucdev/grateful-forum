@@ -10,6 +10,7 @@ import { composeEntryContent } from "../lib/entries/records.ts";
 import { normalizeRecentSpaces } from "../lib/entries/recent-spaces-service.ts";
 import { ApiClientError } from "../lib/api/fetch-json.ts";
 import { handwritingSaveErrorKey } from "../lib/api/handwritten-entry-errors.ts";
+import { hexToHsv, hsvToHex } from "../app/[locale]/write/_components/ink-color-picker/ink-color.ts";
 
 assert.throws(() =>
   createEntryRequestSchema.parse({
@@ -112,17 +113,30 @@ assert.deepEqual(
   [1, 1],
 );
 assert.deepEqual(inkDocumentSchema.parse({ ...inkDocument, strokes: [{ ...inkDocument.strokes[0], tool: "highlighter", width: 9, opacity: 0.3 }] }).strokes[0].tool, "highlighter");
+for (const color of ["#145C34", "#A5393E", "#315E8C", "#4B4033", "#FF8800", "#000000", "#FFFFFF", "#FF0000", "#00FF00", "#0000FF", "#aabbcc"]) {
+  assert.equal(inkDocumentSchema.parse({ ...inkDocument, strokes: [{ ...inkDocument.strokes[0], color }] }).strokes[0].color, color);
+  const hsv = hexToHsv(color);
+  assert.equal(hsvToHex(hsv.hue, hsv.saturation, hsv.value), color.toUpperCase());
+}
+for (const color of ["red", "#123", "#AABBCCDD", "#GGGGGG", "url(https://example.com)"]) {
+  assert.equal(inkDocumentSchema.safeParse({ ...inkDocument, strokes: [{ ...inkDocument.strokes[0], color }] }).success, false);
+}
+assert.equal(hsvToHex(0, 1, 1), "#FF0000");
+assert.equal(hsvToHex(120, 1, 1), "#00FF00");
+assert.equal(hsvToHex(240, 1, 1), "#0000FF");
 
 const canvasCalls: string[] = [];
+const canvasOperations: { name: string; args: unknown[] }[] = [];
 const mockContext = new Proxy<Record<string, unknown>>({}, {
   get(_, property) {
     if (property === "drawImage" || property === "font") throw new Error(`Unexpected canvas dependency: ${String(property)}`);
     return (...args: unknown[]) => {
-      void args;
+      canvasOperations.push({ name: String(property), args });
       canvasCalls.push(String(property));
     };
   },
-  set(_, property) {
+  set(_, property, value) {
+    canvasOperations.push({ name: String(property), args: [value] });
     canvasCalls.push(`set:${String(property)}`);
     return true;
   },
@@ -134,6 +148,25 @@ for (const paperStyle of ["blank", "ruled", "dot", "grid"] as const) {
   }
 }
 assert.ok(canvasCalls.length > 0);
+
+const pressureDocument = inkDocumentSchema.parse({ ...inkDocument, strokes: [{ color: "#FF8800", width: 9, opacity: 0.5, points: [{ x: 100, y: 100, pressure: 0.2 }, { x: 200, y: 400, pressure: 0.5 }, { x: 400, y: 200, pressure: 0.9 }] }] });
+canvasOperations.length = 0;
+renderInkDocument(mockContext, pressureDocument, 600, 800, 1);
+assert.ok(canvasOperations.some(({ name }) => name === "quadraticCurveTo"), "Ink should interpolate smooth curves");
+assert.equal(canvasOperations.filter(({ name }) => name === "fill").length, 1, "Apply opacity once to a pressure stroke, avoiding dark segment seams");
+const capRadii = canvasOperations.filter(({ name }) => name === "arc").map(({ args }) => Number(args[2]));
+assert.ok(capRadii[0] > capRadii[1], "Pressure must affect each end independently");
+canvasOperations.length = 0;
+renderInkDocument(mockContext, pressureDocument, 1200, 1600, 2);
+assert.deepEqual(canvasOperations.filter(({ name }) => name === "arc").map(({ args }) => Number(args[2])), capRadii.map((radius) => radius * 2), "Zoom and export should preserve relative ink width");
+canvasOperations.length = 0;
+renderInkDocument(mockContext, inkDocumentSchema.parse(inkDocument), 600, 800, 1);
+assert.equal(canvasOperations.filter(({ name }) => name === "arc").length, 1, "A tap should leave a visible dot");
+assert.ok(canvasOperations.some(({ name }) => name === "fill"));
+canvasOperations.length = 0;
+renderInkDocument(mockContext, { ...pressureDocument, strokes: [{ ...pressureDocument.strokes[0], tool: "highlighter", opacity: 0.3 }] }, 600, 800, 1);
+assert.ok(canvasOperations.some(({ name, args }) => name === "lineWidth" && args[0] === 36), "Highlighter should have a broad, consistent nib");
+assert.equal(canvasOperations.filter(({ name }) => name === "stroke").length, 1, "Highlighter opacity should apply once per stroke");
 
 assert.equal(stickers.length, 72);
 assert.equal(new Set(stickers.map((sticker) => sticker.id)).size, 72);

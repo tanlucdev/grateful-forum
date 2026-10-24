@@ -15,7 +15,7 @@ const pointSchema = z.object({
 }).strict();
 
 const strokeSchema = z.object({
-  color: z.enum(INK_COLORS),
+  color: z.string().regex(/^#[0-9a-f]{6}$/i),
   points: z.array(pointSchema).min(1).max(MAX_POINTS_PER_STROKE),
   tool: z.enum(["pen", "highlighter"]).optional(),
   width: z.number().min(1).max(80).optional(),

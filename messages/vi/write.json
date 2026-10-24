@@ -13,6 +13,18 @@
   "errors": { "entryFailed": "entry_failed" },
   "text": { "saved": "Đã lưu" },
   "handwriting": {
+    "history": "Lịch sử nét vẽ",
+    "inkColor": "Màu mực",
+    "chooseColor": "Chọn màu mực",
+    "closeColorPicker": "Đóng bảng màu",
+    "spectrum": "Phổ màu",
+    "spectrumValue": "Độ bão hòa {saturation}, độ sáng {brightness}",
+    "spectrumHelp": "Phím trái, phải chỉnh độ bão hòa; lên, xuống chỉnh độ sáng. Giữ Shift để chỉnh nhanh.",
+    "hue": "Sắc độ",
+    "presets": "Màu gợi ý",
+    "hex": "Mã HEX",
+    "hexHelp": "Nhập # và 6 ký tự từ 0–9, A–F.",
+    "pageNavigation": "Cuộn trang viết tay",
     "title": "Viết tay", "canvasLabel": "Trang viết tay", "toolLabel": "Dụng cụ viết", "paperStyleLabel": "Kiểu giấy", "stampLabel": "Dấu góc",
     "ruled": "Có dòng", "blank": "Trống", "dot": "Chấm", "grid": "Ô lưới", "stamp": { "none": "Không dùng", "sprout": "Mầm", "heart": "Tim", "star": "Sao", "sun": "Mặt trời", "moon": "Mặt trăng", "flower": "Hoa" },
     "color": "Màu mực {color}", "pen": "Bút", "highlighter": "Bút đánh dấu", "eraser": "Tẩy vùng", "pan": "Di chuyển", "undo": "Hoàn tác", "redo": "Làm lại", "clear": "Xóa trang", "clearConfirm": "Xóa toàn bộ nét viết trên trang này?", "size": "Cỡ nét", "thin": "Mảnh", "medium": "Vừa", "bold": "Đậm", "opacity": "Độ mờ", "zoom": "Thu phóng", "decorate": "Trang trí trang", "help": "Nét viết được giữ nguyên khi chưa đồng bộ.", "saved": "Đã lưu trang viết tay.", "pending": "Đã giữ trên thiết bị, chưa đồng bộ.", "mediaUnavailable": "Đã giữ trên thiết bị, media_unavailable.", "previewUploadFailed": "Đã giữ trên thiết bị, media_upload_failed.", "previewUnavailable": "Đã giữ trên thiết bị, chưa tạo được ảnh xem trước.", "type": "Gõ chữ", "handwrite": "Viết tay", "back": "Về hồ sơ"
