@@ -1,5 +1,5 @@
 import { INK_SIZE } from "./ink.ts";
-import type { InkDocument } from "./types.ts";
+import type { InkDocument, InkStroke } from "./types.ts";
 
 export const INK_PAPER_COLOR = "#fffdf8";
 
@@ -21,21 +21,61 @@ export function renderInkDocument(
 
   context.lineCap = "round";
   context.lineJoin = "round";
-  document.strokes.forEach((stroke) => {
-    const first = stroke.points[0];
-    if (!first) return;
-    context.strokeStyle = stroke.color;
-    context.globalAlpha = stroke.opacity ?? (stroke.tool === "highlighter" ? 0.3 : 1);
-    context.beginPath();
-    context.moveTo((first.x / INK_SIZE) * width, (first.y / INK_SIZE) * height);
-    stroke.points.slice(1).forEach((point) => {
-      context.lineWidth = Math.max(1.5, (stroke.width ?? 5) * point.pressure) * pixelRatio;
-      context.lineTo((point.x / INK_SIZE) * width, (point.y / INK_SIZE) * height);
-    });
-    if (stroke.points.length === 1) context.lineTo((first.x / INK_SIZE) * width + pixelRatio, (first.y / INK_SIZE) * height + pixelRatio);
-    context.stroke();
-  });
+  document.strokes.forEach((stroke) => drawStroke(context, stroke, width, height));
   context.globalAlpha = 1;
+}
+
+function drawStroke(context: CanvasRenderingContext2D, stroke: InkStroke, width: number, height: number) {
+  const highlighter = stroke.tool === "highlighter";
+  // ponytail: a 600px reference sheet keeps ink proportional across zoom and export; version geometry if paper sizes become configurable.
+  const size = (stroke.width ?? 5) * (width / 600) * (highlighter ? 4 : 1);
+  const points = stroke.points.filter((point, index, items) => index === 0 || point.x !== items[index - 1].x || point.y !== items[index - 1].y).map((point) => ({ x: point.x / INK_SIZE * width, y: point.y / INK_SIZE * height, radius: size / 2 * (highlighter ? 1 : 0.35 + point.pressure * 0.65) }));
+  if (!points.length) return;
+  context.fillStyle = stroke.color;
+  context.strokeStyle = stroke.color;
+  context.globalAlpha = stroke.opacity ?? (highlighter ? 0.3 : 1);
+  context.beginPath();
+  const first = points[0];
+  const last = points[points.length - 1];
+  if (points.length === 1) {
+    context.arc(first.x, first.y, first.radius, 0, Math.PI * 2);
+    context.fill();
+    return;
+  }
+  if (highlighter) {
+    context.lineWidth = size;
+    context.moveTo(first.x, first.y);
+    points.slice(1).forEach((point, index) => {
+      const previous = points[index];
+      context.quadraticCurveTo(previous.x, previous.y, (previous.x + point.x) / 2, (previous.y + point.y) / 2);
+    });
+    context.lineTo(last.x, last.y);
+    context.stroke();
+    return;
+  }
+  const edges = points.map((point, index) => {
+    const before = points[Math.max(0, index - 1)];
+    const after = points[Math.min(points.length - 1, index + 1)];
+    const angle = Math.atan2(after.y - before.y, after.x - before.x) + Math.PI / 2;
+    const dx = Math.cos(angle) * point.radius;
+    const dy = Math.sin(angle) * point.radius;
+    return { left: { x: point.x + dx, y: point.y + dy }, right: { x: point.x - dx, y: point.y - dy }, angle };
+  });
+  const left = edges.map((edge) => edge.left);
+  const right = edges.map((edge) => edge.right).reverse();
+  context.moveTo(left[0].x, left[0].y);
+  for (const side of [left, right]) {
+    side.slice(1).forEach((point, index) => {
+      const previous = side[index];
+      context.quadraticCurveTo(previous.x, previous.y, (previous.x + point.x) / 2, (previous.y + point.y) / 2);
+    });
+    context.lineTo(side[side.length - 1].x, side[side.length - 1].y);
+    const end = side === left ? last : first;
+    const angle = side === left ? edges[edges.length - 1].angle : edges[0].angle + Math.PI;
+    context.arc(end.x, end.y, end.radius, angle, angle - Math.PI, true);
+  }
+  context.closePath();
+  context.fill();
 }
 
 function drawRules(context: CanvasRenderingContext2D, width: number, height: number, pixelRatio: number) {

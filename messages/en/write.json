@@ -13,6 +13,18 @@
   "errors": { "entryFailed": "entry_failed" },
   "text": { "saved": "Saved" },
   "handwriting": {
+    "history": "Stroke history",
+    "inkColor": "Ink color",
+    "chooseColor": "Choose ink color",
+    "closeColorPicker": "Close color picker",
+    "spectrum": "Color spectrum",
+    "spectrumValue": "Saturation {saturation}, brightness {brightness}",
+    "spectrumHelp": "Left and right adjust saturation; up and down adjust brightness. Hold Shift for larger steps.",
+    "hue": "Hue",
+    "presets": "Suggested colors",
+    "hex": "HEX code",
+    "hexHelp": "Enter # followed by 6 characters from 0–9, A–F.",
+    "pageNavigation": "Scroll handwritten page",
     "title": "Handwrite", "canvasLabel": "Handwritten page", "toolLabel": "Writing tools", "paperStyleLabel": "Paper style", "stampLabel": "Corner stamp",
     "ruled": "Ruled", "blank": "Blank", "dot": "Dot", "grid": "Grid", "stamp": { "none": "None", "sprout": "Sprout", "heart": "Heart", "star": "Star", "sun": "Sun", "moon": "Moon", "flower": "Flower" },
     "color": "Ink color {color}", "pen": "Pen", "highlighter": "Highlighter", "eraser": "Area eraser", "pan": "Pan", "undo": "Undo", "redo": "Redo", "clear": "Clear page", "clearConfirm": "Clear every stroke on this page?", "size": "Stroke size", "thin": "Thin", "medium": "Medium", "bold": "Bold", "opacity": "Opacity", "zoom": "Zoom", "decorate": "Decorate page", "help": "Your strokes stay intact until sync succeeds.", "saved": "Handwritten page saved.", "pending": "Kept on this device; not synced.", "mediaUnavailable": "Kept on this device; media_unavailable.", "previewUploadFailed": "Kept on this device; media_upload_failed.", "previewUnavailable": "Kept on this device; preview unavailable.", "type": "Type", "handwrite": "Handwrite", "back": "Back to profile"
