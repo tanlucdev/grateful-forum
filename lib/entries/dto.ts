@@ -3,12 +3,12 @@ import type { EntryVisibility, InkDocument } from "./types";
 export type CreateEntryRequest = {
   visibility: EntryVisibility;
   gratitudes: string[];
-  reflection: string;
-  mood: string;
-  washi: string;
-  space: string;
-  quote: string;
-  sticker: string;
+  reflection?: string | null;
+  mood?: string | null;
+  washi?: string | null;
+  space?: string | null;
+  quote?: string | null;
+  sticker?: string | null;
   imageUrl?: string | null;
 };
 

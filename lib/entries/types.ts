@@ -20,7 +20,8 @@ export type EntryMetadata = {
 };
 
 export type InkPoint = { x: number; y: number; pressure: number };
-export type InkStroke = { color: string; points: InkPoint[] };
+export type InkTool = "pen" | "highlighter";
+export type InkStroke = { color: string; points: InkPoint[]; tool?: InkTool; width?: number; opacity?: number };
 export type InkPaperStyle = "blank" | "ruled" | "dot" | "grid";
 export type InkStamp = "none" | "sprout" | "heart" | "star" | "sun" | "moon" | "flower";
 export type InkDocumentV1 = {

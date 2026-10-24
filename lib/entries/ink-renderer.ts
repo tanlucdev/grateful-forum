@@ -25,15 +25,17 @@ export function renderInkDocument(
     const first = stroke.points[0];
     if (!first) return;
     context.strokeStyle = stroke.color;
+    context.globalAlpha = stroke.opacity ?? (stroke.tool === "highlighter" ? 0.3 : 1);
     context.beginPath();
     context.moveTo((first.x / INK_SIZE) * width, (first.y / INK_SIZE) * height);
     stroke.points.slice(1).forEach((point) => {
-      context.lineWidth = Math.max(1.5, point.pressure * 5) * pixelRatio;
+      context.lineWidth = Math.max(1.5, (stroke.width ?? 5) * point.pressure) * pixelRatio;
       context.lineTo((point.x / INK_SIZE) * width, (point.y / INK_SIZE) * height);
     });
     if (stroke.points.length === 1) context.lineTo((first.x / INK_SIZE) * width + pixelRatio, (first.y / INK_SIZE) * height + pixelRatio);
     context.stroke();
   });
+  context.globalAlpha = 1;
 }
 
 function drawRules(context: CanvasRenderingContext2D, width: number, height: number, pixelRatio: number) {

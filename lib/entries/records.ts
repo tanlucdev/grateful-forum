@@ -1,5 +1,4 @@
 import type { CreateEntryRequest } from "./dto.ts";
-import { getStickerLabel } from "./stickers.ts";
 import type { EntryKind, EntryMetadata, EntryVisibility, InkDocument } from "./types.ts";
 
 export const entrySelect =
@@ -31,19 +30,9 @@ export type EntryDetailRow = EntryRow & {
 
 export function composeEntryContent(input: CreateEntryRequest) {
   return [
-    `Washi: ${input.washi}`,
-    `Tâm trạng: ${input.mood}`,
-    `Không gian: ${input.space}`,
-    `Sticker: ${getStickerLabel(input.sticker, "vi")}`,
-    `Câu trích dẫn: ${input.quote}`,
-    ...(input.imageUrl ? [`Ảnh: ${input.imageUrl}`] : []),
-    ...(input.gratitudes.length
-      ? ["", "Điều biết ơn:", ...input.gratitudes.map((item, index) => `${index + 1}. ${item}`)]
-      : []),
-    "",
-    "Tự sự:",
-    input.reflection,
-  ].join("\n");
+    ...input.gratitudes.map((item) => item.trim()),
+    input.reflection?.trim() || null,
+  ].filter(Boolean).join("\n\n");
 }
 
 export function toEntryMetadata(row: Pick<EntryRow, "entry_kind" | "gratitudes" | "reflection" | "mood" | "washi" | "space" | "quote" | "sticker" | "image_url" | "handwriting_preview_url">): EntryMetadata {

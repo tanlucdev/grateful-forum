@@ -1,294 +1,164 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useTranslations } from "next-intl";
-import { toast } from "sonner";
-import { createEntry } from "@/lib/api/entries";
+import { useLocale, useTranslations } from "next-intl";
+import { MaterialSymbol } from "@/components/ui/material-symbol";
+import { createEntry, getRecentSpaces } from "@/lib/api/entries";
 import { createHandwrittenEntry } from "@/lib/api/handwritten-entries";
 import { handwritingSaveErrorKey } from "@/lib/api/handwritten-entry-errors";
-import { MaterialSymbol } from "@/components/ui/material-symbol";
 import { uploadEntryMedia } from "@/lib/api/entry-media";
-import { DEFAULT_STICKER_ID, getStickerLabel } from "@/lib/entries/stickers";
+import { DEFAULT_STICKER_ID } from "@/lib/entries/stickers";
 import type { EntryVisibility, InkDocument } from "@/lib/entries/types";
-import { addLocalEntry, addLocalHandwrittenEntry, markLocalEntrySynced } from "@/lib/entries/local-store";
-import {
-  defaultGratitudes,
-  defaultReflection,
-  writeMoods,
-  writeQuotes,
-  writeWashiOptions,
-  type WriteMood,
-  type WriteQuote,
-  type WriteSticker,
-  type WriteWashi,
-} from "../composer-data";
-import {
-  ModeSwitcher,
-  NotebookControls,
-  PrivacySettings,
-  WriteIntro,
-  WritingPanel,
-} from "../composer-ui";
-import { PreviewModal, SideRail } from "../composer-right-rail";
+import { removeLocalHandwrittenEntry, upsertLocalHandwrittenEntry } from "@/lib/entries/local-store";
 import { HandwritingComposer, type HandwritingComposerHandle } from "../handwriting-composer";
-import { getEntrySaveFeedback, type EntrySaveOutcome } from "../entry-save-feedback";
+import { StickerPicker } from "../sticker-picker";
+
+const MAX_GRATITUDES = 10;
+const moods = ["calm", "light", "hopeful", "reflective"] as const;
 
 export function EntryComposerClient() {
   const t = useTranslations("write");
-  const [inputMethod, setInputMethod] = useState<"text" | "handwritten">("text");
-  const [mode, setMode] = useState<"minimal" | "creative">("creative");
-  const [visibility, setVisibility] = useState<EntryVisibility>("private");
-  const [washi, setWashi] = useState<WriteWashi>(writeWashiOptions[0].label);
-  const [mood, setMood] = useState<WriteMood>(writeMoods[0].label);
-  const [space, setSpace] = useState("Ban công góc nhỏ");
-  const [gratitudes, setGratitudes] = useState([...defaultGratitudes]);
-  const [gratitudesOpen, setGratitudesOpen] = useState(false);
-  const [reflection, setReflection] = useState(defaultReflection);
-  const [quote, setQuote] = useState<WriteQuote>(writeQuotes[0]);
-  const [sticker, setSticker] = useState<WriteSticker>(DEFAULT_STICKER_ID);
-  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [imageStatus, setImageStatus] = useState("");
-  const [saving, setSaving] = useState(false);
-  const [status, setStatus] = useState("");
-  const [previewOpen, setPreviewOpen] = useState(false);
-  const [inkDocument, setInkDocument] = useState<InkDocument>({ version: 1, orientation: "portrait", paperStyle: "ruled", stamp: "none", strokes: [] });
+  const locale = useLocale();
+  const firstInput = useRef<HTMLTextAreaElement>(null);
   const handwritingRef = useRef<HandwritingComposerHandle>(null);
-  const today = useMemo(
-    () =>
-      new Intl.DateTimeFormat("vi-VN", {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-      }).format(new Date()),
-    [],
-  );
-  const filledGratitudes = useMemo(
-    () => gratitudes.map((item) => item.trim()).filter(Boolean),
-    [gratitudes],
-  );
-  const entryText = useMemo(
-    () =>
-      [
-        `Washi: ${washi}`,
-        `Tâm trạng: ${mood}`,
-        `Không gian: ${space}`,
-        `Sticker: ${getStickerLabel(sticker, "vi")}`,
-        `Câu trích dẫn: ${quote}`,
-        previewUrl ? "Ảnh: đã chọn" : "",
-        ...filledGratitudes.map((item, index) => `${index + 1}. ${item}`),
-        reflection.trim(),
-        visibility === "private" ? "Riêng tư" : "Cộng đồng",
-      ]
-        .filter(Boolean)
-        .join("\n"),
-    [filledGratitudes, mood, previewUrl, quote, reflection, space, sticker, visibility, washi],
-  );
-  const canSubmit =
-    reflection.trim().length > 0 &&
-    space.trim().length > 0 &&
-    quote.trim().length > 0 &&
-    sticker.trim().length > 0 &&
-    !saving;
+  const [method, setMethod] = useState<"text" | "handwritten">("text");
+  const [mode, setMode] = useState<"minimal" | "creative">("minimal");
+  const [visibility, setVisibility] = useState<EntryVisibility>("private");
+  const [gratitudes, setGratitudes] = useState(["", "", ""]);
+  const [reflection, setReflection] = useState("");
+  const [reflectionOpen, setReflectionOpen] = useState(false);
+  const [mood, setMood] = useState<string | null>(null);
+  const [space, setSpace] = useState("");
+  const [recentSpaces, setRecentSpaces] = useState<string[]>([]);
+  const [washi, setWashi] = useState<string | null>(null);
+  const [quote, setQuote] = useState("");
+  const [sticker, setSticker] = useState(DEFAULT_STICKER_ID);
+  const [image, setImage] = useState<File | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [status, setStatus] = useState<string | null>(null);
+  const [inkDocument, setInkDocument] = useState<InkDocument>({ version: 1, orientation: "portrait", paperStyle: "ruled", stamp: "none", strokes: [] });
+  const [pendingId, setPendingId] = useState<string | null>(null);
+  const filled = useMemo(() => gratitudes.map((item) => item.trim()).filter(Boolean), [gratitudes]);
+  const canSaveText = filled.length > 0 && !saving;
+  const canSaveInk = inkDocument.strokes.length > 0 && !saving;
+  const date = useMemo(() => new Intl.DateTimeFormat(locale, { weekday: "long", day: "numeric", month: "long" }).format(new Date()), [locale]);
 
-  useEffect(() => {
-    return () => {
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
-    };
-  }, [previewUrl]);
+  useEffect(() => { firstInput.current?.focus(); }, []);
+  useEffect(() => { getRecentSpaces().then(({ spaces }) => setRecentSpaces(spaces)).catch(() => setRecentSpaces([])); }, []);
 
-  function resetDraft() {
-    setVisibility("private");
-    setWashi(writeWashiOptions[0].label);
-    setMood(writeMoods[0].label);
-    setSpace("Ban công góc nhỏ");
-    setGratitudes([...defaultGratitudes]);
-    setGratitudesOpen(false);
-    setReflection(defaultReflection);
-    setQuote(writeQuotes[0]);
-    setSticker(DEFAULT_STICKER_ID);
-    setSelectedImageFile(null);
-    setPreviewUrl(null);
-    setImageStatus("");
+  function updateGratitude(index: number, value: string) {
+    setGratitudes((items) => items.map((item, itemIndex) => itemIndex === index ? value : item));
   }
 
-  function showSaveToast(outcome: EntrySaveOutcome) {
-    const feedback = getEntrySaveFeedback(outcome);
-    if (feedback.tone === "warning") toast.warning(t(feedback.messageKey));
-    else toast.success(t(feedback.messageKey));
+  function addGratitude() {
+    if (gratitudes.length < MAX_GRATITUDES) setGratitudes((items) => [...items, ""]);
   }
 
-  function selectImage(file: File) {
-    setSelectedImageFile(file);
-    setPreviewUrl(URL.createObjectURL(file));
-    setImageStatus("Đã chọn ảnh. Ảnh sẽ tải lên khi lưu.");
+  function removeGratitude(index: number) {
+    if (index >= 3) setGratitudes((items) => items.filter((_, itemIndex) => itemIndex !== index));
   }
 
-  function clearImage() {
-    setSelectedImageFile(null);
-    setPreviewUrl(null);
-    setImageStatus("");
+  function updateRecentSpaces(value: string) {
+    const trimmed = value.trim();
+    if (!trimmed) return;
+    setRecentSpaces((spaces) => [trimmed, ...spaces.filter((item) => item.localeCompare(trimmed, undefined, { sensitivity: "accent" }) !== 0)].slice(0, 8));
   }
 
-  async function submit() {
-    if (!canSubmit) return;
-
+  async function saveText() {
+    if (!canSaveText) return;
     setSaving(true);
-    setStatus("");
-
+    setStatus(null);
     try {
       let imageUrl: string | null = null;
-      let imageUploadFailed = false;
-      if (selectedImageFile) {
-        setImageStatus("Đang lưu ảnh...");
-        try {
-          const media = await uploadEntryMedia(selectedImageFile);
-          imageUrl = media.uploaded ? media.url : null;
-        } catch (error) {
-          imageUploadFailed = true;
-          setImageStatus(error instanceof Error ? error.message : "Không tải được ảnh.");
-        }
+      if (image) {
+        const media = await uploadEntryMedia(image);
+        if (!media.uploaded) throw new Error("media_upload_failed");
+        imageUrl = media.url;
       }
-
-      const savedEntryText = imageUrl
-        ? entryText.replace("Ảnh: đã chọn", `Ảnh: ${imageUrl}`).trim()
-        : entryText.replace("\nẢnh: đã chọn\n", "\n").trim();
-      const local = addLocalEntry(
-        savedEntryText,
-        visibility,
-      );
-      const result = await createEntry({
-        visibility,
-        gratitudes: filledGratitudes,
-        reflection: reflection.trim(),
-        mood,
-        washi,
-        space: space.trim(),
-        quote,
-        sticker,
-        imageUrl,
-      });
-      if (result.saved) markLocalEntrySynced(local.id);
-      resetDraft();
-      showSaveToast(imageUploadFailed ? "text-saved-without-image" : result.saved ? "text-synced" : "text-local");
-    } catch (error) {
-      setStatus(
-        error instanceof Error ? error.message : t("errors.saveFailed"),
-      );
+      const result = await createEntry({ visibility, gratitudes: filled, reflection, mood, space, washi: mode === "creative" ? washi : null, quote: mode === "creative" ? quote : null, sticker: mode === "creative" ? sticker : null, imageUrl });
+      if (!result.saved) throw new Error("entry_unsynced");
+      updateRecentSpaces(space);
+      setGratitudes(["", "", ""]);
+      setReflection("");
+      setImage(null);
+      setStatus("text.saved");
+    } catch {
+      setStatus("errors.entryFailed");
     } finally {
       setSaving(false);
     }
   }
 
-  async function submitHandwriting() {
-    if (!inkDocument.strokes.length || saving) return;
+  async function saveHandwriting() {
+    if (!canSaveInk) return;
     setSaving(true);
-    setStatus("");
+    setStatus(null);
     try {
-      const preview = visibility === "private" ? null : await handwritingRef.current?.exportPreview();
-      if (visibility !== "private" && !preview) throw new Error(t("handwriting.previewUnavailable"));
-      const result = await createHandwrittenEntry({ document: inkDocument, visibility }, preview ?? null);
-      if (!result.saved) addLocalHandwrittenEntry(inkDocument, visibility);
+      const preview = visibility === "private" ? null : await handwritingRef.current?.exportPreview() ?? null;
+      if (visibility !== "private" && !preview) throw new Error("preview-unavailable");
+      const result = await createHandwrittenEntry({ document: inkDocument, visibility }, preview);
+      if (!result.saved) throw new Error("entry_unsynced");
+      if (pendingId) removeLocalHandwrittenEntry(pendingId);
+      setPendingId(null);
       setInkDocument((current) => ({ ...current, strokes: [] }));
-      showSaveToast(result.saved ? "handwriting-synced" : "handwriting-local");
+      setStatus("handwriting.saved");
     } catch (error) {
-      const errorKey = handwritingSaveErrorKey(error);
-      if (errorKey) {
-        setStatus(t(errorKey));
-      } else {
-        setStatus(error instanceof Error && error.message === "preview-unavailable" ? t("handwriting.previewUnavailable") : t("handwriting.saveFailed"));
-      }
+      const pending = upsertLocalHandwrittenEntry(pendingId, inkDocument, visibility);
+      setPendingId(pending.id);
+      const mediaKey = handwritingSaveErrorKey(error);
+      setStatus(mediaKey ?? "handwriting.pending");
     } finally {
       setSaving(false);
     }
   }
 
-  return (
-    <div className="min-h-dvh text-foreground [font-family:var(--font-quicksand)]">
-      <section className="mx-auto min-h-dvh max-w-[1200px] px-5 pb-8 pt-6 md:px-6 md:pb-16 md:pt-24">
-        <div className="flex flex-col gap-6">
-          <WriteIntro
-            canSubmit={inputMethod === "handwritten" ? inkDocument.strokes.length > 0 && !saving : canSubmit}
-            saving={saving}
-            setPreviewOpen={setPreviewOpen}
-            status={status}
-            submit={inputMethod === "handwritten" ? submitHandwriting : submit}
-            today={today}
-            showPreview={inputMethod === "text"}
-          />
-          <div className="flex w-fit rounded-full bg-muted p-1" role="tablist" aria-label={t("handwriting.methodLabel")}>
-            <button aria-selected={inputMethod === "text"} className={`inline-flex min-h-10 items-center gap-2 rounded-full px-4 text-sm font-semibold ${inputMethod === "text" ? "bg-card text-primary shadow-sm" : "text-muted-foreground"}`} onClick={() => setInputMethod("text")} role="tab" type="button"><MaterialSymbol name="edit_note" />{t("handwriting.type")}</button>
-            <button aria-selected={inputMethod === "handwritten"} className={`inline-flex min-h-10 items-center gap-2 rounded-full px-4 text-sm font-semibold ${inputMethod === "handwritten" ? "bg-card text-primary shadow-sm" : "text-muted-foreground"}`} onClick={() => setInputMethod("handwritten")} role="tab" type="button"><MaterialSymbol name="edit" />{t("handwriting.handwrite")}</button>
-          </div>
-          {inputMethod === "handwritten" ? (
-            <section aria-label={t("handwriting.canvasLabel")} className="relative overflow-hidden rounded-3xl bg-card p-4 shadow-sm md:p-7 lg:p-8">
-              <div className="mx-auto flex max-w-4xl flex-col gap-5">
-                <HandwritingComposer document={inkDocument} onChange={setInkDocument} ref={handwritingRef} />
-                <PrivacySettings setVisibility={setVisibility} visibility={visibility} />
-              </div>
-            </section>
-          ) : (
-          <ModeSwitcher mode={mode} setMode={setMode} />
-          )}
-          {inputMethod === "text" ? (
-          <section aria-label="Nội dung nhật ký" className="relative overflow-hidden rounded-3xl bg-card p-4 shadow-sm md:p-7 lg:p-8" id="journal-editor-canvas">
-            <div className={`relative z-10 grid gap-6 ${mode === "creative" ? "lg:grid-cols-12 lg:gap-8" : "grid-cols-1"}`}>
-              <div className={`${mode === "creative" ? "lg:col-span-8" : "mx-auto w-full max-w-3xl"} flex flex-col gap-4`}>
-                <NotebookControls
-                  mode={mode}
-                  mood={mood}
-                  setMood={setMood}
-                  setSpace={setSpace}
-                  setWashi={setWashi}
-                  space={space}
-                  washi={washi}
-                />
-                <WritingPanel
-                  gratitudes={gratitudes}
-                  gratitudesOpen={gratitudesOpen}
-                  mode={mode}
-                  noteLength={reflection.length}
-                  quote={quote}
-                  reflection={reflection}
-                  setGratitudes={setGratitudes}
-                  setGratitudesOpen={setGratitudesOpen}
-                  setQuote={setQuote}
-                  setReflection={setReflection}
-                  setSticker={setSticker}
-                  sticker={sticker}
-                />
-                {mode === "minimal" ? (
-                  <PrivacySettings setVisibility={setVisibility} visibility={visibility} />
-                ) : null}
-              </div>
-              {mode === "creative" ? (
-                <SideRail
-                  clearImage={clearImage}
-                  previewUrl={previewUrl}
-                  setVisibility={setVisibility}
-                  imageStatus={imageStatus}
-                  selectImage={selectImage}
-                  visibility={visibility}
-                />
-              ) : null}
-            </div>
-          </section>
-          ) : null}
-        </div>
+  const submit = method === "text" ? saveText : saveHandwriting;
+  const canSubmit = method === "text" ? canSaveText : canSaveInk;
+
+  return <main className="mx-auto min-h-dvh max-w-5xl px-4 py-6 sm:px-6">
+    <header className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
+      <p className="text-sm font-semibold text-muted-foreground md:justify-self-start">{date}</p>
+      <div className="flex w-fit rounded-full bg-muted p-1 md:col-start-2" role="tablist" aria-label={t("method.label")}>
+        <MethodButton active={method === "text"} icon="edit_note" label={t("method.text")} onClick={() => setMethod("text")} />
+        <MethodButton active={method === "handwritten"} icon="edit" label={t("method.handwritten")} onClick={() => setMethod("handwritten")} />
+      </div>
+      <div className="sm:justify-self-end md:col-start-3"><SaveBar canSubmit={canSubmit} pending={pendingId !== null} saving={saving} status={status} submit={submit} t={t as unknown as (key: string, values?: Record<string, string | number>) => string} /></div>
+    </header>
+    {method === "text" ? <section className="space-y-5 rounded-3xl bg-card p-4 shadow-sm sm:p-6">
+      <div className="flex rounded-full bg-muted p-1" role="tablist" aria-label={t("mode.label")}>
+        <MethodButton active={mode === "minimal"} label={t("mode.minimal")} onClick={() => setMode("minimal")} />
+        <MethodButton active={mode === "creative"} label={t("mode.creative")} onClick={() => setMode("creative")} />
+      </div>
+      <section aria-labelledby="gratitudes-title" className="space-y-3">
+        <div className="flex items-center justify-between gap-3"><h1 className="text-xl font-bold" id="gratitudes-title">{t("gratitudes.title")}</h1><span className="rounded-full bg-accent px-3 py-1 text-sm font-semibold text-primary">{t("gratitudes.progress", { count: filled.length })}</span></div>
+        {gratitudes.map((value, index) => <div className="flex gap-2" key={index}><label className="sr-only" htmlFor={`gratitude-${index}`}>{t("gratitudes.field", { number: index + 1 })}</label><span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent font-bold text-primary">{index + 1}</span><textarea className="min-h-11 flex-1 resize-none rounded-xl border border-input bg-background px-3 py-2 outline-offset-2 focus-visible:outline-2 focus-visible:outline-ring" data-tour={index === 0 ? "gratitude-input" : undefined} id={`gratitude-${index}`} maxLength={1000} onChange={(event) => updateGratitude(index, event.target.value)} placeholder={t("gratitudes.placeholder", { number: index + 1 })} ref={index === 0 ? firstInput : undefined} rows={1} value={value} />{index >= 3 ? <button aria-label={t("gratitudes.remove", { number: index + 1 })} className="min-h-11 min-w-11 rounded-xl text-destructive" onClick={() => removeGratitude(index)} type="button"><MaterialSymbol name="close" /></button> : null}</div>)}
+        <button className="min-h-11 rounded-xl bg-muted px-4 text-sm font-semibold text-primary disabled:opacity-50" disabled={gratitudes.length >= MAX_GRATITUDES} onClick={addGratitude} type="button">{t("gratitudes.add")}</button>
       </section>
-      {previewOpen && inputMethod === "text" ? (
-        <PreviewModal
-          close={() => setPreviewOpen(false)}
-          gratitudes={filledGratitudes}
-          imageUrl={previewUrl}
-          mood={mood}
-          quote={quote}
-          reflection={reflection}
-          sticker={sticker}
-          submit={submit}
-          today={today}
-        />
-      ) : null}
-    </div>
-  );
+      <section className="space-y-3">
+        <h2 className="text-base font-bold">{t("details.title")}</h2>
+        <div className="flex flex-wrap gap-2">{moods.map((item) => <button aria-pressed={mood === item} className={`min-h-11 rounded-full px-4 text-sm font-semibold ${mood === item ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"}`} key={item} onClick={() => setMood(mood === item ? null : item)} type="button">{t(`moods.${item}`)}</button>)}</div>
+        <label className="block text-sm font-semibold" htmlFor="space">{t("space.label")}</label>
+        <input className="min-h-11 w-full rounded-xl border border-input bg-background px-3 outline-offset-2 focus-visible:outline-2 focus-visible:outline-ring" id="space" maxLength={160} onChange={(event) => setSpace(event.target.value)} placeholder={t("space.placeholder")} value={space} />
+        {recentSpaces.length ? <div className="flex flex-wrap gap-2" aria-label={t("space.recentLabel")}>{recentSpaces.map((item) => <button className="min-h-11 rounded-full bg-muted px-3 text-sm" key={item.toLocaleLowerCase()} onClick={() => setSpace(item)} type="button">{item}</button>)}</div> : null}
+      </section>
+      <section className="border-t border-border pt-4">
+        <button aria-controls="reflection" aria-expanded={reflectionOpen} className="min-h-11 text-left text-base font-bold text-primary" onClick={() => setReflectionOpen(!reflectionOpen)} type="button">{t("reflection.title")}</button>
+        <div className={reflectionOpen ? "mt-3" : "mt-3 hidden md:block"} id="reflection"><textarea className="min-h-28 w-full rounded-xl border border-input bg-background p-3 outline-offset-2 focus-visible:outline-2 focus-visible:outline-ring" maxLength={5000} onChange={(event) => setReflection(event.target.value)} placeholder={t("reflection.placeholder")} value={reflection} /></div>
+      </section>
+      {mode === "creative" ? <section className="grid gap-3 border-t border-border pt-4 md:grid-cols-2"><label className="text-sm font-semibold">{t("creative.washi")}<select className="mt-2 min-h-11 w-full rounded-xl border border-input bg-background px-3" onChange={(event) => setWashi(event.target.value || null)} value={washi ?? ""}><option value="">{t("creative.none")}</option><option value="calm">{t("creative.calm")}</option><option value="warm">{t("creative.warm")}</option></select></label><label className="text-sm font-semibold">{t("creative.quote")}<input className="mt-2 min-h-11 w-full rounded-xl border border-input bg-background px-3" maxLength={240} onChange={(event) => setQuote(event.target.value)} value={quote} /></label><div><p className="mb-2 text-sm font-semibold">{t("creative.sticker")}</p><StickerPicker onSelect={setSticker} sticker={sticker} /></div><label className="text-sm font-semibold">{t("creative.image")}<input accept="image/*" className="mt-2 block min-h-11 w-full text-sm" onChange={(event) => setImage(event.target.files?.[0] ?? null)} type="file" /></label></section> : null}
+      <Visibility value={visibility} onChange={setVisibility} t={t as unknown as (key: string) => string} />
+    </section> : <section className="rounded-3xl bg-card p-4 shadow-sm sm:p-6"><h1 className="mb-4 text-xl font-bold">{t("handwriting.title")}</h1><HandwritingComposer document={inkDocument} onChange={setInkDocument} ref={handwritingRef} /><div className="mt-4"><Visibility value={visibility} onChange={setVisibility} t={t as unknown as (key: string) => string} /></div></section>}
+  </main>;
+}
+
+function MethodButton({ active, icon, label, onClick }: Readonly<{ active: boolean; icon?: string; label: string; onClick: () => void }>) {
+  return <button aria-pressed={active} className={`min-h-11 rounded-full px-4 text-sm font-semibold ${active ? "bg-card text-primary shadow-sm" : "text-muted-foreground"}`} onClick={onClick} type="button">{icon ? <MaterialSymbol className="mr-1" name={icon} /> : null}{label}</button>;
+}
+
+function SaveBar({ canSubmit, pending, saving, status, submit, t }: Readonly<{ canSubmit: boolean; pending: boolean; saving: boolean; status: string | null; submit: () => void; t: (key: string, values?: Record<string, string | number>) => string }>) {
+  return <div className="flex flex-wrap items-center justify-end gap-2"><span aria-live="polite" className="text-xs font-semibold text-muted-foreground">{status ? t(status) : null}</span>{pending ? <span className="text-xs font-semibold text-amber-700">{t("handwriting.pending")}</span> : null}<button className="min-h-11 rounded-xl bg-primary px-4 text-sm font-bold text-primary-foreground disabled:opacity-50" data-tour="save" disabled={!canSubmit} onClick={submit} type="button">{saving ? t("save.saving") : pending ? t("save.retry") : t("save.action")}</button></div>;
+}
+
+function Visibility({ onChange, t, value }: Readonly<{ value: EntryVisibility; onChange: (value: EntryVisibility) => void; t: (key: string) => string }>) {
+  return <fieldset data-tour="visibility"><legend className="mb-2 text-sm font-semibold">{t("visibility.label")}</legend><div className="flex flex-wrap gap-2">{(["private", "public", "anonymous"] as const).map((item) => <button aria-pressed={value === item} className={`min-h-11 rounded-full px-4 text-sm font-semibold ${value === item ? "bg-primary text-primary-foreground" : "bg-muted"}`} key={item} onClick={() => onChange(item)} type="button">{t(`visibility.${item}`)}</button>)}</div></fieldset>;
 }

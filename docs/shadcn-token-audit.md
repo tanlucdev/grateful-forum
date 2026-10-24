@@ -97,9 +97,6 @@ rg -n "bg-muted0|text-muted0|border-muted0|bg-primary0|text-primary0" app compon
 Likely still has hard-coded color classes:
 
 - `app/write/_components/sticker-picker/index.tsx`
-- `app/write/_components/sticker-quote-picker/index.tsx`
-- `app/write/_components/composer-ui/index.tsx`
-- `app/write/_components/composer-right-rail/index.tsx`
 - `app/calendar/_components/*`
 - `app/profile/_components/*`
 - `app/auth/_components/auth-panel-client/index.tsx`
