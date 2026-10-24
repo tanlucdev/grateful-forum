@@ -6,15 +6,18 @@ import { getGuestId } from "@/lib/auth/guest-session";
 import type { FeedPage } from "./dto";
 import { emptyFeedReactionCounts } from "./engagement-state.ts";
 import type { FeedReactionType } from "./validation.ts";
-
-const PAGE_SIZE = 8;
+import { feedAccess } from "./access.ts";
 
 export async function loadFeedPage(cursor?: string | null): Promise<FeedPage> {
   if (!hasSupabaseEnv()) {
-    return { items: [], nextCursor: null };
+    feedAccess(false, cursor);
+    return { items: [], nextCursor: null, requiresLogin: true };
   }
 
   const supabase = await createSupabaseServerClient();
+  const { data: auth } = await supabase.auth.getUser();
+  const userId = auth.user?.id ?? null;
+  const { pageSize, requiresLogin } = feedAccess(Boolean(userId), cursor);
   let query = supabase
     .from("entries")
     .select(entrySelect)
@@ -23,7 +26,7 @@ export async function loadFeedPage(cursor?: string | null): Promise<FeedPage> {
     .in("visibility", ["public", "anonymous"])
     .order("created_at", { ascending: false })
     .order("id", { ascending: false })
-    .limit(PAGE_SIZE + 1);
+    .limit(pageSize + 1);
 
   if (cursor) {
     query = query.lt("created_at", cursor);
@@ -33,17 +36,15 @@ export async function loadFeedPage(cursor?: string | null): Promise<FeedPage> {
 
   if (error) {
     if (error.message.includes("'public.entries'") && error.message.includes("schema cache")) {
-      return { items: [], nextCursor: null };
+      return { items: [], nextCursor: null, requiresLogin };
     }
 
     throw new Error(error.message);
   }
 
   const rows = data ?? [];
-  const pageRows = rows.length > PAGE_SIZE ? rows.slice(0, PAGE_SIZE) : rows;
+  const pageRows = rows.length > pageSize ? rows.slice(0, pageSize) : rows;
   const entryIds = pageRows.map((row) => row.id);
-  const { data: auth } = await supabase.auth.getUser();
-  const userId = auth.user?.id ?? null;
   const guestId = userId ? null : await getGuestId();
   const profilesById = new Map<
     string,
@@ -132,7 +133,8 @@ export async function loadFeedPage(cursor?: string | null): Promise<FeedPage> {
           : null,
       };
     }),
-    nextCursor: rows.length > PAGE_SIZE ? pageRows.at(-1)?.created_at ?? null : null,
+    requiresLogin,
+    nextCursor: !requiresLogin && rows.length > pageSize ? pageRows.at(-1)?.created_at ?? null : null,
   };
 }
 

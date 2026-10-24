@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
-import { useLocale } from "next-intl";
+import { useFormatter, useLocale, useTranslations } from "next-intl";
+import type { WeeklyRhythmDay } from "@/lib/profile/weekly-rhythm";
 import { useSyncExternalStore } from "react";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
 import type { AppLocale } from "@/i18n/routing";
@@ -21,12 +22,6 @@ const shellCopy = {
     mascotName: "Bé Mầm",
     endTitle: "Bạn đã đọc hết các chia sẻ mới",
     endDescription: "Hãy hít thở một hơi thật sâu và mang theo sự an yên này vào ngày của bạn nhé.",
-    weeklyRhythm: "Nhịp điệu tuần này",
-    garden: "Vườn hoa 365",
-    habit: "Duy trì thói quen viết để tâm trí thêm vững vàng:",
-    watered: "Đã tưới mát:",
-    days: "18 ngày",
-    rate: "Tỷ lệ: 82%",
     quote: "Trích dẫn",
     quoteEyebrow: "Gieo Vào Tâm Thức",
     everyMorning: "Mỗi sớm mai",
@@ -37,7 +32,6 @@ const shellCopy = {
     footerBadges: "Huy hiệu",
     footerCommunity: "Cộng đồng",
     copyright: "© 2026 Grateful Forum. Lan tỏa lòng biết ơn mỗi ngày.",
-    weekdays: ["T2", "T3", "T4", "T5", "T6", "T7", "CN"],
   },
   en: {
     mascotAlt: "Be Mam",
@@ -45,12 +39,6 @@ const shellCopy = {
     mascotName: "Be Mam",
     endTitle: "You have read all new shares",
     endDescription: "Take one deep breath and carry this calm into your day.",
-    weeklyRhythm: "This week's rhythm",
-    garden: "365 flower garden",
-    habit: "Keep writing so your mind feels steadier:",
-    watered: "Watered:",
-    days: "18 days",
-    rate: "Rate: 82%",
     quote: "Quote",
     quoteEyebrow: "Planting Inward",
     everyMorning: "Every morning",
@@ -61,7 +49,6 @@ const shellCopy = {
     footerBadges: "Badges",
     footerCommunity: "Community",
     copyright: "© 2026 Grateful Forum. Spreading gratitude every day.",
-    weekdays: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
   },
 } as const;
 
@@ -143,7 +130,12 @@ export function MobileFeedEnd({ status }: Readonly<{ status: string }>) {
   );
 }
 
-export function DesktopAside() {
+export function DesktopAside({ weeklyRhythm }: Readonly<{ weeklyRhythm: WeeklyRhythmDay[] }>) {
+  const t = useTranslations("feed");
+  const format = useFormatter();
+  const activeDays = weeklyRhythm.filter((day) => day.active).length;
+  const elapsedDays = weeklyRhythm.findIndex((day) => day.isToday) + 1;
+  const rate = elapsedDays ? activeDays / elapsedDays : 0;
   const locale = useAppLocale();
   const baseCopy = shellCopy[locale];
   const copy = useCompanionTimeCopy();
@@ -179,38 +171,40 @@ export function DesktopAside() {
         <div className="flex items-center justify-between border-b border-border pb-3">
           <h3 className="flex items-center gap-2 text-sm font-bold text-foreground">
             <span>🌱</span>
-            {baseCopy.weeklyRhythm}
+            {t("rhythm.title")}
           </h3>
           <Link className="text-xs font-bold text-primary hover:underline" href="/calendar">
-            {baseCopy.garden}
+            {t("rhythm.garden")}
           </Link>
         </div>
-        <p className="mt-3 text-xs text-muted-foreground">{baseCopy.habit}</p>
+        <p className="mt-3 text-xs text-muted-foreground">{t("rhythm.habit")}</p>
         <div className="mt-4 grid grid-cols-7 gap-1.5 text-center">
-          {baseCopy.weekdays.map((day, index) => (
-            <div className="flex flex-col items-center gap-1.5" key={day}>
-              <span className={`text-[10px] font-semibold ${index === 3 ? "text-primary" : "text-muted-foreground"}`}>
-                {day}
+          {weeklyRhythm.map((day) => (
+            <div className="flex flex-col items-center gap-1.5" key={day.date}>
+              <span className={`text-[10px] font-semibold ${day.isToday ? "text-primary" : "text-muted-foreground"}`}>
+                {format.dateTime(new Date(`${day.date}T12:00:00Z`), { weekday: "short", timeZone: "UTC" })}
               </span>
               <span
+                aria-label={t("rhythm.day", { date: format.dateTime(new Date(`${day.date}T12:00:00Z`), { dateStyle: "medium", timeZone: "UTC" }), count: day.count })}
+                aria-current={day.isToday ? "date" : undefined}
                 className={`flex h-8 w-8 items-center justify-center rounded-full text-xs ${
-                  index < 3
+                  day.active
                     ? "bg-primary text-primary-foreground shadow-xs"
-                    : index === 3
+                    : day.isToday
                       ? "bg-accent text-primary ring-2 ring-ring ring-offset-2"
                       : "bg-muted text-muted-foreground/60"
                 }`}
               >
-                {index < 2 ? "🌸" : index === 2 ? "🌷" : index === 3 ? "✎" : "·"}
+                {day.active ? "🌸" : day.isToday ? "✎" : "·"}
               </span>
             </div>
           ))}
         </div>
         <div className="mt-4 flex items-center justify-between border-t border-border pt-3 text-xs text-muted-foreground">
           <span>
-            {baseCopy.watered} <strong className="text-primary">{baseCopy.days}</strong>
+            {t("rhythm.watered")} <strong className="text-primary">{t("rhythm.days", { count: activeDays })}</strong>
           </span>
-          <span className="font-semibold text-primary">{baseCopy.rate}</span>
+          <span className="font-semibold text-primary">{t("rhythm.rate", { rate: format.number(rate, { style: "percent", maximumFractionDigits: 0 }) })}</span>
         </div>
       </section>
       <section className="relative rounded-3xl border border-border bg-card p-6 shadow-card">
