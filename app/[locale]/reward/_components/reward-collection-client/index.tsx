@@ -32,24 +32,27 @@ export function RewardCollectionClient({ badges, timezone }: { badges: RewardBad
 
   return (
     <section aria-label={t("filters.label")} className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-card p-2 shadow-xs">
-        <div aria-label={t("filters.label")} className="flex max-w-full gap-1 overflow-x-auto" role="group">
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+        <div aria-label={t("filters.label")} className="flex max-w-full items-center gap-1 overflow-x-auto text-xs font-semibold" role="group">
           {filters.map((value) => (
             <button
               aria-pressed={filter === value}
-              className={`min-h-11 shrink-0 rounded-xl px-3 text-xs font-semibold transition-colors ${filter === value ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted"}`}
+              className="flex min-h-11 shrink-0 items-center rounded-full px-0.5"
               key={value}
               onClick={() => setFilter(value)}
               type="button"
             >
-              {t(`filters.${value}`)} ({format.number(badges.filter((badge) => value === "all" || badge.category === value).length)})
+              <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 transition-colors ${filter === value ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-secondary"}`}>
+                {t(`filters.${value}`)}
+                <span className="font-normal tabular-nums opacity-75">{format.number(badges.filter((badge) => value === "all" || badge.category === value).length)}</span>
+              </span>
             </button>
           ))}
         </div>
-        <div className="flex flex-wrap gap-3 px-2 text-xs text-muted-foreground">
+        <div className="flex flex-wrap gap-x-3 gap-y-1 px-3 text-xs text-muted-foreground sm:px-0">
           {(["earned", "growing", "locked"] as const).map((status) => (
             <span className="flex items-center gap-1.5" key={status}>
-              <span aria-hidden="true" className={`size-2 rounded-full ${status === "earned" ? "bg-primary" : status === "growing" ? "bg-amber-500" : "bg-stone-400"}`} />
+              <span aria-hidden="true" className={`size-1.5 rounded-full ${status === "earned" ? "bg-primary" : status === "growing" ? "bg-amber-500" : "bg-stone-400"}`} />
               {t(`status.${status}`)} ({format.number(badges.filter((badge) => badge.status === status).length)})
             </span>
           ))}
