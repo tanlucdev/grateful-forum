@@ -38,7 +38,7 @@ const mobileNavItems = [
   { href: "/feed", icon: "home", protected: false, primary: false },
   { href: "/calendar", icon: "calendar_today", protected: true, primary: false },
   { href: "/write", icon: "eco", protected: false, primary: true },
-  { href: "/reward", icon: "explore", protected: false, primary: false },
+  { href: "/reward", icon: "explore", protected: true, primary: false },
   { href: "/profile", icon: "person", protected: true, primary: false },
 ] as const;
 

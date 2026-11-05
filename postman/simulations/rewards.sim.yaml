@@ -1,0 +1,6 @@
+simulation: rewards
+routing: path
+mocks:
+  - name: rewards-supabase
+    routeKey: supabase
+    path: postman/mocks/rewards-supabase/config.yaml

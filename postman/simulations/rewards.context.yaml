@@ -1,0 +1,23 @@
+purpose:
+  stands_in_for: Supabase Auth user lookup and PostgREST profile/entry reads used by rewards.
+  unblocks: Local authenticated rewards API and UI checks without production credentials or journal data. Owner mock search skipped because the CLI is signed out; fixture follows repository migrations and SDK calls.
+assumptions:
+  - id: owner-filtered-history
+    status: supported
+    claim: In the local simulation, rewards reads every eligible owned entry while excluding other users, hidden, deleted and future rows.
+    reason: The fixture enforces ownership and visibility filters, includes excluded rows and exceeds the default 1000-row limit. Its responses do not establish production RLS or schema availability.
+    verification: node tests/rewards-api.mjs passed against the real Next.js GET handler and Postman simulation, including 1118 eligible rows over three keyset pages with equal timestamps, excluded rows, empty history, 401, 400 and storage-failure 500. Simulation request events confirmed Auth and PostgREST reads.
+    source: lib/rewards/repository.ts; postman/mocks/rewards-supabase/default.js; tests/rewards-api.mjs
+    updated_at: "2026-11-05"
+  - id: provider-contract
+    status: unknown
+    claim: Production Supabase has the profile timezone and entry metadata columns used by rewards.
+    reason: Repository migrations define them; this fixture follows those migrations. No authenticated production request has been made.
+    verification: Source inspection only; live schema and JWT verification remain unverified.
+    source: supabase/migrations; lib/calendar/queries.ts; lib/rewards/repository.ts
+    updated_at: "2026-11-05"
+fingerprints:
+  - id: rewards-local
+    date: "2026-11-05"
+    commit: "based on 26b1a51"
+    cli: 1.75.0

@@ -1,16 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 100 100">
 <!-- Organic Wax seal edge -->
-<path d="M50 6 C62 6 70 12 78 16 C86 20 94 28 94 40 C94 52 88 60 86 68 C84 76 80 84 70 90 C60 96 52 94 44 94 C34 94 26 92 18 84 C10 76 6 66 6 54 C6 42 12 32 18 24 C24 16 38 6 50 6 Z" fill="#F5F5F4" stroke="#D6D3D1" stroke-width="2.5"></path>
+<path d="M50 6 C62 6 70 12 78 16 C86 20 94 28 94 40 C94 52 88 60 86 68 C84 76 80 84 70 90 C60 96 52 94 44 94 C34 94 26 92 18 84 C10 76 6 66 6 54 C6 42 12 32 18 24 C24 16 38 6 50 6 Z" fill="#F0FDF4" stroke="#D4AF37" stroke-width="2.5"></path>
 <!-- Compass dial -->
-<circle cx="50" cy="50" r="32" stroke="#A8A29E" stroke-width="1.8"></circle>
-<circle cx="50" cy="50" r="28" stroke="#E7E5E4" stroke-dasharray="2 3" stroke-width="1"></circle>
+<circle cx="50" cy="50" r="32" stroke="#4CA374" stroke-width="1.8"></circle>
+<circle cx="50" cy="50" r="28" stroke="#D1E9E0" stroke-dasharray="2 3" stroke-width="1"></circle>
 <!-- 4 Compass Points -->
-<polygon fill="#78716C" points="50,22 53,46 50,50 47,46"></polygon>
-<polygon fill="#A8A29E" points="50,78 53,54 50,50 47,54"></polygon>
-<polygon fill="#A8A29E" points="22,50 46,47 50,50 46,53"></polygon>
-<polygon fill="#A8A29E" points="78,50 54,47 50,50 54,53"></polygon>
-<!-- Lock overlay -->
-<rect fill="#78716C" height="12" rx="2.5" width="14" x="43" y="47"></rect>
-<path d="M46 47 V42 C46 39.8 47.8 38 50 38 C52.2 38 54 39.8 54 42 V47" fill="none" stroke="#78716C" stroke-width="2"></path>
-<circle cx="50" cy="52" fill="#FFFFFF" r="1.5"></circle>
+<polygon fill="#006D43" points="50,22 53,46 50,50 47,46"></polygon>
+<polygon fill="#4CA374" points="50,78 53,54 50,50 47,54"></polygon>
+<polygon fill="#4CA374" points="22,50 46,47 50,50 46,53"></polygon>
+<polygon fill="#4CA374" points="78,50 54,47 50,50 54,53"></polygon>
+<circle cx="50" cy="50" fill="#D4AF37" r="4" />
 </svg>

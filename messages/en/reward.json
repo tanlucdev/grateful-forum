@@ -2,25 +2,23 @@
   "title": "Your garden of milestones & badges",
   "description": "Badges are not a race for achievement. They are little blossoms that celebrate the care you give yourself and the world each day.",
   "back": "Back to Gratitude Calendar",
-  "preview": "Illustrative badge collection",
   "levelLabel": "Your inner growth",
-  "level": "A Peaceful Green Sprout",
   "stats": {
     "earned": "Badges in bloom",
     "flowers": "/ {count} blossoms",
     "journey": "{percent} of your mindful journey",
-    "season": "Season {count}",
     "streak": "Your current writing streak",
     "days": "consecutive days",
     "best": "Personal best: {count} days",
     "warmth": "A little warmth, nurtured every day",
     "moments": "Moments of care",
-    "seeds": "seeds of kindness",
-    "months": "Reflections across {count} months",
-    "positive": "A little more room for the good",
+    "seeds": "journal entries",
+    "months": "Reflections in {count} active months",
+    "positive": "Every entry is a little act of care",
     "whisper": "A whisper from Bé Mầm",
     "companion": "Growing alongside you",
-    "encouragement": "You’re doing well! Just {count} more days until you reach The Persistent Sprout badge."
+    "next": "Your next milestone: {badge}. You have completed {current} / {total} steps.",
+    "complete": "Every blossom in your garden has opened. Keep nurturing gratitude every day."
   },
   "filters": {
     "label": "Filter the badge collection",
@@ -37,8 +35,6 @@
   "results": "{count} badges",
   "unlocked": "Unlocked: {date}",
   "progress": "Growing progress",
-  "daysProgress": "{current} / {total} days",
-  "postsProgress": "{current} / {total} posts",
   "condition": "How to earn it",
   "detailProgress": "Date earned / Progress",
   "close": "Close and continue your journey",
@@ -51,13 +47,6 @@
     "ease": "Ease",
     "kindness": "Kindness",
     "lightness": "Lightness"
-  },
-  "inspiration": {
-    "title": "A seed of inspiration",
-    "quote": "“Sáng nay ngắm nhìn chiếc mầm nhỏ vừa bung lá sau mưa, mình chợt thấy biết ơn vì mình vẫn ở đây, khỏe mạnh và bình yên.”",
-    "author": "Mai Nhã (Ẩn danh)",
-    "alt": "An open journal beside a warm cup of tea in gentle sunlight",
-    "empathy": "{count} felt this too"
   },
   "cta": {
     "title": "Tend to your own little garden",
@@ -99,7 +88,7 @@
       "title": "Finding the Good",
       "subtitle": "Daisy seal • Habit",
       "description": "Notice three things to be grateful for and discover wonder in the everyday.",
-      "condition": "Write 3 meaningful gratitudes in a day"
+      "condition": "Write 3 gratitudes in one day"
     },
     "7": {
       "title": "The Persistent Sprout",
@@ -135,7 +124,31 @@
       "title": "A Longer Journey",
       "subtitle": "Mindfulness compass • 365 days",
       "description": "Let gratitude become a way of life through all four seasons.",
-      "condition": "Practice gratitude for 365 days"
+      "condition": "Write on 365 distinct days"
     }
-  }
+  },
+  "collection": "Your collection",
+  "levels": {
+    "seed": "A little seed",
+    "sprout": "A Peaceful Green Sprout",
+    "bloom": "A garden in bloom",
+    "tree": "A peaceful tree"
+  },
+  "next": {
+    "title": "Your next milestone",
+    "complete": "Every milestone reached"
+  },
+  "progressUnits": {
+    "days": "{current} / {total} days",
+    "entries": "{current} / {total} entries",
+    "gratitudes": "{current} / {total} gratitudes",
+    "returns": "{current} / {total} returns"
+  },
+  "error": {
+    "title": "Could not load your rewards",
+    "description": "Your journal is safe. Try loading your collection again.",
+    "retry": "Try again"
+  },
+  "loading": "Loading your rewards",
+  "empty": "Write your first page to help your gratitude garden grow."
 }

@@ -2,25 +2,23 @@
   "title": "Khu vườn cột mốc & huy hiệu đồng hành",
   "description": "Huy hiệu không phải cuộc đua thành tích, mà là những cánh hoa ghi dấu sự trân trọng bạn dành cho chính mình và cuộc sống mỗi ngày.",
   "back": "Quay lại Lịch biết ơn",
-  "preview": "Bản minh họa bộ sưu tập",
   "levelLabel": "Cấp độ tâm hồn",
-  "level": "Chồi Xanh An Nhiên",
   "stats": {
     "earned": "Huy hiệu đã nở rộ",
     "flowers": "/ {count} đóa hoa",
     "journey": "{percent} chặng đường tỉnh thức",
-    "season": "Mùa {count}",
     "streak": "Chuỗi gieo mầm hiện tại",
     "days": "ngày liên tiếp",
     "best": "Kỷ lục cao nhất: {count} ngày",
     "warmth": "Ngọn lửa ấm áp duy trì đều đặn",
     "moments": "Khoảnh khắc nuôi dưỡng",
-    "seeds": "hạt mầm lành",
-    "months": "Ghi chép xuyên suốt {count} tháng qua",
-    "positive": "Tâm thức tràn đầy tích cực",
+    "seeds": "trang nhật ký",
+    "months": "Ghi chép trong {count} tháng có hoạt động",
+    "positive": "Mỗi trang viết là một bước chăm sóc mình",
     "whisper": "Lời thì thầm từ Bé Mầm",
     "companion": "Đồng hành cùng bạn",
-    "encouragement": "Bạn đang làm rất tốt! Chỉ còn {count} ngày nữa để chạm tay vào huy hiệu Chiếc Mầm Kiên Trì."
+    "next": "Cột mốc tiếp theo: {badge}. Bạn đã đi được {current} / {total} bước.",
+    "complete": "Khu vườn của bạn đã nở đủ mọi đóa hoa. Tiếp tục nuôi dưỡng niềm biết ơn mỗi ngày nhé."
   },
   "filters": {
     "label": "Lọc bộ sưu tập huy hiệu",
@@ -37,8 +35,6 @@
   "results": "{count} huy hiệu",
   "unlocked": "Mở khóa: {date}",
   "progress": "Tiến độ gieo mầm",
-  "daysProgress": "{current} / {total} ngày",
-  "postsProgress": "{current} / {total} bài viết",
   "condition": "Điều kiện đạt được",
   "detailProgress": "Ngày nhận / Tiến độ",
   "close": "Đóng và tiếp tục hành trình",
@@ -51,13 +47,6 @@
     "ease": "Tự tại",
     "kindness": "Bao dung",
     "lightness": "Nhẹ nhõm"
-  },
-  "inspiration": {
-    "title": "Hạt mầm truyền cảm hứng",
-    "quote": "“Sáng nay ngắm nhìn chiếc mầm nhỏ vừa bung lá sau mưa, mình chợt thấy biết ơn vì mình vẫn ở đây, khỏe mạnh và bình yên.”",
-    "author": "Mai Nhã (Ẩn danh)",
-    "alt": "Nhật ký mở bên tách trà dưới ánh nắng dịu nhẹ",
-    "empathy": "{count} đồng cảm"
   },
   "cta": {
     "title": "Nuôi dưỡng khu vườn của riêng bạn",
@@ -99,7 +88,7 @@
       "title": "Nhận Biết Điều Lành",
       "subtitle": "Dấu Hoa Cúc Họa Mi • Thói quen",
       "description": "Ghi trọn vẹn 3 điều biết ơn sâu sắc trong ngày, nhìn thấy sự mầu nhiệm đời thường.",
-      "condition": "Ghi đủ 3 điều biết ơn sâu sắc"
+      "condition": "Ghi đủ 3 điều biết ơn trong một ngày"
     },
     "7": {
       "title": "Chiếc Mầm Kiên Trì",
@@ -135,7 +124,31 @@
       "title": "Hành Trình Dài Hơn",
       "subtitle": "La Bàn Chánh Niệm • 365 Ngày",
       "description": "Biến lòng biết ơn thành một nếp sống trọn năm, thuận tự nhiên và thông dong.",
-      "condition": "Biến biết ơn thành thói quen 365 ngày"
+      "condition": "Viết nhật ký trong 365 ngày khác nhau"
     }
-  }
+  },
+  "collection": "Bộ sưu tập của bạn",
+  "levels": {
+    "seed": "Hạt mầm nhỏ",
+    "sprout": "Chồi Xanh An Nhiên",
+    "bloom": "Khu vườn nở hoa",
+    "tree": "Đại thụ bình an"
+  },
+  "next": {
+    "title": "Cột mốc tiếp theo",
+    "complete": "Bạn đã chạm mọi cột mốc"
+  },
+  "progressUnits": {
+    "days": "{current} / {total} ngày",
+    "entries": "{current} / {total} bài viết",
+    "gratitudes": "{current} / {total} điều biết ơn",
+    "returns": "{current} / {total} lần quay lại"
+  },
+  "error": {
+    "title": "Chưa tải được phần thưởng",
+    "description": "Nhật ký của bạn vẫn an toàn. Hãy thử tải lại bộ sưu tập.",
+    "retry": "Thử lại"
+  },
+  "loading": "Đang tải phần thưởng của bạn",
+  "empty": "Viết trang đầu tiên để hạt mầm biết ơn bắt đầu nảy nở."
 }
