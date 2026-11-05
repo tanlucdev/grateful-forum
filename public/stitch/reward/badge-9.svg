@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 100 100">
+<defs>
+<linearGradient id="sunGold9" x1="0%" x2="100%" y1="0%" y2="100%"><stop offset="0%" stop-color="#FEF3C7"></stop><stop offset="50%" stop-color="#F59E0B"></stop><stop offset="100%" stop-color="#EA580C"></stop></linearGradient>
+</defs>
+<!-- 8 soft sculpted sun rays -->
+<g fill="url(#sunGold9)">
+<path d="M50 8 L54 22 H46 Z"></path>
+<path d="M50 92 L54 78 H46 Z"></path>
+<path d="M8 50 L22 54 V46 Z"></path>
+<path d="M92 50 L78 54 V46 Z"></path>
+<path d="M20 20 L32 28 L28 32 Z"></path>
+<path d="M80 80 L68 72 L72 68 Z"></path>
+<path d="M80 20 L72 32 L68 28 Z"></path>
+<path d="M20 80 L32 72 L28 68 Z"></path>
+</g>
+<!-- Morning disc -->
+<circle cx="50" cy="50" fill="#FFFBEB" r="28" stroke="#F59E0B" stroke-width="2.5"></circle>
+<!-- Warm tea cup silhouette -->
+<path d="M38 52 C38 62 62 62 62 52 Z" fill="#D97706"></path>
+<rect fill="#B45309" height="3" rx="1.5" width="28" x="36" y="50"></rect>
+<path d="M62 53 C66 53 68 56 68 58 C68 60 66 62 62 62" fill="none" stroke="#B45309" stroke-width="2"></path>
+<!-- Rising steam aroma -->
+<path d="M46 45 C44 42 46 39 44 36" stroke="#F59E0B" stroke-linecap="round" stroke-width="1.8"></path>
+<path d="M52 46 C50 43 52 40 50 37" stroke="#F59E0B" stroke-linecap="round" stroke-width="1.8"></path>
+</svg>

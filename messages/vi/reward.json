@@ -1,7 +1,141 @@
 {
-  "eyebrow": "Phần thưởng",
-  "title": "Phần thưởng",
-  "description": "Mừng những khoảnh khắc biết ơn đã được nuôi đều mỗi ngày.",
-  "desktopPreview": "Bản xem trước phần thưởng trên máy tính",
-  "mobilePreview": "Bản xem trước phần thưởng trên điện thoại"
+  "title": "Khu vườn cột mốc & huy hiệu đồng hành",
+  "description": "Huy hiệu không phải cuộc đua thành tích, mà là những cánh hoa ghi dấu sự trân trọng bạn dành cho chính mình và cuộc sống mỗi ngày.",
+  "back": "Quay lại Lịch biết ơn",
+  "preview": "Bản minh họa bộ sưu tập",
+  "levelLabel": "Cấp độ tâm hồn",
+  "level": "Chồi Xanh An Nhiên",
+  "stats": {
+    "earned": "Huy hiệu đã nở rộ",
+    "flowers": "/ {count} đóa hoa",
+    "journey": "{percent} chặng đường tỉnh thức",
+    "season": "Mùa {count}",
+    "streak": "Chuỗi gieo mầm hiện tại",
+    "days": "ngày liên tiếp",
+    "best": "Kỷ lục cao nhất: {count} ngày",
+    "warmth": "Ngọn lửa ấm áp duy trì đều đặn",
+    "moments": "Khoảnh khắc nuôi dưỡng",
+    "seeds": "hạt mầm lành",
+    "months": "Ghi chép xuyên suốt {count} tháng qua",
+    "positive": "Tâm thức tràn đầy tích cực",
+    "whisper": "Lời thì thầm từ Bé Mầm",
+    "companion": "Đồng hành cùng bạn",
+    "encouragement": "Bạn đang làm rất tốt! Chỉ còn {count} ngày nữa để chạm tay vào huy hiệu Chiếc Mầm Kiên Trì."
+  },
+  "filters": {
+    "label": "Lọc bộ sưu tập huy hiệu",
+    "all": "Tất cả",
+    "streak": "Chuỗi ngày",
+    "habit": "Nuôi dưỡng thói quen",
+    "community": "Lan tỏa & cộng đồng"
+  },
+  "status": {
+    "earned": "Đã chạm mốc",
+    "growing": "Đang tiến bước",
+    "locked": "Chưa mở khóa"
+  },
+  "results": "{count} huy hiệu",
+  "unlocked": "Mở khóa: {date}",
+  "progress": "Tiến độ gieo mầm",
+  "daysProgress": "{current} / {total} ngày",
+  "postsProgress": "{current} / {total} bài viết",
+  "condition": "Điều kiện đạt được",
+  "detailProgress": "Ngày nhận / Tiến độ",
+  "close": "Đóng và tiếp tục hành trình",
+  "philosophy": {
+    "title": "Ý nghĩa của việc giữ nhịp, không ganh đua",
+    "subtitle": "Triết lý thiết kế từ BeGrateful",
+    "body": "Ở BeGrateful, huy hiệu không phải cuộc thi xếp hạng. Nếu lỡ một ngày bận rộn quên viết, bạn không bao giờ “thất bại”. Bạn chỉ đang bận trải nghiệm cuộc sống, và huy hiệu Lời Cảm Ơn Bền Bỉ luôn sẵn sàng đón chào ngày bạn quay lại.",
+    "seed": "Mỗi ngày một hạt mầm nhỏ",
+    "steady": "Đều đặn tốt hơn sự hoàn hảo tuyệt đối",
+    "ease": "Tự tại",
+    "kindness": "Bao dung",
+    "lightness": "Nhẹ nhõm"
+  },
+  "inspiration": {
+    "title": "Hạt mầm truyền cảm hứng",
+    "quote": "“Sáng nay ngắm nhìn chiếc mầm nhỏ vừa bung lá sau mưa, mình chợt thấy biết ơn vì mình vẫn ở đây, khỏe mạnh và bình yên.”",
+    "author": "Mai Nhã (Ẩn danh)",
+    "alt": "Nhật ký mở bên tách trà dưới ánh nắng dịu nhẹ",
+    "empathy": "{count} đồng cảm"
+  },
+  "cta": {
+    "title": "Nuôi dưỡng khu vườn của riêng bạn",
+    "description": "Mỗi ngày dành 3 phút gieo hạt mầm biết ơn là bạn đang tưới mát cho tâm hồn của chính mình.",
+    "write": "Viết thêm trang mới hôm nay"
+  },
+  "badges": {
+    "1": {
+      "title": "Chồi Non Gieo Hạt",
+      "subtitle": "Ấn Ngọc Bát Giác • Thói quen",
+      "description": "Ghi lại điều biết ơn đầu tiên, bắt đầu gieo mầm bình yên cho tâm trí.",
+      "condition": "Ghi 1 điều biết ơn đầu tiên"
+    },
+    "2": {
+      "title": "Nhịp Điệu Vững Vàng",
+      "subtitle": "Đài Sen Hoàng Kim • Chuỗi 3 ngày",
+      "description": "Duy trì viết 3 ngày liên tiếp bên tách trà ấm, tạo lập bước chân an tĩnh đầu tiên.",
+      "condition": "Chuỗi 3 ngày liên tiếp"
+    },
+    "3": {
+      "title": "Đóa Hoa Đào An Yên",
+      "subtitle": "Phù Điêu Ngũ Cánh • Chuỗi 7 ngày",
+      "description": "Một tuần trọn vẹn nuôi dưỡng tình thương, hương hoa nở thơm ngát một góc hồn.",
+      "condition": "Chuỗi 7 ngày liên tục"
+    },
+    "4": {
+      "title": "Sen Ngọc Bích",
+      "subtitle": "Men Ngọc Nhiều Lớp • Chuỗi 14 ngày",
+      "description": "14 ngày liên tục tĩnh tại như đóa sen thanh tao nở giữa mặt hồ phẳng lặng.",
+      "condition": "Chuỗi 14 ngày liên tục"
+    },
+    "5": {
+      "title": "Lời Cảm Ơn Bền Bỉ",
+      "subtitle": "Phiến Ngọc Lá Trầu • Thói quen",
+      "description": "Quay lại viết nhật ký sau chuỗi ngày bận rộn, bao dung và nâng niu nhịp sống.",
+      "condition": "Trở lại sau ngày bận rộn"
+    },
+    "6": {
+      "title": "Nhận Biết Điều Lành",
+      "subtitle": "Dấu Hoa Cúc Họa Mi • Thói quen",
+      "description": "Ghi trọn vẹn 3 điều biết ơn sâu sắc trong ngày, nhìn thấy sự mầu nhiệm đời thường.",
+      "condition": "Ghi đủ 3 điều biết ơn sâu sắc"
+    },
+    "7": {
+      "title": "Chiếc Mầm Kiên Trì",
+      "subtitle": "Khung Huân Chương Vàng • Chuỗi 21 ngày",
+      "description": "21 ngày biến lòng biết ơn thành một thói quen tự nhiên như hơi thở.",
+      "condition": "Duy trì 21 ngày liên tiếp"
+    },
+    "8": {
+      "title": "Chậu Cây Tròn Đầy",
+      "subtitle": "Chậu Men Ngọc Tròn Đầy • Chuỗi 30 ngày",
+      "description": "Một tháng vững vàng nuôi dưỡng tâm hồn, xanh mát và sum suê bình an.",
+      "condition": "Chuỗi 30 ngày liên tục"
+    },
+    "9": {
+      "title": "Đón Ánh Ban Mai",
+      "subtitle": "Mặt Trời &amp; Tách Trà • Thói quen",
+      "description": "Ghi lời biết ơn trước 08:00 sáng, mở đầu ngày bằng nụ cười trong trẻo.",
+      "condition": "Viết trước 08:00 sáng trong 10 ngày"
+    },
+    "10": {
+      "title": "Hạt Giống Lan Tỏa",
+      "subtitle": "Sa Thạch Bồ Công Anh • Cộng đồng",
+      "description": "Chia sẻ 5 bài viết ẩn danh lên Dòng chảy lành để sưởi ấm người đồng hành.",
+      "condition": "Chia sẻ 5 bài ẩn danh lên Dòng chảy lành"
+    },
+    "11": {
+      "title": "Đại Thụ Tâm Hồn",
+      "subtitle": "Cẩm Thạch Khắc Chìm • Chuỗi 100 ngày",
+      "description": "Chạm mốc 100 ngày biết ơn, tâm hồn trở thành bóng mát che chở mọi giông bão.",
+      "condition": "Duy trì 100 ngày biết ơn"
+    },
+    "12": {
+      "title": "Hành Trình Dài Hơn",
+      "subtitle": "La Bàn Chánh Niệm • 365 Ngày",
+      "description": "Biến lòng biết ơn thành một nếp sống trọn năm, thuận tự nhiên và thông dong.",
+      "condition": "Biến biết ơn thành thói quen 365 ngày"
+    }
+  }
 }

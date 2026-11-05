@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 100 100">
+<!-- Ancient octagonal carved stone -->
+<circle cx="50" cy="50" fill="#F5F5F4" r="44" stroke="#D6D3D1" stroke-width="2.5"></circle>
+<circle cx="50" cy="50" r="39" stroke="#E7E5E4" stroke-dasharray="3 3" stroke-width="1.5"></circle>
+<!-- Mighty ancient tree roots and canopy -->
+<path d="M46 74 V52 H54 V74" stroke="#78716C" stroke-linecap="round" stroke-width="5"></path>
+<path d="M44 72 L36 78 M56 72 L64 78" stroke="#78716C" stroke-linecap="round" stroke-width="3"></path>
+<path d="M50 20 C34 20 24 30 24 42 C24 54 36 56 50 56 C64 56 76 54 76 42 C76 30 66 20 50 20 Z" fill="#D6D3D1" stroke="#A8A29E" stroke-width="2"></path>
+<circle cx="42" cy="36" fill="#A8A29E" opacity="0.5" r="6"></circle>
+<circle cx="58" cy="38" fill="#A8A29E" opacity="0.5" r="5"></circle>
+<!-- Lock indicator badge -->
+<rect fill="#78716C" height="12" rx="2.5" width="14" x="43" y="47"></rect>
+<path d="M46 47 V42 C46 39.8 47.8 38 50 38 C52.2 38 54 39.8 54 42 V47" fill="none" stroke="#78716C" stroke-width="2"></path>
+<circle cx="50" cy="52" fill="#FFFFFF" r="1.5"></circle>
+</svg>

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 100 100">
+<defs>
+<linearGradient id="goldBezel4" x1="0%" x2="100%" y1="0%" y2="100%"><stop offset="0%" stop-color="#FFF2B2"></stop><stop offset="50%" stop-color="#D4AF37"></stop><stop offset="100%" stop-color="#805B00"></stop></linearGradient>
+<linearGradient id="deepJade4" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#A7F3D0"></stop><stop offset="50%" stop-color="#059669"></stop><stop offset="100%" stop-color="#064E3B"></stop></linearGradient>
+</defs>
+<!-- Gold medal rim with meditation ripple -->
+<circle cx="50" cy="50" fill="url(#goldBezel4)" r="45"></circle>
+<circle cx="50" cy="50" fill="#E8F5E9" r="41"></circle>
+<circle cx="50" cy="50" r="38" stroke="#10B981" stroke-opacity="0.4" stroke-width="1.5"></circle>
+<!-- Multi-layer jade lotus petals -->
+<path d="M50 16 C38 32 26 44 26 62 C26 76 74 76 74 62 C74 44 62 32 50 16 Z" fill="url(#deepJade4)"></path>
+<path d="M50 24 C41 38 32 48 32 62 C32 72 68 72 68 62 C68 48 59 38 50 24 Z" fill="#34D399"></path>
+<path d="M50 32 C44 44 38 52 38 62 C38 68 62 68 62 62 C62 52 56 44 50 32 Z" fill="#A7F3D0"></path>
+<ellipse cx="50" cy="62" fill="#FFFFFF" opacity="0.8" rx="7" ry="3"></ellipse>
+<!-- Gold lotus pistil -->
+<circle cx="50" cy="46" fill="#FBBF24" r="3.5"></circle>
+</svg>

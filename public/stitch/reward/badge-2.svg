@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 100 100">
+<defs>
+<linearGradient id="goldLaurel" x1="0%" x2="100%" y1="0%" y2="100%"><stop offset="0%" stop-color="#FFE79A"></stop><stop offset="50%" stop-color="#D4AF37"></stop><stop offset="100%" stop-color="#8F630D"></stop></linearGradient>
+<linearGradient id="mintBase2" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#FFFFFF"></stop><stop offset="60%" stop-color="#D1E9E0"></stop><stop offset="100%" stop-color="#7AC9A5"></stop></linearGradient>
+</defs>
+<!-- Outer golden scalloped ring -->
+<circle cx="50" cy="50" fill="url(#goldLaurel)" r="44"></circle>
+<circle cx="50" cy="50" fill="url(#mintBase2)" r="39"></circle>
+<circle cx="50" cy="50" r="35" stroke="#FFFFFF" stroke-dasharray="3 3" stroke-width="1.8"></circle>
+<!-- 3-leaf golden laurel arc -->
+<path d="M22 62 C18 42 26 26 40 18" stroke="url(#goldLaurel)" stroke-linecap="round" stroke-width="3"></path>
+<path d="M78 62 C82 42 74 26 60 18" stroke="url(#goldLaurel)" stroke-linecap="round" stroke-width="3"></path>
+<!-- Lotus throne -->
+<path d="M28 72 C36 64 64 64 72 72 C60 78 40 78 28 72 Z" fill="#2E7D32"></path>
+<path d="M35 70 C42 62 58 62 65 70 Z" fill="#81C784"></path>
+<!-- Smiling Bé Mầm character -->
+<circle cx="50" cy="46" fill="#D1E9E0" r="14"></circle>
+<path d="M50 32 C50 32 46 22 50 19 C54 22 50 32 50 32 Z" fill="#2E7D32"></path>
+<circle cx="45" cy="44" fill="#1A2F2B" r="1.6"></circle>
+<circle cx="55" cy="44" fill="#1A2F2B" r="1.6"></circle>
+<path d="M47 49 Q50 52 53 49" stroke="#1A2F2B" stroke-linecap="round" stroke-width="1.5"></path>
+<circle cx="42" cy="47" fill="#FF8A80" r="1.5"></circle>
+<circle cx="58" cy="47" fill="#FF8A80" r="1.5"></circle>
+</svg>

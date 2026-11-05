@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 100 100">
+<defs>
+<linearGradient id="warmAura7" x1="0%" x2="100%" y1="0%" y2="100%"><stop offset="0%" stop-color="#FEF3C7"></stop><stop offset="50%" stop-color="#F59E0B"></stop><stop offset="100%" stop-color="#B45309"></stop></linearGradient>
+</defs>
+<!-- Radiating aura rays -->
+<circle cx="50" cy="50" opacity="0.6" r="45" stroke="url(#warmAura7)" stroke-dasharray="4 3" stroke-width="2"></circle>
+<!-- Golden Shield Medallion -->
+<polygon fill="#FFFBEB" points="50,12 85,26 85,58 50,88 15,58 15,26" stroke="url(#warmAura7)" stroke-width="2.8"></polygon>
+<!-- Sprout reaching upward -->
+<path d="M50 72 V38" stroke="#15803D" stroke-linecap="round" stroke-width="4"></path>
+<path d="M50 50 C62 46 68 34 62 26 C54 24 50 36 50 50 Z" fill="#22C55E"></path>
+<path d="M50 44 C38 40 32 28 38 20 C46 18 50 30 50 44 Z" fill="#86EFAC"></path>
+<circle cx="50" cy="22" fill="#F59E0B" r="3"></circle>
+</svg>

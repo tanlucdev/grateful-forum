@@ -236,7 +236,7 @@ function AvatarMenu({
         <div className="space-y-0.5 text-sm">
           <MenuLink active href="/profile" icon="person" label={copy.myProfile} />
           <MenuLink href="/calendar" icon="potted_plant" label={copy.calendarGarden} />
-          <MenuLink href="/profile?tab=moments" icon="military_tech" label={copy.milestones} />
+          <MenuLink href="/reward" icon="military_tech" label={copy.milestones} />
           <MenuLink href="/profile?tab=all" icon="settings" label={copy.settings} />
         </div>
         <DropdownMenuSeparator />

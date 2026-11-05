@@ -1,7 +1,141 @@
 {
-  "eyebrow": "Rewards",
-  "title": "Rewards",
-  "description": "Celebrate gratitude moments nurtured every day.",
-  "desktopPreview": "Desktop reward preview",
-  "mobilePreview": "Mobile reward preview"
+  "title": "Your garden of milestones & badges",
+  "description": "Badges are not a race for achievement. They are little blossoms that celebrate the care you give yourself and the world each day.",
+  "back": "Back to Gratitude Calendar",
+  "preview": "Illustrative badge collection",
+  "levelLabel": "Your inner growth",
+  "level": "A Peaceful Green Sprout",
+  "stats": {
+    "earned": "Badges in bloom",
+    "flowers": "/ {count} blossoms",
+    "journey": "{percent} of your mindful journey",
+    "season": "Season {count}",
+    "streak": "Your current writing streak",
+    "days": "consecutive days",
+    "best": "Personal best: {count} days",
+    "warmth": "A little warmth, nurtured every day",
+    "moments": "Moments of care",
+    "seeds": "seeds of kindness",
+    "months": "Reflections across {count} months",
+    "positive": "A little more room for the good",
+    "whisper": "A whisper from Bé Mầm",
+    "companion": "Growing alongside you",
+    "encouragement": "You’re doing well! Just {count} more days until you reach The Persistent Sprout badge."
+  },
+  "filters": {
+    "label": "Filter the badge collection",
+    "all": "All",
+    "streak": "Daily streaks",
+    "habit": "Nurturing habits",
+    "community": "Kindness & community"
+  },
+  "status": {
+    "earned": "Milestone reached",
+    "growing": "Growing",
+    "locked": "Locked"
+  },
+  "results": "{count} badges",
+  "unlocked": "Unlocked: {date}",
+  "progress": "Growing progress",
+  "daysProgress": "{current} / {total} days",
+  "postsProgress": "{current} / {total} posts",
+  "condition": "How to earn it",
+  "detailProgress": "Date earned / Progress",
+  "close": "Close and continue your journey",
+  "philosophy": {
+    "title": "Finding your rhythm, without comparison",
+    "subtitle": "The thinking behind BeGrateful",
+    "body": "At BeGrateful, badges are never a leaderboard. If a busy day passes without writing, you haven’t failed. You’re simply living your life. The Gratitude That Returns badge will always be here to welcome you back.",
+    "seed": "One little seed each day",
+    "steady": "Consistency over perfection",
+    "ease": "Ease",
+    "kindness": "Kindness",
+    "lightness": "Lightness"
+  },
+  "inspiration": {
+    "title": "A seed of inspiration",
+    "quote": "“Sáng nay ngắm nhìn chiếc mầm nhỏ vừa bung lá sau mưa, mình chợt thấy biết ơn vì mình vẫn ở đây, khỏe mạnh và bình yên.”",
+    "author": "Mai Nhã (Ẩn danh)",
+    "alt": "An open journal beside a warm cup of tea in gentle sunlight",
+    "empathy": "{count} felt this too"
+  },
+  "cta": {
+    "title": "Tend to your own little garden",
+    "description": "Three minutes of gratitude each day can bring a little calm to your inner world.",
+    "write": "Write a new page today"
+  },
+  "badges": {
+    "1": {
+      "title": "The First Sprout",
+      "subtitle": "Octagonal jade seal • Habit",
+      "description": "Write your first gratitude entry and plant a seed of peace.",
+      "condition": "Write your first gratitude entry"
+    },
+    "2": {
+      "title": "A Steady Rhythm",
+      "subtitle": "Golden lotus • 3-day streak",
+      "description": "Three consecutive days of writing: a gentle first step toward a daily practice.",
+      "condition": "Write for 3 consecutive days"
+    },
+    "3": {
+      "title": "A Peaceful Blossom",
+      "subtitle": "Five-petal ceramic seal • 7-day streak",
+      "description": "A full week of nurturing kindness, like a blossom opening in your heart.",
+      "condition": "Write for 7 consecutive days"
+    },
+    "4": {
+      "title": "The Jade Lotus",
+      "subtitle": "Layered jade glaze • 14-day streak",
+      "description": "Fourteen days of stillness, like a lotus blooming on a quiet lake.",
+      "condition": "Write for 14 consecutive days"
+    },
+    "5": {
+      "title": "Gratitude That Returns",
+      "subtitle": "Jade leaf • Habit",
+      "description": "Return after a busy spell and welcome your own pace with kindness.",
+      "condition": "Return to writing after a busy day"
+    },
+    "6": {
+      "title": "Finding the Good",
+      "subtitle": "Daisy seal • Habit",
+      "description": "Notice three things to be grateful for and discover wonder in the everyday.",
+      "condition": "Write 3 meaningful gratitudes in a day"
+    },
+    "7": {
+      "title": "The Persistent Sprout",
+      "subtitle": "Golden medal • 21-day streak",
+      "description": "Twenty-one days to make gratitude feel as natural as breathing.",
+      "condition": "Write for 21 consecutive days"
+    },
+    "8": {
+      "title": "A Flourishing Plant",
+      "subtitle": "Jade planter • 30-day streak",
+      "description": "A whole month of tending your inner garden, growing greener every day.",
+      "condition": "Write for 30 consecutive days"
+    },
+    "9": {
+      "title": "Welcoming the Dawn",
+      "subtitle": "Sunshine & a cup of tea • Habit",
+      "description": "Write before eight in the morning and start the day with a gentle smile.",
+      "condition": "Write before 8 am on 10 days"
+    },
+    "10": {
+      "title": "Seeds of Kindness",
+      "subtitle": "Sandstone dandelion • Community",
+      "description": "Share five anonymous entries to bring warmth to someone else’s day.",
+      "condition": "Share 5 anonymous entries"
+    },
+    "11": {
+      "title": "The Tree Within",
+      "subtitle": "Carved marble • 100-day streak",
+      "description": "A hundred days of gratitude, growing the strength to weather life’s storms.",
+      "condition": "Write for 100 consecutive days"
+    },
+    "12": {
+      "title": "A Longer Journey",
+      "subtitle": "Mindfulness compass • 365 days",
+      "description": "Let gratitude become a way of life through all four seasons.",
+      "condition": "Practice gratitude for 365 days"
+    }
+  }
 }
