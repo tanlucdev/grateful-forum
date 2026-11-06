@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 100 100">
+<!-- Ancient octagonal carved stone -->
+<circle cx="50" cy="50" fill="#F0FDF4" r="44" stroke="#D4AF37" stroke-width="2.5"></circle>
+<circle cx="50" cy="50" r="39" stroke="#D1E9E0" stroke-dasharray="3 3" stroke-width="1.5"></circle>
+<!-- Mighty ancient tree roots and canopy -->
+<path d="M46 74 V52 H54 V74" stroke="#006D43" stroke-linecap="round" stroke-width="5"></path>
+<path d="M44 72 L36 78 M56 72 L64 78" stroke="#006D43" stroke-linecap="round" stroke-width="3"></path>
+<path d="M50 20 C34 20 24 30 24 42 C24 54 36 56 50 56 C64 56 76 54 76 42 C76 30 66 20 50 20 Z" fill="#99F3B6" stroke="#4CA374" stroke-width="2"></path>
+<circle cx="42" cy="36" fill="#4CA374" opacity="0.5" r="6"></circle>
+<circle cx="58" cy="38" fill="#4CA374" opacity="0.5" r="5"></circle>
+</svg>

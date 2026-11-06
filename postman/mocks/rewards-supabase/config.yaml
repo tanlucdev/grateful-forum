@@ -1,0 +1,10 @@
+version: 1
+name: rewards-supabase
+slug: rewards-supabase
+protocol: http
+port: 4011
+interceptRequests: true
+scenarios:
+  - name: default
+    path: ./default.js
+    default: true
