@@ -6,6 +6,7 @@ insert into auth.users (id, email, is_anonymous, raw_user_meta_data)
 values (current_setting('test.member_id')::uuid,
         'member-rls-' || current_setting('test.member_id') || '@example.invalid',
         false, '{}'::jsonb);
+>>>>>>> origin/main
 
 set local role anon;
 select set_config('request.jwt.claims', '{"role":"anon"}', true);

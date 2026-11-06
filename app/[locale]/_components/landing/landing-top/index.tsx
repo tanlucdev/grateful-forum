@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 
 import { LocaleSwitcher } from "@/components/navigation/locale-switcher";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
-import { loginHref } from "@/lib/auth/redirects";
+import { localizedLoginHref, loginHref } from "@/lib/auth/redirects";
 
 import { moods, moodsEn, navItems, navItemsEn } from "../landing-data";
 import { LiveDot, MoodButton, ShimmerCTA, softPress, tapLift, useLandingReducedMotion } from "../motion-primitives";
@@ -166,7 +166,7 @@ export function HeroSection() {
             <span>{copy.explore}</span>
             <MaterialSymbol className="text-[20px]" name="arrow_forward" />
           </ShimmerCTA>
-          <motion.a className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-surface-container-high bg-surface-white px-5 py-3.5 text-sm font-bold text-text-deep hover:border-primary/40 hover:bg-surface-container-low lg:w-auto lg:text-base" href={`/${locale}/write`} {...tapLift(Boolean(reduceMotion))}>
+          <motion.a className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-surface-container-high bg-surface-white px-5 py-3.5 text-sm font-bold text-text-deep hover:border-primary/40 hover:bg-surface-container-low lg:w-auto lg:text-base" href={localizedLoginHref("/write", locale)} {...tapLift(Boolean(reduceMotion))}>
             <MaterialSymbol className="text-[20px] text-primary" name="edit_note" />
             <span>{copy.write}</span>
           </motion.a>

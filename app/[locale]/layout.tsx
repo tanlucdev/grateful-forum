@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+import { loadShellStreak } from "@/lib/profile/load-shell-streak";
 import { NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -38,7 +40,7 @@ export default async function LocaleLayout({
             displayName: profile?.displayName || t("navigation.account"),
             email: profile?.email || "",
             signedIn: authenticated,
-            streak: profile?.streak || 0,
+            streak: authenticated ? <Suspense fallback={<span className="inline-block w-4" aria-hidden="true" />}><ShellStreak /></Suspense> : 0,
           }}
         >
           {children}
@@ -47,3 +49,5 @@ export default async function LocaleLayout({
     </NextIntlClientProvider>
   );
 }
+
+async function ShellStreak() { return await loadShellStreak(); }

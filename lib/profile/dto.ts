@@ -1,3 +1,5 @@
+import type { JournalStatistics } from "./queries";
+import type { JournalPagination } from "./pagination";
 import type { EntryKind, EntryMetadata, EntryVisibility, InkDocument } from "@/lib/entries/types";
 
 export type ProfileRecord = {
@@ -21,6 +23,8 @@ export type JournalEntry = {
 };
 
 export type ProfileDashboard = {
+  statistics: JournalStatistics;
+  pagination: JournalPagination;
   profile: ProfileRecord;
   entryCount: number;
   streak: number;
@@ -29,6 +33,7 @@ export type ProfileDashboard = {
 };
 
 export type PublicProfile = {
+  pagination: JournalPagination;
   profile: ProfileRecord;
   publicEntryCount: number;
   streak: number;
