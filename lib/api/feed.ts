@@ -1,7 +1,8 @@
 import type { FeedPage } from "@/lib/feed/dto";
 import type { FeedReactionCounts } from "@/lib/feed/engagement-state";
 import type { FeedReactionType } from "@/lib/feed/validation";
-import { fetchJson } from "./fetch-json";
+import type { FeedVisibilityFilter } from "@/lib/feed/validation";
+import { fetchJson } from "./fetch-json.ts";
 
 type ReactionResponse = {
   saved: true;
@@ -14,10 +15,10 @@ type BookmarkResponse = {
   bookmarked: boolean;
 };
 
-export function loadMoreFeed(cursor: string) {
+export function loadMoreFeed(cursor: string, visibility: FeedVisibilityFilter = "all") {
   return fetchJson<FeedPage>(
-    `/api/feed?cursor=${encodeURIComponent(cursor)}`,
-    {},
+    `/api/feed?cursor=${encodeURIComponent(cursor)}&visibility=${visibility}`,
+    { cache: "no-store", credentials: "same-origin" },
     "Could not load more entries.",
   );
 }

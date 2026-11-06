@@ -1,20 +1,27 @@
 import type { Metadata } from "next";
-import { Manrope, Quicksand, Geist } from "next/font/google";
+import localFont from "next/font/local";
 import type { ReactNode } from "react";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
-
-const manrope = Manrope({
-  subsets: ["latin", "vietnamese"],
-  weight: ["400", "500", "600"],
+const geist = localFont({
+  src: "./fonts/geist.ttf",
+  variable: "--font-sans",
+  weight: "100 900",
+  display: "swap",
 });
 
-const quicksand = Quicksand({
-  subsets: ["latin", "vietnamese"],
+const manrope = localFont({
+  src: "./fonts/manrope.ttf",
+  weight: "200 800",
+  display: "swap",
+});
+
+const quicksand = localFont({
+  src: "./fonts/quicksand.ttf",
   variable: "--font-quicksand",
-  weight: ["400", "500", "600", "700"],
+  weight: "300 700",
+  display: "swap",
 });
 
 export const metadata: Metadata = {

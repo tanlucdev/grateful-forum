@@ -29,8 +29,8 @@ Mobile web first. Users write short entries, choose visibility, browse a feed, e
 ## Capabilities and Constraints
 
 - Gratitude entries can be public, anonymous, or account-linked.
-- Guests can create entries before signup.
-- Guest entries migrate to an account after authentication.
+- Guests can preview up to five real public entries without pagination. Writing (text, handwriting, images) requires a verified session for a non-anonymous account.
+- Existing guest entries still migrate to an account after authentication; no new guest entries are created.
 - Supabase is the backend foundation.
 - MVP must support moderation, profile pages, and responsive navigation.
 
@@ -47,8 +47,8 @@ Only the user brief and repository scaffold. No existing content, assets, or cla
 - Keep writing fast.
 - Treat privacy as a first-class choice.
 - Make public sharing optional, not forced, while making community discovery welcoming.
-- Preserve guest work through signup.
+- Preserve legacy guest work through signup. Keep in-progress writing and selected images on session expiry; sign in in a separate tab and retry.
 
 ## Accessibility & Inclusion
 
-Mobile-friendly, keyboard-safe, and usable without requiring a logged-in account.
+Mobile-friendly, keyboard-safe, and readable in preview without an account; writing requires sign-in.

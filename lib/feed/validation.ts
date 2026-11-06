@@ -14,6 +14,9 @@ export const feedEntryIdQuerySchema = z.object({
 
 export const feedPageQuerySchema = z.object({
   cursor: z.string().trim().min(1).max(80).nullable(),
+  visibility: z.enum(["all", "anonymous", "public"]).default("all"),
 });
+
+export type FeedVisibilityFilter = "all" | "anonymous" | "public";
 
 export type FeedReactionType = z.infer<typeof feedReactionSchema>;

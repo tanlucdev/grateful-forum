@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { useLocale, useTranslations } from "next-intl";
 /* eslint-disable @next/next/no-img-element */
 import { Link } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
@@ -33,12 +36,12 @@ const feedCardCopy = {
   },
 } as const;
 
-export function MobileFeedCard({ item, locale, priorityImage = false }: Readonly<{ item: DisplayItem; locale: AppLocale; priorityImage?: boolean }>) {
+export function MobileFeedCard({ item, locale, priorityImage = false, readOnly = false }: Readonly<{ item: DisplayItem; locale: AppLocale; priorityImage?: boolean; readOnly?: boolean }>) {
   return (
-    <article className="relative w-full min-w-0 rounded-3xl border border-border bg-card p-5 shadow-card">
+    <article className="relative w-full min-w-0 [overflow-wrap:anywhere] rounded-3xl border border-border bg-card p-5 shadow-card">
       <Tape locale={locale} tone={item.tone} />
       <div className="mt-2 flex items-start justify-between gap-3 pr-8">
-        <div className="flex min-w-0 items-center gap-3">
+        <div className="flex w-full min-w-0 items-center gap-3">
           <Avatar item={item} />
           <div className="min-w-0 flex-1">
             <Author item={item} mobile />
@@ -50,20 +53,20 @@ export function MobileFeedCard({ item, locale, priorityImage = false }: Readonly
       </div>
       <EntryBody item={item} locale={locale} mobile priorityImage={priorityImage} />
       <Tags item={item} locale={locale} />
-      <MindfulActionsClient item={item} compact floatingMenu />
+      {readOnly ? <FeedReactionSummary item={item} /> : <MindfulActionsClient item={item} compact floatingMenu />}
     </article>
   );
 }
 
-export function DesktopFeedCard({ item, locale, priorityImage = false }: Readonly<{ item: DisplayItem; locale: AppLocale; priorityImage?: boolean }>) {
+export function DesktopFeedCard({ item, locale, priorityImage = false, readOnly = false }: Readonly<{ item: DisplayItem; locale: AppLocale; priorityImage?: boolean; readOnly?: boolean }>) {
   const tone = toneClasses(item.tone);
   const copy = feedCardCopy[locale];
 
   return (
-    <article className="relative w-full min-w-0 rounded-3xl border border-border bg-card p-7 shadow-card transition-shadow hover:shadow-md">
+    <article className="relative w-full min-w-0 [overflow-wrap:anywhere] rounded-3xl border border-border bg-card p-7 shadow-card transition-shadow hover:shadow-md">
       <Tape locale={locale} tone={item.tone} />
       <div className="mt-2 flex flex-col items-start justify-between gap-3 pr-9 xl:flex-row xl:gap-4">
-        <div className="flex min-w-0 items-center gap-3">
+        <div className="flex w-full min-w-0 items-center gap-3">
           <Avatar item={item} />
           <div className="min-w-0 flex-1">
             <div className="flex min-w-0 flex-wrap items-center gap-2">
@@ -80,7 +83,7 @@ export function DesktopFeedCard({ item, locale, priorityImage = false }: Readonl
       </div>
       <EntryBody item={item} locale={locale} priorityImage={priorityImage} />
       <Tags item={item} locale={locale} />
-      <MindfulActionsClient item={item} floatingMenu />
+      {readOnly ? <FeedReactionSummary item={item} /> : <MindfulActionsClient item={item} floatingMenu />}
     </article>
   );
 }
@@ -163,7 +166,7 @@ export function Avatar({ item }: Readonly<{ item: DisplayItem }>) {
     );
 
     return item.profileHref ? (
-      <Link className="h-10 w-10 shrink-0 overflow-hidden rounded-full border border-border bg-accent" href={item.profileHref}>
+      <Link aria-label={item.authorName} className="h-11 w-11 shrink-0 overflow-hidden rounded-full border border-border bg-accent" href={item.profileHref}>
         {avatar}
       </Link>
     ) : (
@@ -189,7 +192,7 @@ export function Author({ item, mobile = false }: Readonly<{ item: DisplayItem; m
 
   if (item.profileHref) {
     return (
-      <Link className={className} href={item.profileHref}>
+      <Link className={`${className} inline-block max-w-full min-h-11 min-w-11 py-3`} href={item.profileHref}>
         {item.authorName}
       </Link>
     );
@@ -257,4 +260,10 @@ function Tags({ item, locale }: Readonly<{ item: DisplayItem; locale: AppLocale 
       ))}
     </div>
   );
+}
+
+function FeedReactionSummary({ item }: Readonly<{ item: DisplayItem }>) {
+  const t = useTranslations("feed");
+  const locale = useLocale();
+  return <ul aria-label={t("preview.reactions")} className="mt-4 flex flex-wrap gap-4 text-sm text-muted-foreground">{(["empathy", "healing_energy", "refreshing"] as const).map((type) => <li className="inline-flex items-center gap-1.5" key={type}><MaterialSymbol aria-hidden="true" name={type === "empathy" ? "volunteer_activism" : type === "healing_energy" ? "auto_awesome" : "psychiatry"} /><span>{t(`preview.${type}`)}: {new Intl.NumberFormat(locale).format(item.reactions[type])}</span></li>)}</ul>;
 }

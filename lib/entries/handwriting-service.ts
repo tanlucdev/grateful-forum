@@ -6,7 +6,7 @@ import { createHandwrittenEntry } from "./mutations";
 export async function saveHandwrittenEntry(
   supabase: SupabaseClient,
   input: { document: InkDocument; preview: File | null; visibility: EntryVisibility },
-  userId: string | null,
+  userId: string,
 ) {
   // Public previews are intentional; private ink remains only in the protected entry row.
   const previewUrl = input.preview ? (await uploadEntryMedia(input.preview)).url : null;
