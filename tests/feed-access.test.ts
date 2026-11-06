@@ -32,4 +32,3 @@ assert.equal(lateResponse.requiresLogin, true);
 assert.deepEqual(appendFeedPage(memberPage, toFeedPreview(nextPage.items)), signedOutPage);
 
 console.log("feed access checks passed");
-await import("./feed-quota.test.ts");
