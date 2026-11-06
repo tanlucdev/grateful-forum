@@ -38,3 +38,7 @@ export function deleteEntry(id: string) {
     "Could not delete entry.",
   );
 }
+
+export async function getEntryQuota() {
+  return fetchJson<import("../entries/daily-quota").EntryDailyQuota>("/api/entries/quota", { cache: "no-store" }, "Could not load daily allowance.");
+}

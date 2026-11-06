@@ -70,7 +70,8 @@
   },
   "errors": {
     "authRequired": "Phiên đăng nhập đã hết. Nội dung và ảnh vẫn được giữ ở đây. Đăng nhập trong tab mới, quay lại rồi bấm Lưu.",
-    "entryFailed": "Không lưu được bài. Nội dung vẫn còn; vui lòng thử lại."
+    "entryFailed": "Không lưu được bài. Nội dung vẫn còn; vui lòng thử lại.",
+    "dailyLimit": "Bạn đã đủ 3 bài hôm nay. Bản nháp vẫn ở đây; bạn có thể lưu vào ngày mai."
   },
   "text": {
     "saved": "Đã lưu"
@@ -152,5 +153,16 @@
     "empty": "Chưa có nhật ký để mở sổ.",
     "navigation": "Các bài trong sổ",
     "position": "{current, number} / {total, number}"
+  },
+  "quota": {
+    "remaining": "Hôm nay còn {count, number}/{limit, number} lượt viết",
+    "exhausted": "Bạn đã dùng hết lượt viết hôm nay",
+    "loading": "Đang xem lượt viết hôm nay…",
+    "unavailable": "Chưa kiểm tra được lượt viết",
+    "resetHint": "Lượt viết được làm mới lúc {time} · giờ Việt Nam.",
+    "exhaustedHint": "Có lượt mới lúc {time} · giờ Việt Nam. Giữ trang này mở để không mất nội dung đang viết.",
+    "loadingHint": "Bạn có thể bắt đầu viết trong lúc chờ.",
+    "unavailableHint": "Nội dung đang viết vẫn ở đây. Bạn thử lại nhé.",
+    "retry": "Kiểm tra lại"
   }
 }
