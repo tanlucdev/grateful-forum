@@ -7,6 +7,6 @@ export async function getCurrentUser() {
   }
 
   const supabase = await createSupabaseServerClient();
-  const { data } = await supabase.auth.getUser();
-  return data.user ?? null;
+  const { data, error } = await supabase.auth.getUser();
+  return error || data.user?.is_anonymous ? null : data.user ?? null;
 }

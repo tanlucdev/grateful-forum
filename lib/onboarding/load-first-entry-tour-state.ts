@@ -1,19 +1,32 @@
-import { loadJournalContext } from "@/lib/profile/load-journal-context";
-import type { EntryDailyQuota } from "@/lib/entries/daily-quota";
+import { hasSupabaseEnv } from "@/lib/supabase/env";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export type FirstEntryTourState = {
   onboardingCompletedAt: string | null;
   signedIn: boolean;
   tourSeenAt: string | null;
-  initialQuota: EntryDailyQuota | null;
 };
 
 export async function loadFirstEntryTourState(): Promise<FirstEntryTourState> {
-  const context = await loadJournalContext();
+  if (!hasSupabaseEnv()) {
+    return { onboardingCompletedAt: null, signedIn: false, tourSeenAt: null };
+  }
+
+  const supabase = await createSupabaseServerClient();
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) {
+    return { onboardingCompletedAt: null, signedIn: false, tourSeenAt: null };
+  }
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("onboarding_tour_seen_at, onboarding_completed_at")
+    .eq("id", auth.user.id)
+    .maybeSingle();
+
   return {
-    onboardingCompletedAt: context?.profile?.onboarding_completed_at ?? null,
-    signedIn: Boolean(context && !context.user.is_anonymous),
-    tourSeenAt: context?.profile?.onboarding_tour_seen_at ?? null,
-    initialQuota: context?.quota ?? null,
+    onboardingCompletedAt: profile?.onboarding_completed_at ?? null,
+    signedIn: true,
+    tourSeenAt: profile?.onboarding_tour_seen_at ?? null,
   };
 }

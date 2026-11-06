@@ -1,6 +1,6 @@
 import { Link } from "@/i18n/navigation";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { ProfileEditModalButton } from "../profile-modals-client";
 import { ProfileJournalBook } from "../profile-journal-book";
 import type { ProfileView } from "../profile-view";
@@ -14,7 +14,7 @@ export function MobileProfile({ view }: Readonly<{ view: ProfileView }>) {
         <ProfileBrief view={view} />
         <WeeklyRhythm view={view} />
         <div data-tour="profile-mobile-entries"><MobileTabs view={view} /><MobileControls /></div>
-        <ProfileJournalBook key={`${view.pagination.start}-${view.requestedEntry}-${view.initialEdge}`} mobile view={view} />
+        <ProfileJournalBook key={view.requestedEntry} mobile view={view} />
       </main>
     </div>
   );
@@ -61,11 +61,12 @@ function MobileStat({
   value,
 }: Readonly<{ label: string; suffix?: string; tone: "primary" | "secondary" | "tertiary"; value: number }>) {
   const color = tone === "primary" ? "text-primary" : tone === "secondary" ? "text-[var(--leaf-deep)]" : "text-[var(--fire)]";
+  const number = new Intl.NumberFormat(useLocale());
 
   return (
     <div className="flex min-w-0 flex-1 flex-col items-center justify-center rounded-lg bg-muted/70 px-2 py-1.5 text-center">
       <div className={`flex items-center gap-0.5 text-lg font-bold leading-6 ${color}`}>
-        <span>{value}</span>
+        <span>{number.format(value)}</span>
         {suffix ? <span className="text-[13px] leading-none">{suffix}</span> : null}
       </div>
       <span className="truncate text-[10px] leading-[14px] text-muted-foreground">{label}</span>
@@ -76,6 +77,7 @@ function MobileStat({
 function WeeklyRhythm({ view }: Readonly<{ view: ProfileView }>) {
   const t = useTranslations("profile");
   const activeCount = view.weeklyRhythm.filter((day) => day.active).length;
+  const weekday = new Intl.DateTimeFormat(useLocale(), { weekday: "short", timeZone: "UTC" });
 
   return (
     <section data-tour="profile-mobile-rhythm" className="relative z-10 mt-3 flex flex-col gap-2 rounded-xl bg-card p-3.5 shadow-sm">
@@ -89,8 +91,8 @@ function WeeklyRhythm({ view }: Readonly<{ view: ProfileView }>) {
       <div className="grid grid-cols-7 gap-1.5 pt-1">
         {view.weeklyRhythm.map((day) => (
           <div className={`${day.active ? "bg-accent/30" : "bg-muted opacity-60"} flex flex-col items-center gap-1 rounded-lg py-1.5`} key={day.date}>
-            <span className={`text-[10px] ${day.isToday ? "font-bold text-primary" : "text-muted-foreground"}`}>{day.label}</span>
-            <span aria-label={t("a11y.rhythmDay", { day: day.label, count: day.count })} className={`${day.active ? "bg-primary text-primary-foreground" : day.isToday ? "bg-card text-primary ring-1 ring-primary/35" : "bg-input text-muted-foreground"} flex h-6 w-6 items-center justify-center rounded-full text-[12px]`} title={day.date}>
+            <span className={`text-[10px] ${day.isToday ? "font-bold text-primary" : "text-muted-foreground"}`}>{weekday.format(new Date(`${day.date}T12:00:00Z`))}</span>
+            <span aria-label={t("a11y.rhythmDay", { day: weekday.format(new Date(`${day.date}T12:00:00Z`)), count: day.count })} className={`${day.active ? "bg-primary text-primary-foreground" : day.isToday ? "bg-card text-primary ring-1 ring-primary/35" : "bg-input text-muted-foreground"} flex h-6 w-6 items-center justify-center rounded-full text-[12px]`} title={day.date}>
               {day.active ? (day.count > 2 ? "🌸" : day.count === 2 ? "🌿" : "🌱") : "·"}
             </span>
           </div>

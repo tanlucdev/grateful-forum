@@ -22,7 +22,7 @@ export function AppShell({
 }: Readonly<{ children: ReactNode; locale: AppLocale; profile: AppShellProfile }>) {
   const pathname = usePathname();
   const router = useRouter();
-  const showHeader = appRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`));
+  const showHeader = pathname !== "/feed/preview" && appRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`));
 
   function onSignedOut() {
     router.replace("/", { locale });

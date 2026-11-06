@@ -144,7 +144,7 @@ export function OnboardingTours() {
         selector: profileTourSelectors(desktop)[index],
         selectorRetryAttempts: 20,
         selectorRetryDelay: 100,
-        side: index === 0 ? "bottom" : "top",
+        side: index === 0 ? "bottom-right" : "top",
         title: t(`profile.${target}.title`),
       })),
     })),
