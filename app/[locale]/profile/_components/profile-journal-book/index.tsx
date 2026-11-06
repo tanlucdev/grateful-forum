@@ -1,9 +1,6 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
 
-import { useSearchParams } from "next/navigation";
-import { usePathname, useRouter } from "@/i18n/navigation";
-import { journalPageHref } from "@/lib/profile/pagination";
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { JournalBookFrame, JournalBookPage } from "@/components/entries/journal-book-frame";
@@ -19,12 +16,9 @@ import { EntryActionsClient } from "../entry-actions-client";
 export function ProfileJournalBook({ mobile = false, view }: Readonly<{ mobile?: boolean; view: ProfileView }>) {
   const t = useTranslations("profile");
   const w = useTranslations("write");
-  const router = useRouter();
-  const pathname = usePathname();
-  const search = useSearchParams().toString();
   const pageSize = mobile ? 1 : 2;
   const selection = selectJournalEntry(view.entries, view.requestedEntry);
-  const [selectedId, setSelectedId] = useState(view.entries[view.initialEdge === "last" ? Math.max(0, view.entries.length - pageSize) : selection.index]?.id);
+  const [selectedId, setSelectedId] = useState(view.entries[selection.index]?.id);
   const index = Math.max(0, view.entries.findIndex((entry) => entry.id === selectedId));
   const entries = view.entries.slice(index, index + pageSize);
 
@@ -39,12 +33,12 @@ export function ProfileJournalBook({ mobile = false, view }: Readonly<{ mobile?:
       ) : (
         <>
           <JournalBookFrame label={w("creative.diaryTitle")} mobile={mobile} washi={entries[0].metadata.washi}>
-            {entries.map((entry, offset) => <NotebookPage entry={entry} index={offset} key={entry.id} page={view.pagination.start + index + offset + 1} />)}
+            {entries.map((entry, offset) => <NotebookPage entry={entry} index={offset} key={entry.id} page={index + offset + 1} />)}
           </JournalBookFrame>
           <nav aria-label={w("book.navigation")} className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-card p-3">
-            <button className="min-h-11 rounded-lg px-3 font-semibold text-primary disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" disabled={index === 0 && !view.pagination.previous} onClick={() => index === 0 && view.pagination.previous ? router.push(journalPageHref(pathname, search, view.pagination.previous, "last")) : setSelectedId(view.entries[Math.max(0, index - pageSize)].id)} type="button">{t("pagination.previous")}</button>
-            <span aria-live="polite" className="text-sm">{t("book.position", { first: view.pagination.start + index + 1, last: view.pagination.start + index + entries.length, total: view.pagination.total })}</span>
-            <button className="min-h-11 rounded-lg px-3 font-semibold text-primary disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" disabled={index + pageSize >= view.entries.length && !view.pagination.next} onClick={() => index + pageSize >= view.entries.length && view.pagination.next ? router.push(journalPageHref(pathname, search, view.pagination.next)) : setSelectedId(view.entries[index + pageSize].id)} type="button">{t("pagination.next")}</button>
+            <button className="min-h-11 rounded-lg px-3 font-semibold text-primary disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" disabled={index === 0} onClick={() => setSelectedId(view.entries[Math.max(0, index - pageSize)].id)} type="button">{t("pagination.previous")}</button>
+            <span aria-live="polite" className="text-sm">{t("book.position", { first: index + 1, last: index + entries.length, total: view.entries.length })}</span>
+            <button className="min-h-11 rounded-lg px-3 font-semibold text-primary disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" disabled={index + pageSize >= view.entries.length} onClick={() => setSelectedId(view.entries[index + pageSize].id)} type="button">{t("pagination.next")}</button>
           </nav>
         </>
       )}

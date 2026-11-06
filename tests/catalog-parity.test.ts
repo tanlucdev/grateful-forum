@@ -15,6 +15,14 @@ for (const file of files.sort()) {
   }
 }
 
+for (const locale of locales) {
+  const feed = JSON.parse(await readFile(join(root, locale, "feed.json"), "utf8"));
+  for (const key of ["brand", "write", "label", "invitation", "reactions", "empathy", "healing_energy", "refreshing"]) {
+    assert.ok(typeof feed.preview[key] === "string" && feed.preview[key].trim(), `${locale}: missing feed.preview.${key}`);
+  }
+  assert.match(feed.dailyPractice, /<strong>.+<\/strong>/, `${locale}: daily practice emphasis missing`);
+}
+
 function shape(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(shape);
   if (value && typeof value === "object") return Object.fromEntries(Object.entries(value).sort().map(([key, item]) => [key, shape(item)]));

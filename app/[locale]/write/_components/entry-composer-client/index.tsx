@@ -28,7 +28,7 @@ import { JournalDecoration } from "../journal-decoration";
 
 const HandwritingComposer = dynamic(() => import("../handwriting-composer").then((module) => module.HandwritingComposer), { ssr: false });
 
-export function EntryComposerClient({ initialQuota }: Readonly<{ initialQuota: EntryDailyQuota | null }>) {
+export function EntryComposerClient() {
   const t = useTranslations("write");
   const locale = useLocale();
   const submitting = useRef(false);
@@ -55,8 +55,8 @@ export function EntryComposerClient({ initialQuota }: Readonly<{ initialQuota: E
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState<{ id: string; createdAt: string } | null>(null);
   const [status, setStatus] = useState<Parameters<typeof t>[0] | null>(null);
-  const [quota, setQuota] = useState<EntryDailyQuota | null>(initialQuota);
-  const [quotaError, setQuotaError] = useState(initialQuota === null);
+  const [quota, setQuota] = useState<EntryDailyQuota | null>(null);
+  const [quotaError, setQuotaError] = useState(false);
   async function refreshQuota() {
     try { setQuota(await getEntryQuota()); setQuotaError(false); setStatus((current) => current === "errors.authRequired" ? null : current); }
     catch (error) {
@@ -76,6 +76,10 @@ export function EntryComposerClient({ initialQuota }: Readonly<{ initialQuota: E
 
   useEffect(() => { getRecentSpaces().then(({ spaces }) => setRecentSpaces(spaces)).catch(() => setRecentSpaces([])); }, []);
   useEffect(() => {
+    getEntryQuota().then(setQuota).catch((error: unknown) => {
+      setQuotaError(true);
+      if (error instanceof ApiClientError && error.code === "auth_required") setStatus("errors.authRequired");
+    });
     const onVisible = () => { if (document.visibilityState === "visible") void refreshQuota(); };
     window.addEventListener("focus", refreshQuota);
     document.addEventListener("visibilitychange", onVisible);
