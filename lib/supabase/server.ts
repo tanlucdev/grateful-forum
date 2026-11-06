@@ -1,12 +1,15 @@
 import { createServerClient } from "@supabase/ssr";
+import { cache } from "react";
+import { timedSupabaseFetch } from "./timing";
 import { cookies } from "next/headers";
 import { getSupabaseEnv } from "./env";
 
-export async function createSupabaseServerClient() {
+export const createSupabaseServerClient = cache(async () => {
   const { url, anonKey } = getSupabaseEnv();
   const cookieStore = await cookies();
 
   return createServerClient(url, anonKey, {
+    global: { fetch: timedSupabaseFetch },
     cookies: {
       getAll() {
         return cookieStore.getAll();
@@ -22,4 +25,4 @@ export async function createSupabaseServerClient() {
       },
     },
   });
-}
+});
