@@ -1,5 +1,4 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { ensureGuestId } from "@/lib/auth/guest-session";
 import { ENTRY_LIMIT } from "./types.ts";
 import type { CreateEntryRequest } from "./dto.ts";
 import { composeEntryContent } from "./records.ts";
@@ -10,7 +9,7 @@ import { softDeleteEntryData } from "./ownership.ts";
 export async function createEntry(
   supabase: SupabaseClient,
   input: CreateEntryRequest,
-  userId: string | null,
+  userId: string,
 ) {
   const content = composeEntryContent(input).trim();
 
@@ -31,17 +30,7 @@ export async function createEntry(
     image_url: input.imageUrl ?? null,
   };
 
-  const result = userId
-    ? await supabase
-        .from("entries")
-        .insert({ ...data, user_id: userId })
-        .select("id, created_at")
-        .single()
-    : await supabase
-        .from("entries")
-        .insert({ ...data, guest_id: await ensureGuestId() })
-        .select("id, created_at")
-        .single();
+  const result = await supabase.from("entries").insert({ ...data, user_id: userId }).select("id, created_at").single();
 
   if (result.error) {
     throw new Error(result.error.message);
@@ -58,7 +47,7 @@ function optional(value: string | null | undefined) {
 export async function createHandwrittenEntry(
   supabase: SupabaseClient,
   input: { document: InkDocument; visibility: EntryVisibility; previewUrl: string | null },
-  userId: string | null,
+  userId: string,
 ) {
   const data = {
     content: "[Handwritten journal entry]",
@@ -68,9 +57,7 @@ export async function createHandwrittenEntry(
     handwriting_orientation: input.document.orientation,
     handwriting_preview_url: input.previewUrl,
   };
-  const result = userId
-    ? await supabase.from("entries").insert({ ...data, user_id: userId }).select("id, created_at").single()
-    : await supabase.from("entries").insert({ ...data, guest_id: await ensureGuestId() }).select("id, created_at").single();
+  const result = await supabase.from("entries").insert({ ...data, user_id: userId }).select("id, created_at").single();
 
   if (result.error) throw new Error(result.error.message);
   return result.data;

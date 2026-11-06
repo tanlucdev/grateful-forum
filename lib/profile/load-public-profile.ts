@@ -1,10 +1,12 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
-import { entrySelect, toEntryMetadata } from "@/lib/entries/records";
-import { getStreak } from "./streak";
+import { queryJournalPage, queryJournalStatistics } from "./queries";
+import type { ProfileQuery } from "./pagination";
+
 import type { PublicProfile } from "./types";
 
-export async function loadPublicProfile(id: string): Promise<PublicProfile | null> {
+export async function loadPublicProfile(id: string, query: ProfileQuery = { tab: "all" }): Promise<PublicProfile | null> {
+  // journal_page excludes hidden_at and owner_deleted_at entries.
   if (!hasSupabaseEnv()) {
     return null;
   }
@@ -20,17 +22,10 @@ export async function loadPublicProfile(id: string): Promise<PublicProfile | nul
     return null;
   }
 
-  const { data: entries } = await supabase
-    .from("entries")
-    .select(entrySelect)
-    .eq("user_id", id)
-    .in("visibility", ["public", "anonymous"])
-    .eq("hidden_at", null)
-    .is("owner_deleted_at", null)
-    .order("created_at", { ascending: false })
-    .order("id", { ascending: false });
-
-  const journal = entries ?? [];
+  const [page, statistics] = await Promise.all([
+    queryJournalPage(supabase, query, id),
+    queryJournalStatistics(supabase, "UTC", new Date().getUTCFullYear(), new Date().getUTCMonth() + 1, id),
+  ]);
 
   return {
     profile: {
@@ -40,17 +35,8 @@ export async function loadPublicProfile(id: string): Promise<PublicProfile | nul
       avatarUrl: profileRow.avatar_url,
       bio: profileRow.bio,
     },
-    publicEntryCount: journal.length,
-    streak: getStreak(journal.map((entry) => entry.created_at)),
-    entries: journal.map((entry) => ({
-      id: entry.id,
-      content: entry.content,
-      visibility: entry.visibility,
-      createdAt: entry.created_at,
-      metadata: toEntryMetadata(entry),
-      entryKind: entry.entry_kind,
-      handwritingData: null,
-      handwritingPreviewUrl: entry.handwriting_preview_url,
-    })),
+    publicEntryCount: statistics.total,
+    streak: statistics.streak,
+    ...page,
   };
 }

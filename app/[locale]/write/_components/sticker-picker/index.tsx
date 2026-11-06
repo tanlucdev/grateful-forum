@@ -1,65 +1,15 @@
 "use client";
-
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { createPortal } from "react-dom";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
-import { getStickerLabel, STICKER_GROUPS, stickers, type StickerGroup, type StickerId } from "@/lib/entries/stickers";
-import { StickerIcon } from "../sticker-icons";
-
-type StickerPickerProps = {
-  compact?: boolean;
-  onSelect: (value: StickerId) => void;
-  sticker: StickerId;
-};
-
+import { STICKER_GROUPS, stickers, type StickerGroup, type StickerId } from "@/lib/entries/stickers";
+import { StickerIcon } from "@/components/entries/sticker-icons";
 type Category = "all" | StickerGroup;
-
 const categories: readonly Category[] = ["all", ...STICKER_GROUPS.map((item) => item.id)];
-
-export function StickerPicker({ compact = false, onSelect, sticker }: Readonly<StickerPickerProps>) {
-  const [open, setOpen] = useState(false);
+export function StickerPicker({ onSelect, sticker }: Readonly<{ onSelect: (value: StickerId | null) => void; sticker: StickerId | null }>) {
   const locale = useLocale() as "vi" | "en";
   const t = useTranslations("write.picker");
-  const label = getStickerLabel(sticker, locale) ?? sticker;
-
-  return (
-    <>
-      <button
-        className={`flex w-full items-center gap-2 text-left outline-offset-2 ring-1 ring-accent transition-colors hover:bg-card focus-visible:outline-2 focus-visible:outline-ring ${
-          compact ? "min-h-9 rounded-xl bg-card px-2.5 py-1" : "min-h-14 rounded-2xl bg-muted/80 px-3 py-2"
-        }`}
-        onClick={() => setOpen(true)}
-        type="button"
-      >
-        <StickerIcon className={`${compact ? "h-7 w-7" : "h-10 w-10"} shrink-0`} id={sticker} />
-        <span className="min-w-0 flex-1">
-          {compact ? null : <span className="block text-xs font-semibold leading-4 text-muted-foreground">{t("current")}</span>}
-          <span className={`${compact ? "text-xs leading-4" : "text-sm leading-5"} block truncate font-bold text-foreground`}>{compact ? t("currentValue", { value: label }) : label}</span>
-        </span>
-        <MaterialSymbol className="text-lg text-primary" name="keyboard_arrow_down" />
-      </button>
-      {open ? (
-        <StickerPickerModal
-          close={() => setOpen(false)}
-          onSelect={(value) => {
-            onSelect(value);
-            setOpen(false);
-          }}
-          sticker={sticker}
-        />
-      ) : null}
-    </>
-  );
-}
-
-function StickerPickerModal({
-  close,
-  onSelect,
-  sticker,
-}: Readonly<StickerPickerProps & { close: () => void }>) {
-  const locale = useLocale() as "vi" | "en";
-  const t = useTranslations("write.picker");
+  const creative = useTranslations("write.creative");
   const [category, setCategory] = useState<Category>("all");
   const [query, setQuery] = useState("");
   const normalizedQuery = query.trim().toLowerCase();
@@ -81,72 +31,26 @@ function StickerPickerModal({
     [category, normalizedQuery],
   );
 
-  useEffect(() => {
-    const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    const root = document.querySelector<HTMLElement>("[data-sticker-picker-modal]");
-    const siblings = Array.from(document.body.children).filter((child) => !child.hasAttribute("data-sticker-picker-portal"));
-    const previousOverflow = document.body.style.overflow;
-    siblings.forEach((child) => child.setAttribute("inert", ""));
-    document.body.style.overflow = "hidden";
-    root?.querySelector<HTMLElement>("[data-sticker-picker-close]")?.focus();
-
-    function closeOnKey(event: KeyboardEvent) {
-      if (event.key === "Escape") close();
-      if (event.key !== "Tab" || !root) return;
-
-      const focusable = Array.from(root.querySelectorAll<HTMLElement>("button, input, [href], [tabindex]:not([tabindex='-1'])")).filter((element) => !element.hasAttribute("disabled"));
-      const first = focusable[0];
-      const last = focusable.at(-1);
-      if (!first || !last) return;
-
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    }
-
-    window.addEventListener("keydown", closeOnKey);
-    return () => {
-      window.removeEventListener("keydown", closeOnKey);
-      siblings.forEach((child) => child.removeAttribute("inert"));
-      document.body.style.overflow = previousOverflow;
-      opener?.focus();
-    };
-  }, [close]);
-
-  return createPortal(
-    <div aria-label={t("dialog")} aria-modal="true" className="fixed inset-0 z-[100] flex items-end justify-center bg-foreground/35 px-3 py-4 backdrop-blur-sm sm:items-center sm:px-5 sm:py-8" data-sticker-picker-modal onClick={close} role="dialog">
-      <div className="flex max-h-[calc(100dvh-32px)] w-full max-w-3xl flex-col rounded-3xl bg-card shadow-2xl ring-1 ring-border" onClick={(event) => event.stopPropagation()}>
-        <div className="flex items-start justify-between gap-4 border-b border-border p-4 sm:p-5">
-          <div className="min-w-0">
-            <h4 className="text-xl font-semibold leading-7 text-foreground">{t("title")}</h4>
-            <p className="mt-1 text-xs font-medium leading-4 text-muted-foreground">{t("count", { count: stickers.length })}</p>
-          </div>
-          <button aria-label={t("close")} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground outline-offset-2 transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-ring" data-sticker-picker-close onClick={close} type="button">
-            <MaterialSymbol name="close" />
-          </button>
-        </div>
+  return <div className="min-w-0">
+    <button aria-pressed={sticker === null} className="min-h-11 rounded-lg px-3 text-sm font-semibold text-primary" onClick={() => onSelect(null)} type="button">{creative("none")}</button>
         <div className="space-y-3 border-b border-border p-4 sm:p-5">
-          <label className="flex min-h-11 items-center gap-2 rounded-2xl bg-muted px-3 text-muted-foreground focus-within:bg-card focus-within:ring-2 focus-within:ring-primary/25">
+          <label className="flex min-h-11 items-center gap-2 rounded-2xl bg-muted px-3 text-muted-foreground focus-within:bg-card has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-primary has-[:focus-visible]:outline-offset-[-2px]">
             <MaterialSymbol className="text-lg text-primary" name="search" />
-            <input className="min-w-0 flex-1 bg-transparent text-sm font-medium leading-5 outline-none placeholder:text-muted-foreground" onChange={(event) => setQuery(event.target.value)} placeholder={t("search")} value={query} />
+            <input aria-label={t("search")} className="journal-search min-w-0 flex-1 bg-transparent text-sm font-medium leading-5 outline-none placeholder:text-muted-foreground" onChange={(event) => setQuery(event.target.value)} placeholder={t("search")} value={query} />
           </label>
           <div className="flex gap-2 overflow-x-auto pb-1">
             {categories.map((item) => {
               const active = item === category;
               return (
-                <button className={`h-9 shrink-0 rounded-full px-3 text-xs font-bold outline-offset-2 transition-colors focus-visible:outline-2 focus-visible:outline-ring ${active ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:bg-accent"}`} key={item} onClick={() => setCategory(item)} type="button">
+                <button aria-pressed={active} className={`min-h-11 shrink-0 rounded-full px-3 text-xs font-bold outline-offset-2 transition-colors focus-visible:outline-2 focus-visible:outline-ring ${active ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:bg-accent"}`} key={item} onClick={() => setCategory(item)} type="button">
                   {t(`groups.${item}`)}
                 </button>
               );
             })}
           </div>
         </div>
-        <div className="min-h-0 overflow-y-auto overscroll-contain p-4 sm:p-5">
-          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 md:grid-cols-4">
+        <div className="p-4 sm:p-5">
+          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
             {results.map((item) => {
               const active = sticker === item.id;
               return (
@@ -168,18 +72,5 @@ function StickerPickerModal({
           </div>
           {results.length ? null : <p className="py-8 text-center text-sm font-semibold text-muted-foreground">{t("empty")}</p>}
         </div>
-      </div>
-    </div>,
-    getStickerPickerPortal(),
-  );
-}
-
-function getStickerPickerPortal() {
-  let portal = document.querySelector<HTMLElement>("[data-sticker-picker-portal]");
-  if (!portal) {
-    portal = document.createElement("div");
-    portal.setAttribute("data-sticker-picker-portal", "");
-    document.body.append(portal);
-  }
-  return portal;
+</div>;
 }

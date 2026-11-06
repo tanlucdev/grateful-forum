@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -18,6 +19,7 @@ export function ProfileEditModalButton({
   variant = "default",
   view,
 }: Readonly<{ variant?: "default" | "icon"; view: ProfileView }>) {
+  const t = useTranslations("profile");
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [draft, setDraft] = useState<Draft>({
@@ -56,17 +58,17 @@ export function ProfileEditModalButton({
   return (
     <>
       <button
-        aria-label="Chỉnh sửa hồ sơ"
+        aria-label={t("actions.editProfile")}
         className={
           variant === "icon"
-            ? "inline-flex h-[29px] w-[29px] items-center justify-center rounded-full bg-muted text-primary shadow-sm transition-colors hover:bg-input"
+            ? "inline-flex h-11 w-11 items-center justify-center rounded-full bg-muted text-primary shadow-sm transition-colors hover:bg-input"
             : "inline-flex h-11 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-[10px] bg-secondary px-[13px] text-xs font-semibold leading-4 text-foreground shadow-sm transition-colors hover:bg-input"
         }
         onClick={() => setOpen(true)}
         type="button"
       >
         <MaterialSymbol className={variant === "icon" ? "text-[13px]" : "text-[12px]"} name={variant === "icon" ? "edit_note" : "tune"} />
-        {variant === "icon" ? null : <span>Chỉnh sửa hồ sơ</span>}
+        {variant === "icon" ? null : <span>{t("actions.editProfile")}</span>}
       </button>
       {open && mounted
         ? createPortal(
@@ -170,36 +172,12 @@ export function ProfileEditModalButton({
                     />
                   </div>
 
-                  <div className="space-y-2.5 pt-1">
-                    <label className="block text-[14px] font-semibold leading-5 text-foreground">
-                      Chế độ riêng tư mặc định
-                    </label>
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-border/40 bg-muted p-3 transition-all hover:bg-input">
-                        <input className="mt-0.5 h-4 w-4 accent-primary" name="default_privacy" type="radio" />
-                        <div>
-                          <div className="flex items-center gap-1.5 text-[12px] font-semibold leading-4 text-foreground">
-                            <MaterialSymbol className="text-sm text-muted-foreground" name="lock" />
-                            Chỉ mình tôi
-                          </div>
-                          <p className="mt-0.5 text-[11px] leading-[14px] text-muted-foreground">
-                            Riêng tư an toàn cho những suy tư sâu kín
-                          </p>
-                        </div>
-                      </label>
-                      <label className="flex cursor-pointer items-start gap-3 rounded-xl border-2 border-primary bg-primary/5 p-3 transition-all">
-                        <input checked className="mt-0.5 h-4 w-4 accent-primary" name="default_privacy" readOnly type="radio" />
-                        <div>
-                          <div className="flex items-center gap-1.5 text-[12px] font-semibold leading-4 text-primary">
-                            <MaterialSymbol className="text-sm" fill name="public" />
-                            Công khai lên Feed
-                          </div>
-                          <p className="mt-0.5 text-[11px] leading-[14px] text-muted-foreground">
-                            Lan tỏa an lành và năng lượng biết ơn
-                          </p>
-                        </div>
-                      </label>
-                    </div>
+                  <div className="space-y-1.5 rounded-xl bg-muted p-4">
+                    <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                      <MaterialSymbol className="text-lg text-primary" name="lock" />
+                      {t("editPrivacy.title")}
+                    </h3>
+                    <p className="text-xs leading-5 text-muted-foreground">{t("editPrivacy.description")}</p>
                   </div>
                 </div>
                 <div className="flex items-center justify-end gap-3 border-t border-border bg-muted/60 px-6 py-4">

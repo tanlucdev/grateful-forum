@@ -1,18 +1,83 @@
 {
-  "method": { "label": "Writing method", "text": "Type", "handwritten": "Handwrite" },
-  "mode": { "label": "Writing mode", "minimal": "Simple", "creative": "Decorate journal" },
-  "gratitudes": { "title": "What are you grateful for today?", "progress": "{count}/3", "field": "Gratitude {number}", "placeholder": "Something you are grateful for {number}", "remove": "Remove gratitude {number}", "add": "Add gratitude" },
-  "details": { "title": "Writing space" },
-  "moods": { "calm": "Calm", "light": "Light", "hopeful": "Hopeful", "reflective": "Reflective" },
-  "space": { "label": "Space", "placeholder": "For example: a small desk", "recentLabel": "Recent spaces" },
-  "reflection": { "title": "Add more if you want", "placeholder": "One more line, if you want to keep it." },
-  "creative": { "washi": "Washi", "quote": "Quote", "sticker": "Sticker", "image": "Image", "none": "None", "calm": "Calm", "warm": "Warm" },
-  "picker": { "current": "Current sticker", "currentValue": "Sticker: {value}", "dialog": "Choose a sticker", "title": "Choose a Sprout sticker", "count": "{count} SVG stickers", "close": "Close dialog", "search": "Search id, label, tag...", "empty": "No matching stickers.", "groups": { "all": "All", "sprout": "Sprout", "moment": "Moments", "nature": "Nature", "badge": "Milestones" } },
-  "visibility": { "label": "Privacy", "private": "Private", "public": "Public", "anonymous": "Anonymous" },
-  "save": { "action": "Save", "saving": "Saving", "retry": "Retry" },
-  "errors": { "entryFailed": "entry_failed" },
-  "text": { "saved": "Saved" },
+  "method": {
+    "label": "Writing method",
+    "text": "Type",
+    "handwritten": "Handwrite"
+  },
+  "gratitudes": {
+    "title": "What are you grateful for today?",
+    "progress": "{count, number}/{total, number}",
+    "field": "Gratitude {number}",
+    "placeholder": "Something you are grateful for {number}",
+    "remove": "Remove gratitude {number}",
+    "add": "Add gratitude"
+  },
+  "moods": {
+    "calm": "Calm",
+    "light": "Light",
+    "hopeful": "Hopeful",
+    "reflective": "Reflective"
+  },
+  "space": {
+    "label": "Space",
+    "placeholder": "For example: a small desk",
+    "recentLabel": "Recent spaces"
+  },
+  "reflection": {
+    "title": "Add more if you want",
+    "placeholder": "One more line, if you want to keep it."
+  },
+  "creative": {
+    "washi": "Washi",
+    "quote": "Quote",
+    "sticker": "Sticker",
+    "image": "Image",
+    "none": "None",
+    "calm": "Calm",
+    "warm": "Warm",
+    "title": "Decorate your page",
+    "quotePlaceholder": "A thought you want to keep…",
+    "chooseImage": "Choose a memory photo",
+    "imageHint": "Your photo will be saved with this entry.",
+    "removeImage": "Remove selected photo",
+    "diaryTitle": "Gratitude journal",
+    "memories": "Today’s memories"
+  },
+  "picker": {
+    "title": "Choose a Sprout sticker",
+    "count": "{count} SVG stickers",
+    "search": "Search id, label, tag...",
+    "empty": "No matching stickers.",
+    "groups": {
+      "all": "All",
+      "sprout": "Sprout",
+      "moment": "Moments",
+      "nature": "Nature",
+      "badge": "Milestones"
+    }
+  },
+  "visibility": {
+    "label": "Privacy",
+    "private": "Private",
+    "public": "Public",
+    "anonymous": "Anonymous"
+  },
+  "save": {
+    "signInNewTab": "Sign in in a new tab",
+    "action": "Save",
+    "saving": "Saving",
+    "retry": "Retry"
+  },
+  "errors": {
+    "authRequired": "Your session has expired. Your writing and selected image remain here. Sign in in a new tab, return here, then save again.",
+    "entryFailed": "Could not save. Your writing is still here; please retry.",
+    "dailyLimit": "You have reached today's 3-entry limit. Your draft is still here; save it tomorrow."
+  },
+  "text": {
+    "saved": "Saved"
+  },
   "handwriting": {
+    "clearCancel": "Cancel",
     "history": "Stroke history",
     "inkColor": "Ink color",
     "chooseColor": "Choose ink color",
@@ -25,8 +90,79 @@
     "hex": "HEX code",
     "hexHelp": "Enter # followed by 6 characters from 0–9, A–F.",
     "pageNavigation": "Scroll handwritten page",
-    "title": "Handwrite", "canvasLabel": "Handwritten page", "toolLabel": "Writing tools", "paperStyleLabel": "Paper style", "stampLabel": "Corner stamp",
-    "ruled": "Ruled", "blank": "Blank", "dot": "Dot", "grid": "Grid", "stamp": { "none": "None", "sprout": "Sprout", "heart": "Heart", "star": "Star", "sun": "Sun", "moon": "Moon", "flower": "Flower" },
-    "color": "Ink color {color}", "pen": "Pen", "highlighter": "Highlighter", "eraser": "Area eraser", "pan": "Pan", "undo": "Undo", "redo": "Redo", "clear": "Clear page", "clearConfirm": "Clear every stroke on this page?", "size": "Stroke size", "thin": "Thin", "medium": "Medium", "bold": "Bold", "opacity": "Opacity", "zoom": "Zoom", "decorate": "Decorate page", "help": "Your strokes stay intact until sync succeeds.", "saved": "Handwritten page saved.", "pending": "Kept on this device; not synced.", "mediaUnavailable": "Kept on this device; media_unavailable.", "previewUploadFailed": "Kept on this device; media_upload_failed.", "previewUnavailable": "Kept on this device; preview unavailable.", "type": "Type", "handwrite": "Handwrite", "back": "Back to profile"
+    "title": "Handwrite",
+    "canvasLabel": "Handwritten page",
+    "toolLabel": "Writing tools",
+    "paperStyleLabel": "Paper style",
+    "stampLabel": "Corner stamp",
+    "ruled": "Ruled",
+    "blank": "Blank",
+    "dot": "Dot",
+    "grid": "Grid",
+    "stamp": {
+      "none": "None",
+      "sprout": "Sprout",
+      "heart": "Heart",
+      "star": "Star",
+      "sun": "Sun",
+      "moon": "Moon",
+      "flower": "Flower"
+    },
+    "color": "Ink color {color}",
+    "pen": "Pen",
+    "highlighter": "Highlighter",
+    "eraser": "Area eraser",
+    "pan": "Pan",
+    "undo": "Undo",
+    "redo": "Redo",
+    "clear": "Clear page",
+    "clearConfirm": "Clear every stroke on this page?",
+    "size": "Stroke size",
+    "thin": "Thin",
+    "medium": "Medium",
+    "bold": "Bold",
+    "opacity": "Opacity",
+    "zoom": "Zoom",
+    "decorate": "Decorate page",
+    "help": "Your strokes stay intact until sync succeeds.",
+    "saved": "Handwritten page saved.",
+    "pending": "Kept on this device; not synced.",
+    "mediaUnavailable": "Kept on this device; media_unavailable.",
+    "previewUploadFailed": "Kept on this device; media_upload_failed.",
+    "previewUnavailable": "Kept on this device; preview unavailable.",
+    "type": "Type",
+    "handwrite": "Handwrite",
+    "back": "Back to profile"
+  },
+  "book": {
+    "gratitudeRequiredShort": "Add at least one gratitude to save.",
+    "gratitudeRequired": "Write at least one gratitude on the left page to save. The reflection section is additional content.",
+    "handwritingRequired": "Draw a stroke on the page to save.",
+    "addMood": "Add a feeling",
+    "done": "Done",
+    "removeQuote": "Remove quote",
+    "imageHint": "JPEG, PNG, WebP, GIF or AVIF · up to 5 MB",
+    "invalidImage": "Choose a supported image up to 5 MB. Your previous photo is still here.",
+    "finish": "Finish your page",
+    "savedAt": "Saved at {time}",
+    "unsaved": "Not saved",
+    "viewProfile": "View in profile",
+    "newPage": "Write a new page",
+    "invalidContent": "Keep each gratitude within 1,000 characters and the whole entry within 10,000 characters. Shorten your writing, then retry.",
+    "entryUnavailable": "This entry is unavailable. Showing your latest available entry.",
+    "empty": "No journal entries yet.",
+    "navigation": "Journal entries",
+    "position": "{current, number} / {total, number}"
+  },
+  "quota": {
+    "remaining": "{count, number}/{limit, number} entries left today",
+    "exhausted": "You’ve used today’s writing allowance",
+    "loading": "Checking today’s writing allowance…",
+    "unavailable": "Could not check your writing allowance",
+    "resetHint": "Your allowance refreshes at {time} · Vietnam time.",
+    "exhaustedHint": "More entries available at {time} · Vietnam time. Keep this page open to preserve your draft.",
+    "loadingHint": "You can start writing while you wait.",
+    "unavailableHint": "Your draft is still here. Please try again.",
+    "retry": "Check again"
   }
 }

@@ -24,3 +24,12 @@
 - Format dates, times, and numbers with the active locale. Keep API contracts and error codes locale-neutral.
 - Do not translate user-generated content.
 - Before handoff, run catalog parity through `npm run test:logic`, then `npm run typecheck`, `npm run lint`, and `npm run build`.
+
+## Responsive UI
+
+- Treat tablet widths as a separate layout constraint. Do not enable desktop rows at `md` unless all children fit with both `vi/en` labels.
+- Prefer CSS flex/grid, `min-w-0`, wrapping, and content-driven sizing. Keep actions readable; move them to another row before squeezing content. Avoid device detection, fixed content heights, and hiding overflow to mask layout bugs.
+- User-generated names, bios, and journal text must handle long unbroken strings without widening the page. Only intentional horizontal controls may scroll inside their own container.
+- Group controls by purpose: keep content filters together, view-mode controls together. Use deliberate tablet rows instead of allowing unrelated actions to wrap between tabs. Keep summary modules independent of avatar/text columns so they can use the available width.
+- Keep interactive targets at least 44×44 CSS pixels; preserve visible keyboard focus.
+- Verify affected routes at 320, 390, 768×1024 (iPad Mini), 820, 1024×768, 1280, and 1440 CSS pixels, plus breakpoint boundaries and both locales. Check page overflow, overlapping controls, long content, and empty states. Report any browser verification blockers explicitly.

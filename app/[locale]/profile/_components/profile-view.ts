@@ -13,6 +13,7 @@ export const profileAssets = {
 };
 
 export type ProfileView = {
+  requestedEntry?: string;
   avatarDesktop: string;
   avatarMobile: string;
   bio: string;

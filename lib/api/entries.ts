@@ -1,5 +1,5 @@
 import type { CreateEntryResponse, UpdateEntryResponse } from "@/lib/entries/dto";
-import { fetchJson } from "./fetch-json";
+import { fetchJson } from "./fetch-json.ts";
 import type { CreateEntryRequest } from "@/lib/entries/dto";
 import type { EntryVisibility } from "@/lib/entries/types";
 
@@ -37,4 +37,8 @@ export function deleteEntry(id: string) {
     { method: "DELETE" },
     "Could not delete entry.",
   );
+}
+
+export async function getEntryQuota() {
+  return fetchJson<import("../entries/daily-quota").EntryDailyQuota>("/api/entries/quota", { cache: "no-store" }, "Could not load daily allowance.");
 }

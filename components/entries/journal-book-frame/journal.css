@@ -1,0 +1,54 @@
+.journal-gratitude {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  gap: 0.625rem;
+  border: 1px solid #eee8dc;
+  border-radius: 0.75rem;
+  background: var(--card);
+  padding: 0.75rem;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+}
+
+.journal-number {
+  display: flex;
+  width: 1.75rem;
+  height: 1.75rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: var(--accent);
+  color: var(--primary);
+  font-size: 0.875rem;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+}
+
+.journal-mood {
+  border: 1px solid #ede3d4;
+  border-radius: 1rem;
+  background: #f5f1e8;
+  padding: 0.75rem;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+}
+
+.journal-photo {
+  border: 1px solid #ede5d8;
+  border-radius: 0.75rem;
+  background: var(--card);
+  padding: 0.5rem;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+}
+
+.journal-reflection {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  gap: 0.75rem;
+  border: 1px solid #cbe1d5;
+  border-radius: 0.75rem;
+  background: #dbeee5;
+  padding: 0.75rem;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+}

@@ -3,14 +3,19 @@
 import { useTranslations } from "next-intl";
 import { useNextStep } from "nextstepjs";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
+import { profileTourName } from "@/lib/onboarding/profile-tour";
 import { calendarTourName } from "@/lib/onboarding/calendar-tour";
 
-export function OnboardingTourReplayButton({ tour }: Readonly<{ tour: "calendar" | "first-entry" }>) {
+export function OnboardingTourReplayButton({ tour }: Readonly<{ tour: "calendar" | "first-entry" | "profile" }>) {
   const t = useTranslations("onboarding");
   const { startNextStep } = useNextStep();
-  const label = t(tour === "calendar" ? "replay.calendar" : "replay.firstEntry");
+  const label = t(tour === "first-entry" ? "replay.firstEntry" : `replay.${tour}`);
 
   function replay() {
+    if (tour === "profile") {
+      startNextStep(profileTourName(window.matchMedia("(min-width: 768px)").matches));
+      return;
+    }
     startNextStep(tour === "calendar" && window.matchMedia("(min-width: 768px)").matches ? calendarTourName(true) : tour === "calendar" ? calendarTourName(false) : tour);
   }
 

@@ -1,4 +1,5 @@
 "use client";
+import type { ReactNode } from "react";
 
 import { useState } from "react";
 import Image from "next/image";
@@ -24,12 +25,12 @@ export type NavigationHeaderProfile = {
   displayName: string;
   email: string;
   signedIn: boolean;
-  streak: number;
+  streak: ReactNode;
 };
 
 const navItems = [
   { href: "/feed", icon: "grid_view", protected: false },
-  { href: "/write", icon: "eco", protected: false },
+  { href: "/write", icon: "eco", protected: true },
   { href: "/calendar", icon: "calendar_today", protected: true },
   { href: "/profile", icon: "person", protected: true },
 ] as const;
@@ -37,8 +38,8 @@ const navItems = [
 const mobileNavItems = [
   { href: "/feed", icon: "home", protected: false, primary: false },
   { href: "/calendar", icon: "calendar_today", protected: true, primary: false },
-  { href: "/write", icon: "eco", protected: false, primary: true },
-  { href: "/reward", icon: "explore", protected: true, primary: false },
+  { href: "/write", icon: "eco", protected: true, primary: true },
+  { href: "/reward", icon: "explore", protected: false, primary: false },
   { href: "/profile", icon: "person", protected: true, primary: false },
 ] as const;
 

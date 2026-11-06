@@ -21,13 +21,24 @@ export async function proxy(request: NextRequest) {
       },
       setAll(cookiesToSet) {
         cookiesToSet.forEach(({ name, value, options }) => {
+          request.cookies.set(name, value);
           response.cookies.set(name, value, options);
         });
+        // Forward the refreshed cookie header through the existing i18n rewrite.
+        const overrides = response.headers.get("x-middleware-override-headers");
+        const forwarded = new Set(overrides === null ? request.headers.keys() : overrides.split(",").filter(Boolean));
+        if (overrides === null) {
+          request.headers.forEach((value, name) => response.headers.set(`x-middleware-request-${name}`, value));
+        }
+        forwarded.add("cookie");
+        response.headers.set("x-middleware-override-headers", [...forwarded].join(","));
+        response.headers.set("x-middleware-request-cookie", request.headers.get("cookie") ?? "");
       },
     },
   });
 
-  await supabase.auth.getUser();
+  // Refresh cookies only; server loaders still verify identity with getUser().
+  await supabase.auth.getSession();
   return response;
 }
 
