@@ -2,7 +2,6 @@
 
 import { useSearchParams } from "next/navigation";
 import { usePathname, useRouter } from "@/i18n/navigation";
-import { ProfilePagination } from "../profile-pagination";
 import { useTranslations } from "next-intl";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
 import { ProfileJournalBook } from "../profile-journal-book";
@@ -64,13 +63,12 @@ export function ProfileDesktopTabs({
       {tab === "moments" ? (
         <MomentsTab layout={layout === "journal" ? "list" : layout} />
       ) : layout === "journal" ? (
-        <ProfileJournalBook key={`${view.pagination.start}-${view.requestedEntry}-${view.initialEdge}-${tab}`} view={{ ...view, entries }} />
+        <ProfileJournalBook key={`${view.requestedEntry}-${tab}`} view={{ ...view, entries }} />
       ) : tab === "public" ? (
         <PublicTab entries={entries} layout={layout} />
       ) : (
         <AllTab entries={entries} layout={layout} />
       )}
-      {layout !== "journal" && tab !== "moments" ? <ProfilePagination pagination={view.pagination} /> : null}
     </section>
   );
 }

@@ -8,8 +8,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
 import { ApiClientError } from "@/lib/api/fetch-json";
 import { localizedLoginHref } from "@/lib/auth/redirects";
-import { createEntry, getRecentSpaces, getEntryQuota } from "@/lib/api/entries";
-import type { EntryDailyQuota } from "@/lib/entries/daily-quota";
+import { createEntry, getRecentSpaces } from "@/lib/api/entries";
 import { createHandwrittenEntry } from "@/lib/api/handwritten-entries";
 import { handwritingSaveErrorKey } from "@/lib/api/handwritten-entry-errors";
 import { uploadEntryMedia } from "@/lib/api/entry-media";
@@ -28,7 +27,7 @@ import { JournalDecoration } from "../journal-decoration";
 
 const HandwritingComposer = dynamic(() => import("../handwriting-composer").then((module) => module.HandwritingComposer), { ssr: false });
 
-export function EntryComposerClient({ initialQuota }: Readonly<{ initialQuota: EntryDailyQuota | null }>) {
+export function EntryComposerClient() {
   const t = useTranslations("write");
   const locale = useLocale();
   const submitting = useRef(false);
@@ -55,50 +54,16 @@ export function EntryComposerClient({ initialQuota }: Readonly<{ initialQuota: E
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState<{ id: string; createdAt: string } | null>(null);
   const [status, setStatus] = useState<Parameters<typeof t>[0] | null>(null);
-  const [quota, setQuota] = useState<EntryDailyQuota | null>(initialQuota);
-  const [quotaError, setQuotaError] = useState(initialQuota === null);
-  async function refreshQuota() {
-    try { setQuota(await getEntryQuota()); setQuotaError(false); setStatus((current) => current === "errors.authRequired" ? null : current); }
-    catch (error) {
-      setQuotaError(true);
-      if (error instanceof ApiClientError && error.code === "auth_required") setStatus("errors.authRequired");
-    }
-  }
   const [inkDocument, setInkDocument] = useState<InkDocument>({ version: 1, orientation: "portrait", paperStyle: "ruled", stamp: "none", strokes: [] });
   const [pendingId, setPendingId] = useState<string | null>(null);
   const filled = useMemo(() => gratitudes.map((item) => item.text.trim()).filter(Boolean), [gratitudes]);
   const payload = { visibility, gratitudes: filled, reflection, mood, space, washi, quote, sticker };
   const validText = validComposerEntry(payload);
-  const quotaAvailable = quota !== null && !quotaError && quota.remaining > 0;
-  const canSaveText = quotaAvailable && canSubmitEntry(validText, saving, saved !== null);
-  const canSaveInk = quotaAvailable && canSubmitEntry(inkDocument.strokes.length > 0, saving, saved !== null);
+  const canSaveText = canSubmitEntry(validText, saving, saved !== null);
+  const canSaveInk = canSubmitEntry(inkDocument.strokes.length > 0, saving, saved !== null);
   const date = useMemo(() => new Intl.DateTimeFormat(locale, { weekday: "long", day: "numeric", month: "long" }).format(new Date()), [locale]);
 
   useEffect(() => { getRecentSpaces().then(({ spaces }) => setRecentSpaces(spaces)).catch(() => setRecentSpaces([])); }, []);
-  useEffect(() => {
-    const onVisible = () => { if (document.visibilityState === "visible") void refreshQuota(); };
-    window.addEventListener("focus", refreshQuota);
-    document.addEventListener("visibilitychange", onVisible);
-    return () => { window.removeEventListener("focus", refreshQuota); document.removeEventListener("visibilitychange", onVisible); };
-  }, []);
-  useEffect(() => {
-    if (!quota) return;
-    const timer = window.setTimeout(() => { void refreshQuota(); }, Math.max(1000, Date.parse(quota.resetsAt) - Date.now() + 1000));
-    return () => window.clearTimeout(timer);
-  }, [quota]);
-
-  function consumeQuota() {
-    setQuota((current) => current ? { ...current, remaining: Math.max(0, current.remaining - 1) } : current);
-    void refreshQuota();
-  }
-
-  function handleQuotaError(error: unknown) {
-    if (!(error instanceof ApiClientError) || error.code !== "daily_entry_limit") return false;
-    setQuota((current) => current ? { ...current, remaining: 0 } : current);
-    setStatus("errors.dailyLimit");
-    void refreshQuota();
-    return true;
-  }
 
   function updateRecentSpaces(value: string) {
     const trimmed = value.trim();
@@ -112,10 +77,6 @@ export function EntryComposerClient({ initialQuota }: Readonly<{ initialQuota: E
     setSaving(true);
     setStatus(null);
     try {
-      const currentQuota = await getEntryQuota();
-      setQuota(currentQuota);
-      setQuotaError(false);
-      if (currentQuota.remaining === 0) throw new ApiClientError("daily_entry_limit", "Daily entry limit reached.");
       let imageUrl: string | null = null;
       if (image) {
         const media = await uploadEntryMedia(image);
@@ -127,9 +88,7 @@ export function EntryComposerClient({ initialQuota }: Readonly<{ initialQuota: E
       updateRecentSpaces(space);
       setSaved({ id: result.entry.id, createdAt: result.entry.created_at });
       setStatus("text.saved");
-      consumeQuota();
     } catch (error) {
-      if (handleQuotaError(error)) return;
       setStatus(error instanceof ApiClientError && error.code === "auth_required" ? "errors.authRequired" : "errors.entryFailed");
     } finally {
       submitting.current = false;
@@ -151,13 +110,7 @@ export function EntryComposerClient({ initialQuota }: Readonly<{ initialQuota: E
       setPendingId(null);
       setSaved({ id: result.entry.id, createdAt: result.entry.created_at });
       setStatus("handwriting.saved");
-      consumeQuota();
     } catch (error) {
-      if (handleQuotaError(error)) {
-        const pending = upsertLocalHandwrittenEntry(pendingId, inkDocument, visibility);
-        setPendingId(pending.id);
-        return;
-      }
       if (error instanceof ApiClientError && error.code === "auth_required") {
         setStatus("errors.authRequired");
         return;
@@ -182,22 +135,9 @@ export function EntryComposerClient({ initialQuota }: Readonly<{ initialQuota: E
     setInkDocument((current) => ({ ...current, strokes: [] }));
   }
   const savedDate = saved ? new Intl.DateTimeFormat(locale, { dateStyle: "long", timeStyle: "short" }).format(new Date(saved.createdAt)) : null;
-  const quotaResetTime = quota ? new Intl.DateTimeFormat(locale, { timeZone: "Asia/Ho_Chi_Minh", hour: "2-digit", minute: "2-digit" }).format(new Date(quota.resetsAt)) : null;
-  const quotaMessage = quotaError ? t("quota.unavailable") : !quota ? t("quota.loading") : quota.remaining === 0 ? t("quota.exhausted") : t("quota.remaining", { count: quota.remaining, limit: quota.limit });
-  const quotaHint = quotaError ? t("quota.unavailableHint") : !quota ? t("quota.loadingHint") : t(quota.remaining === 0 ? "quota.exhaustedHint" : "quota.resetHint", { time: quotaResetTime! });
-  const saveHint = !quotaAvailable ? quotaMessage : method === "text" && filled.length === 0 ? <><span className="lg:hidden">{t("book.gratitudeRequiredShort")}</span><span className="hidden lg:inline">{t("book.gratitudeRequired")}</span></> : method === "handwritten" && inkDocument.strokes.length === 0 ? t("book.handwritingRequired") : t("book.unsaved");
+  const saveHint = method === "text" && filled.length === 0 ? <><span className="lg:hidden">{t("book.gratitudeRequiredShort")}</span><span className="hidden lg:inline">{t("book.gratitudeRequired")}</span></> : method === "handwritten" && inkDocument.strokes.length === 0 ? t("book.handwritingRequired") : t("book.unsaved");
   const metadata = { entryKind: "text" as const, gratitudes: filled, reflection, mood, space, washi, quote, sticker, imageUrl: photo?.url ?? null, handwritingPreviewUrl: null };
   return <main className="journal-controls mx-auto min-h-dvh max-w-5xl px-3 pb-8 pt-6 sm:px-6">
-    <div className={`mb-5 flex min-w-0 flex-wrap items-center gap-3 rounded-2xl p-4 ${quotaError ? "bg-[var(--fire-soft)]/40" : quota && quota.remaining > 0 ? "bg-accent/50" : "bg-muted"}`}>
-      <div className="flex min-w-0 flex-1 basis-52 items-start gap-3" role="status" aria-atomic="true">
-        <span aria-hidden="true" className={`flex size-10 shrink-0 items-center justify-center rounded-xl bg-card/80 ${quotaError ? "text-[var(--fire)]" : "text-primary"}`}><MaterialSymbol className="text-xl" name={quotaError ? "info" : !quota || quota.remaining === 0 ? "schedule" : "nest_eco_leaf"} /></span>
-        <div className="min-w-0 [overflow-wrap:anywhere]">
-          <p className="text-sm font-bold leading-6 text-foreground tabular-nums">{quotaMessage}</p>
-          <p className="mt-1 text-xs leading-5 text-muted-foreground">{quotaHint}</p>
-        </div>
-      </div>
-      {quotaError ? <button className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-card px-4 text-sm font-semibold text-primary" onClick={() => void refreshQuota()} type="button"><MaterialSymbol name="history" />{t("quota.retry")}</button> : null}
-    </div>
     <fieldset className="min-w-0" disabled={saving || saved !== null}>
       <header className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm font-semibold text-muted-foreground"><MaterialSymbol className="mr-2 text-primary" name="calendar_today" />{date}</p>
