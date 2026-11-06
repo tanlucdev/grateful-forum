@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { Link } from "@/i18n/navigation";
 /* eslint-disable @next/next/no-img-element */
 import { notFound } from "next/navigation";
@@ -12,6 +13,7 @@ export default async function PublicProfilePage({
 }>) {
   const { id, locale } = await params;
   const t = await getTranslations("profile");
+  if (!z.uuid().safeParse(id).success) notFound();
   const profile = await loadPublicProfile(id);
 
   if (!profile) {
@@ -19,10 +21,10 @@ export default async function PublicProfilePage({
   }
 
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-5 px-4 py-6 sm:px-6">
-      <section className="soft-surface flex items-start justify-between gap-4 rounded-lg border border-border bg-card p-5">
-        <div className="flex items-center gap-4">
-          <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-lg border border-border bg-background">
+    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-5 [overflow-wrap:anywhere] px-4 py-6 sm:px-6">
+      <section className="soft-surface flex flex-wrap items-start justify-between gap-4 rounded-lg border border-border bg-card p-5">
+        <div className="flex min-w-0 items-center gap-4">
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border bg-background">
             {profile.profile.avatarUrl ? (
               <img alt="" className="h-full w-full object-cover" src={profile.profile.avatarUrl} />
             ) : (
@@ -31,7 +33,7 @@ export default async function PublicProfilePage({
               </span>
             )}
           </div>
-          <div>
+          <div className="min-w-0">
             <h1 className="text-2xl font-semibold tracking-tight">
               {profile.profile.displayName}
             </h1>

@@ -10,7 +10,7 @@ import { ProfileShareModalButton } from "../profile-share-modal-client";
 export function MilestoneCard({ view }: Readonly<{ view: ProfileView }>) {
   const t = useTranslations("profile");
   return (
-    <section className="relative flex flex-col items-center justify-between gap-6 overflow-hidden rounded-xl bg-gradient-to-r from-muted via-accent/30 to-secondary p-8 shadow-sm md:flex-row">
+    <section className="relative flex flex-col items-center justify-between gap-6 overflow-hidden rounded-xl bg-gradient-to-r from-muted via-accent/30 to-secondary p-6 shadow-sm lg:p-8 xl:flex-row">
       <div className="absolute -bottom-10 -left-10 h-44 w-44 rounded-full bg-accent/20 blur-2xl" />
       <div className="pointer-events-none absolute right-0 top-0 h-64 w-64 rounded-full bg-accent/20 blur-3xl" />
       <div className="z-10 flex items-center gap-6 text-left">
@@ -57,7 +57,7 @@ export function Pill({
       : "bg-muted text-muted-foreground";
 
   return (
-    <span className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 ${className}`}>
+    <span className={`inline-flex min-w-0 items-center gap-1.5 rounded-xl px-3 py-1.5 ${className}`}>
       <MaterialSymbol className={`text-base ${tone === "fire" ? "text-[var(--fire)]" : "text-primary"}`} fill name={icon} />
       <span className="text-xs font-medium leading-4 tracking-[0.04em]">{text}</span>
     </span>

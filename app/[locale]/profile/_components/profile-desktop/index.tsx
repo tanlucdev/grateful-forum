@@ -32,71 +32,67 @@ function DesktopHero({ view }: Readonly<{ view: ProfileView }>) {
     <section className="relative overflow-hidden rounded-xl bg-card p-6 shadow-sm lg:p-8">
       <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-accent/40 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-12 -left-12 h-48 w-48 rounded-full bg-accent/30 blur-2xl" />
-      <div className="relative z-10 flex flex-col items-start justify-between gap-6 md:flex-row md:items-start lg:items-center">
-        <div className="flex min-w-0 flex-col items-start gap-6 sm:flex-row sm:items-start lg:items-center">
-          <div className="relative">
-            <div className="h-24 w-24 rounded-full bg-gradient-to-tr from-primary to-accent p-1 shadow-md">
-              <Avatar className="h-full w-full" src={view.avatarDesktop} />
-            </div>
-            <span className="absolute -bottom-1 -right-1 flex rounded-full bg-primary p-1 text-primary-foreground shadow-sm">
-              <MaterialSymbol className="text-sm" fill name="eco" />
-            </span>
-          </div>
-          <div className="flex min-w-0 flex-1 flex-col space-y-2">
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-semibold leading-8 text-foreground">
-                {view.displayName}
-              </h1>
-              <span className="rounded-full bg-accent px-2.5 py-0.5 text-[11px] font-medium leading-[14px] text-primary">
-                {t("rank")}
+      <div className="relative z-10 flex flex-col gap-6">
+        <div className="flex min-w-0 flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+          <div className="flex min-w-0 flex-1 items-start gap-5">
+            <div className="relative shrink-0">
+              <div className="h-24 w-24 rounded-full bg-gradient-to-tr from-primary to-accent p-1 shadow-md">
+                <Avatar className="h-full w-full" src={view.avatarDesktop} />
+              </div>
+              <span className="absolute -bottom-1 -right-1 flex rounded-full bg-primary p-1 text-primary-foreground shadow-sm">
+                <MaterialSymbol className="text-sm" fill name="eco" />
               </span>
             </div>
-            <p className="max-w-md text-base leading-6 text-muted-foreground">{view.bio}</p>
-            <div className="flex flex-wrap items-center gap-2.5 pt-2">
-              <Pill icon="spa" text={t("stats.entries", { count: number.format(view.entryCount) })} />
-              <Pill icon="local_fire_department" text={t("stats.streak", { count: number.format(view.streak) })} tone="fire" />
-              <Pill icon="nest_eco_leaf" text={t("stats.companion", { count: 14 })} />
+            <div className="flex min-w-0 flex-1 flex-col space-y-2">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                <h1 className="min-w-0 [overflow-wrap:anywhere] text-2xl font-semibold leading-8 text-foreground">
+                  {view.displayName}
+                </h1>
+                <span className="rounded-full bg-accent px-2.5 py-0.5 text-[11px] font-medium leading-[14px] text-primary">
+                  {t("rank")}
+                </span>
+              </div>
+              {view.bio ? <p className="max-w-md [overflow-wrap:anywhere] text-sm leading-6 text-muted-foreground">{view.bio}</p> : null}
+              <div className="flex flex-wrap items-center gap-2.5 pt-2">
+                <Pill icon="spa" text={t("stats.entries", { count: number.format(view.entryCount) })} />
+                <Pill icon="local_fire_department" text={t("stats.streak", { count: number.format(view.streak) })} tone="fire" />
+                <Pill icon="nest_eco_leaf" text={t("stats.companion", { count: 14 })} />
+              </div>
             </div>
-            <WeeklyRhythm compact={false} view={view} />
           </div>
+          <div className="flex flex-wrap gap-2 xl:shrink-0" data-tour="profile-desktop-edit"><Link className="inline-flex min-h-11 items-center rounded-xl bg-muted px-4 text-sm font-semibold text-primary" href="/write?tour=first-entry">{t("onboarding.replay")}</Link><ProfileEditModalButton view={view} /></div>
         </div>
-        <div className="flex self-end gap-2 md:self-start lg:self-center">
-          <Link className="inline-flex min-h-11 items-center rounded-xl bg-muted px-4 text-sm font-semibold text-primary" href="/write?tour=first-entry">
-            {t("onboarding.replay")}
-          </Link>
-          <ProfileEditModalButton view={view} />
-        </div>
+        <WeeklyRhythm view={view} />
       </div>
     </section>
   );
 }
 
-function WeeklyRhythm({ compact, view }: Readonly<{ compact: boolean; view: ProfileView }>) {
+function WeeklyRhythm({ view }: Readonly<{ view: ProfileView }>) {
   const t = useTranslations("profile");
   const locale = useLocale();
   const activeCount = view.weeklyRhythm.filter((day) => day.active).length;
+  const weekday = new Intl.DateTimeFormat(locale, { weekday: "short", timeZone: "UTC" });
 
   return (
-    <div className={`${compact ? "rounded-xl bg-card p-3.5 shadow-sm" : "mt-4 rounded-2xl border border-primary/10 bg-muted/70 p-3 sm:px-4"} flex flex-col gap-3`}>
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-accent/60 text-primary">
-            <MaterialSymbol className="text-base" fill name="potted_plant" />
-          </span>
-          <div>
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs font-bold text-foreground">{t("rhythm.title")}</span>
-              <span className="rounded-full bg-accent/50 px-2 py-0.5 text-[11px] font-bold text-[var(--leaf-deep)]">{t("rhythm.active", { count: activeCount })}</span>
-            </div>
-            {!compact ? <p className="text-[11px] font-medium text-muted-foreground">{activeCount ? t("rhythm.written", { count: activeCount }) : t("rhythm.none")}</p> : null}
+    <div data-tour="profile-desktop-rhythm" className="flex flex-col gap-4 border-t border-primary/10 pt-5 md:flex-row md:items-center md:justify-between">
+      <div className="flex min-w-0 flex-1 items-center gap-3">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent/60 text-primary">
+          <MaterialSymbol className="text-base" fill name="potted_plant" />
+        </span>
+        <div>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs font-bold text-foreground">{t("rhythm.title")}</span>
+            <span className="rounded-full bg-accent/50 px-2 py-0.5 text-[11px] font-bold text-[var(--leaf-deep)]">{t("rhythm.active", { count: activeCount })}</span>
           </div>
+          <p className="mt-1 text-xs leading-5 text-muted-foreground">{activeCount ? t("rhythm.written", { count: activeCount }) : t("rhythm.none")}</p>
         </div>
       </div>
-      <div className="grid grid-cols-7 gap-1.5">
+      <div className="grid w-full shrink-0 grid-cols-7 gap-1.5 md:w-72 lg:w-80">
         {view.weeklyRhythm.map((day) => (
           <div className={`${day.active ? "bg-accent/35" : "bg-muted opacity-70"} flex flex-col items-center gap-1 rounded-lg py-1.5`} key={day.date}>
-            <span className={`text-[10px] ${day.isToday ? "font-bold text-primary" : "text-muted-foreground"}`}>{day.label}</span>
-            <span aria-label={t("a11y.rhythmDay", { day: day.label, count: day.count })} className={`${day.active ? "bg-primary text-primary-foreground" : day.isToday ? "bg-card text-primary ring-1 ring-primary/35" : "bg-input text-muted-foreground"} flex h-6 w-6 items-center justify-center rounded-full text-[12px]`} title={new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(new Date(`${day.date}T12:00:00Z`))}>
+            <span className={`text-[10px] ${day.isToday ? "font-bold text-primary" : "text-muted-foreground"}`}>{weekday.format(new Date(`${day.date}T12:00:00Z`))}</span>
+            <span aria-label={t("a11y.rhythmDay", { day: weekday.format(new Date(`${day.date}T12:00:00Z`)), count: day.count })} className={`${day.active ? "bg-primary text-primary-foreground" : day.isToday ? "bg-card text-primary ring-1 ring-primary/35" : "bg-input text-muted-foreground"} flex h-6 w-6 items-center justify-center rounded-full text-[12px]`} title={new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(new Date(`${day.date}T12:00:00Z`))}>
               {day.active ? (day.count > 2 ? "🌸" : day.count === 2 ? "🌿" : "🌱") : "·"}
             </span>
           </div>
@@ -111,7 +107,7 @@ function RhythmCard({ view }: Readonly<{ view: ProfileView }>) {
   const format = useFormatter();
   const locale = useLocale();
   return (
-    <section className="flex items-center justify-between gap-4 rounded-xl bg-card p-6 shadow-sm">
+    <section className="flex flex-col items-start justify-between gap-4 rounded-xl bg-card p-6 shadow-sm lg:flex-row lg:items-center">
       <div className="flex items-center gap-3">
         <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted text-primary">
           <MaterialSymbol fill name="calendar_month" />
@@ -147,8 +143,8 @@ function DesktopFooter() {
   const t = useTranslations("profile");
   return (
     <footer className="mt-auto w-full bg-muted py-8 shadow-sm">
-      <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-4 px-6">
-        <div className="flex items-center gap-2">
+      <div className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-4 px-6">
+        <div className="flex flex-wrap items-center gap-2">
           <MaterialSymbol className="text-xl text-primary" name="eco" />
           <span className="text-xl font-semibold leading-7 text-primary">Grateful Forum</span>
           <span className="ml-2 text-[11px] font-medium leading-[14px] text-muted-foreground">

@@ -29,7 +29,7 @@ function LiveJournalEntries({
   return (
     <div className="flex flex-col space-y-4">
       <ListFilterBar />
-      <div className={layout === "list" ? "flex flex-col gap-4" : "grid grid-cols-1 gap-5 lg:grid-cols-3"}>
+      <div className={layout === "list" ? "flex flex-col gap-4" : "grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3"}>
         {entries.map((entry) => (
           <LiveEntryCard entry={entry} grid={layout === "grid"} key={entry.id} />
         ))}
@@ -44,7 +44,7 @@ function LiveEntryCard({ entry, grid }: Readonly<{ entry: JournalEntry; grid: bo
   const hasMetadata = entry.metadata.gratitudes.length || entry.metadata.reflection || entry.metadata.quote || entry.metadata.imageUrl;
 
   return (
-    <article className={`${grid ? "min-h-[320px]" : ""} group flex flex-col gap-3 rounded-xl bg-card p-5 shadow-sm transition-all duration-300 hover:shadow-md`}>
+    <article className={`${grid ? "min-h-[320px]" : ""} group flex min-w-0 flex-col gap-3 [overflow-wrap:anywhere] rounded-xl bg-card p-5 shadow-sm transition-all duration-300 hover:shadow-md`}>
       <div className="flex items-center justify-between gap-3">
         <span className="text-xs font-medium leading-4 tracking-[0.04em] text-muted-foreground">{formatRelative(entry.createdAt, locale)}</span>
         <div className="flex items-center gap-1">
