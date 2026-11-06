@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { useLocale } from "next-intl";
 
+import { loginHref } from "@/lib/auth/redirects";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
 
 import { badgeData, badgeDataEn, feedCards, feedCardsEn } from "../landing-data";
@@ -170,8 +171,9 @@ export function Footer() {
 }
 
 function ShimmerButton({ label }: Readonly<{ label: string }>) {
+  const locale = useLocale();
   return (
-    <ShimmerCTA className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-gradient-start to-gradient-end px-7 py-3.5 text-base font-bold text-on-primary shadow-md" href="/write">
+    <ShimmerCTA className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-gradient-start to-gradient-end px-7 py-3.5 text-base font-bold text-on-primary shadow-md" href={loginHref("/write", locale)}>
       {label}
       <MaterialSymbol className="text-[20px]" name="edit_note" />
     </ShimmerCTA>

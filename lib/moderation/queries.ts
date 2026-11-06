@@ -1,3 +1,4 @@
+import { getVerifiedUser } from "@/lib/auth/current-user";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { ModerationReport } from "./dto";
@@ -8,7 +9,7 @@ export async function loadAdminQueue() {
   }
 
   const supabase = await createSupabaseServerClient();
-  const { data: auth } = await supabase.auth.getUser();
+  const auth = { user: await getVerifiedUser() };
 
   if (!auth.user) {
     return { admin: false, reports: [] as ModerationReport[] };
