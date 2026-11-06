@@ -2,6 +2,7 @@
 
 ## Contract
 
+- `GET /api/feed?visibility=all|anonymous|public&cursor=...`: defaults to `all`; `public` means named shares. Invalid filters return 400. Filtering precedes pagination; private entries remain excluded. Guests receive at most five entries, without pagination or author identity for anonymous shares.
 - `GET /api/entries/quota`: authenticated members only. Returns `{ limit: 3, remaining, resetsAt }`; responses are private/no-store. Unavailable database support returns 503, never an invented allowance.
 - Both `POST /api/entries` and `POST /api/entries/handwritten` return 429 with `{ code: "daily_entry_limit", error, limit: 3, remaining: 0, resetsAt }` and `Retry-After` seconds when exhausted. Existing success contracts are unchanged.
 
