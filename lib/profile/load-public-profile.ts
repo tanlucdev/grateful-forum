@@ -6,6 +6,7 @@ import type { ProfileQuery } from "./pagination";
 import type { PublicProfile } from "./types";
 
 export async function loadPublicProfile(id: string, query: ProfileQuery = { tab: "all" }): Promise<PublicProfile | null> {
+  // journal_page excludes hidden_at and owner_deleted_at entries.
   if (!hasSupabaseEnv()) {
     return null;
   }

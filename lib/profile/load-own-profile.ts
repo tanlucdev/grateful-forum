@@ -7,6 +7,7 @@ import type { ProfileQuery } from "./pagination";
 import type { ProfileDashboard } from "./types";
 
 export async function loadOwnProfileDashboard(query: ProfileQuery = { tab: "all" }): Promise<ProfileDashboard | null> {
+  // journal_page excludes hidden_at and owner_deleted_at entries.
   if (!hasSupabaseEnv()) {
     return null;
   }
