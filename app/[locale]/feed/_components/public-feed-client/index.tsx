@@ -1,17 +1,21 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { FeedPreviewClient } from "../../preview/_components/feed-preview-client";
+import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
-import { loginHref } from "@/lib/auth/redirects";
+import { usePathname, useRouter } from "@/i18n/navigation";
+import { appendFeedPage, toFeedPreview } from "@/lib/feed/access";
+import { ApiClientError } from "@/lib/api/fetch-json";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { loadMoreFeed } from "@/lib/api/feed";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
 import { LocaleSwitcher } from "@/components/navigation/locale-switcher";
 import type { FeedPage } from "@/lib/feed/types";
-import type { WeeklyRhythmDay } from "@/lib/profile/weekly-rhythm";
+import type { FeedVisibilityFilter } from "@/lib/feed/validation";
+import type { ReactNode } from "react";
 import type { AppLocale } from "@/i18n/routing";
 import {
-  DesktopAside,
   DesktopFooter,
   MobileFeedEnd,
   MobileReflectionBanner,
@@ -29,10 +33,19 @@ const feedFilters: { key: FeedFilter; icon: string }[] = [
 
 export function PublicFeedClient({
   initialPage,
-  weeklyRhythm,
-}: Readonly<{ initialPage: FeedPage; weeklyRhythm: WeeklyRhythmDay[] }>) {
+  aside,
+  initialVisibility = "all",
+}: Readonly<{ initialPage: FeedPage; aside: ReactNode; initialVisibility?: FeedVisibilityFilter }>) {
   const locale = useLocale() as AppLocale;
   const t = useTranslations("feed");
+  const router = useRouter();
+  const pathname = usePathname();
+  const [filterPending, startFilterTransition] = useTransition();
+  const visibilityControls = <fieldset className="flex min-w-0 flex-wrap items-center gap-1" disabled={filterPending}>
+    <legend className="mb-1 text-xs font-semibold text-muted-foreground">{t("filters.visibility")}</legend>
+    {(["all", "anonymous", "public"] as const).map((value) => <button aria-pressed={initialVisibility === value} className="group min-h-11 min-w-11 rounded-full px-0.5 py-1.5 text-xs font-medium outline-offset-2 focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-60" key={value} onClick={() => startFilterTransition(() => router.replace({ pathname: "/feed", query: { visibility: value } }, { scroll: false }))} type="button"><span className={`inline-flex min-h-8 items-center rounded-full px-3 ${initialVisibility === value ? "bg-primary text-primary-foreground" : "bg-card/80 text-muted-foreground group-hover:bg-muted"}`}>{t(`filters.visibility${value === "all" ? "All" : value === "anonymous" ? "Anonymous" : "Public"}`)}</span></button>)}
+  </fieldset>;
+  const dailyPractice = <p className="max-w-prose text-sm leading-relaxed text-muted-foreground">{t.rich("dailyPractice", { strong: (chunks) => <strong className="font-bold text-primary">{chunks}</strong> })}</p>;
   const copy = {
     all: t("filters.all"), ordinary: t("filters.ordinary"), polaroid: t("filters.polaroid"),
     ordinaryEmptyTitle: t("empty.ordinaryTitle"), ordinaryEmptyDescription: t("empty.ordinaryDescription"),
@@ -40,35 +53,76 @@ export function PublicFeedClient({
     loading: t("loading"), done: t("done"), noPublic: t("noPublic"), eyebrow: t("eyebrow"),
     title: t("title"), description: t("description"), showAll: t("showAll"),
   };
-  const [requiresLogin, setRequiresLogin] = useState(initialPage.requiresLogin);
-  const [items, setItems] = useState(initialPage.items);
-  const [cursor, setCursor] = useState(initialPage.nextCursor);
+  const [page, setPage] = useState(() => initialPage.requiresLogin ? toFeedPreview(initialPage.items) : initialPage);
+  const { items, nextCursor: cursor, requiresLogin } = page;
+  const done = !cursor;
+  const accessRevision = useRef(0);
   const [loading, setLoading] = useState(false);
-  const [done, setDone] = useState(!initialPage.nextCursor);
   const [error, setError] = useState("");
   const [filter, setFilter] = useState<FeedFilter>("all");
   const [showScrollTop, setShowScrollTop] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
+
+  const restrictToPreview = useCallback(() => {
+    accessRevision.current += 1;
+    setPage((current) => toFeedPreview(current.items));
+    setLoading(false);
+    setError("");
+    if (pathname !== "/feed/preview") {
+      router.replace("/feed/preview");
+      router.refresh();
+    }
+  }, [pathname, router]);
+
+  useEffect(() => {
+    if (!hasSupabaseEnv()) return;
+    const supabase = createSupabaseBrowserClient();
+    let active = true;
+    const revalidate = () => {
+      void supabase.auth.getUser().then(({ data, error }) => {
+        if (active && (error || !data.user || data.user.is_anonymous)) restrictToPreview();
+      }).catch(() => { if (active) restrictToPreview(); });
+    };
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session || session.user.is_anonymous) restrictToPreview();
+    });
+    window.addEventListener("focus", revalidate);
+    window.addEventListener("pageshow", revalidate);
+    return () => {
+      active = false;
+      subscription.unsubscribe();
+      window.removeEventListener("focus", revalidate);
+      window.removeEventListener("pageshow", revalidate);
+    };
+  }, [restrictToPreview]);
 
   const loadMore = useCallback(async () => {
     if (requiresLogin || !cursor || loading || done) {
       return;
     }
 
+    const revision = accessRevision.current;
     setLoading(true);
     setError("");
     try {
-      const page = await loadMoreFeed(cursor);
-      setItems((current) => [...current, ...page.items]);
-      setRequiresLogin(page.requiresLogin);
-      setCursor(page.nextCursor);
-      setDone(!page.nextCursor);
+      const nextPage = await loadMoreFeed(cursor, initialVisibility);
+      if (revision !== accessRevision.current) return;
+      if (nextPage.requiresLogin) {
+        restrictToPreview();
+        return;
+      }
+      setPage((current) => appendFeedPage(current, nextPage));
     } catch (loadError) {
-      setError(loadError instanceof Error ? loadError.message : "Could not load more entries.");
+      if (revision !== accessRevision.current) return;
+      if (loadError instanceof ApiClientError && loadError.code === "auth_required") {
+        restrictToPreview();
+        return;
+      }
+      setError(t("loadError"));
     } finally {
-      setLoading(false);
+      if (revision === accessRevision.current) setLoading(false);
     }
-  }, [cursor, done, loading, requiresLogin]);
+  }, [cursor, done, loading, requiresLogin, restrictToPreview, initialVisibility, t]);
 
   useEffect(() => {
     const sentinel = sentinelRef.current;
@@ -120,39 +174,30 @@ export function PublicFeedClient({
   const feedItems: DisplayItem[] = filteredItems.map((item, index) => toDisplayItem(item, index, locale, displayCopy));
   const status = error || (loading ? copy.loading : !requiresLogin && done && items.length ? copy.done : "");
   const showMobileEnd = !requiresLogin && !loading && !error && done && items.length > 0;
-  const sentinelStatus = showMobileEnd ? "" : status;
   const filters = feedFilters.map((item) => ({ ...item, label: copy[item.key] }));
   const emptyState = filter === "all" ? <FeedEmptyState locale={locale} /> : <FilteredFeedEmptyState filter={filter} onReset={() => setFilter("all")} />;
 
-  const loginPrompt = requiresLogin && items.length > 0 ? (
-    <section className="space-y-3 border-t border-border py-6 text-center">
-      <h2 className="text-lg font-bold text-foreground">{t("preview.title")}</h2>
-      <p className="text-sm leading-relaxed text-muted-foreground">{t("preview.description")}</p>
-      <Link className="inline-flex min-h-11 items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary" href={loginHref("/feed", locale)}>
-        {t("preview.login")}
-      </Link>
-    </section>
-  ) : null;
+  if (requiresLogin) return <FeedPreviewClient initialPage={page} />;
 
   return (
-    <div className="app-garden-bg w-screen max-w-[100vw] min-h-svh overflow-x-hidden font-[family-name:var(--font-quicksand)] text-foreground">
-      <main className="w-full max-w-full min-h-svh overflow-x-hidden md:mx-auto md:max-w-7xl md:px-6">
-        <section className="flex w-full max-w-full min-w-0 flex-col gap-5 overflow-hidden px-5 pt-5 md:hidden">
+    <div aria-busy={filterPending} className="app-garden-bg w-full min-h-svh text-foreground">
+      <main className="w-full max-w-full min-h-svh md:mx-auto md:max-w-7xl md:px-6">
+        <section className="flex w-full max-w-full min-w-0 flex-col gap-5 px-5 pt-5 md:hidden">
           <LocaleSwitcher className="self-end" />
           <MobileReflectionBanner />
+          {dailyPractice}
+          {visibilityControls}
           <div className="flex flex-col gap-4">
             {feedItems.length ? feedItems.map((item, index) => (
               <MobileFeedCard item={item} key={item.id} locale={locale} priorityImage={index === 0} />
             )) : emptyState}
           </div>
-          <FeedSentinel refEl={sentinelRef} status={sentinelStatus} />
-          {loginPrompt}
           {showMobileEnd ? <MobileFeedEnd status={items.length ? "" : copy.noPublic} /> : null}
         </section>
 
         <section className="hidden w-full py-8 md:block">
           <div className="grid grid-cols-1 items-start gap-8 md:grid-cols-12">
-            <div className="flex flex-col gap-6 md:col-span-7 lg:col-span-8">
+            <div className="flex min-w-0 flex-col gap-6 md:col-span-7 lg:col-span-8">
               <div className="flex flex-col items-start justify-between gap-4 pb-3">
                 <div className="flex w-full items-start justify-between gap-4">
                   <div>
@@ -160,15 +205,17 @@ export function PublicFeedClient({
                       <span className="h-2 w-2 rounded-full bg-primary" />
                       {copy.eyebrow}
                     </p>
-                    <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground">
+                    <h1 className="mt-2 text-2xl font-bold leading-snug tracking-tight text-foreground">
                       {copy.title}
                     </h1>
-                    <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                    <p className="mt-1.5 max-w-prose text-sm leading-relaxed text-muted-foreground">
                       {copy.description}
                     </p>
                   </div>
                   <LocaleSwitcher className="hidden shrink-0 md:grid lg:hidden" />
                 </div>
+                {dailyPractice}
+                {visibilityControls}
                 <div className="grid w-full grid-cols-1 items-center gap-1 rounded-[24px] border border-border bg-card/90 p-1 text-xs font-bold text-muted-foreground shadow-card backdrop-blur-md lg:grid-cols-3 lg:rounded-full">
                   {filters.map((item) => {
                     const active = item.key === filter;
@@ -176,7 +223,7 @@ export function PublicFeedClient({
                     return (
                       <button
                         aria-pressed={active}
-                        className={`flex h-9 min-w-0 items-center justify-center gap-1.5 rounded-full px-3 outline-offset-2 transition ${
+                        className={`flex min-h-11 min-w-0 items-center justify-center gap-1.5 rounded-full px-3 outline-offset-2 transition ${
                           active ? "bg-primary text-primary-foreground shadow-sm" : "hover:bg-muted hover:text-primary"
                         }`}
                         key={item.key}
@@ -194,13 +241,12 @@ export function PublicFeedClient({
                 {feedItems.length ? feedItems.map((item, index) => (
                   <DesktopFeedCard item={item} key={item.id} locale={locale} priorityImage={index === 0} />
                 )) : emptyState}
-                <FeedSentinel refEl={sentinelRef} status={status} />
-                {loginPrompt}
               </div>
             </div>
-            <DesktopAside weeklyRhythm={weeklyRhythm} />
+            {aside}
           </div>
         </section>
+        <FeedSentinel refEl={sentinelRef} status={status} />
       </main>
       <DesktopFooter />
       {showScrollTop ? (

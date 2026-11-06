@@ -1,3 +1,4 @@
+import { getCurrentUser } from "@/lib/auth/current-user";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -6,17 +7,18 @@ import { getGuestId } from "@/lib/auth/guest-session";
 import type { FeedPage } from "./dto";
 import { emptyFeedReactionCounts } from "./engagement-state.ts";
 import type { FeedReactionType } from "./validation.ts";
+import type { FeedVisibilityFilter } from "./validation.ts";
 import { feedAccess } from "./access.ts";
 
-export async function loadFeedPage(cursor?: string | null): Promise<FeedPage> {
+export async function loadFeedPage(cursor?: string | null, visibility: FeedVisibilityFilter = "all"): Promise<FeedPage> {
   if (!hasSupabaseEnv()) {
     feedAccess(false, cursor);
     return { items: [], nextCursor: null, requiresLogin: true };
   }
 
   const supabase = await createSupabaseServerClient();
-  const { data: auth } = await supabase.auth.getUser();
-  const userId = auth.user?.id ?? null;
+  const auth = { user: await getCurrentUser() };
+  const userId = auth.user?.is_anonymous ? null : auth.user?.id ?? null;
   const { pageSize, requiresLogin } = feedAccess(Boolean(userId), cursor);
   let query = supabase
     .from("entries")
@@ -31,6 +33,7 @@ export async function loadFeedPage(cursor?: string | null): Promise<FeedPage> {
   if (cursor) {
     query = query.lt("created_at", cursor);
   }
+  if (visibility !== "all") query = query.eq("visibility", visibility);
 
   const { data, error } = await query;
 
@@ -53,64 +56,31 @@ export async function loadFeedPage(cursor?: string | null): Promise<FeedPage> {
   const reactionsByEntry = new Map<string, ReturnType<typeof emptyFeedReactionCounts>>();
   const viewerReactionByEntry = new Map<string, FeedReactionType>();
   const bookmarkedEntryIds = new Set<string>();
-  const userIds = Array.from(new Set(pageRows.map((row) => row.user_id).filter(Boolean)));
+  const userIds = Array.from(new Set(pageRows.filter((row) => row.visibility !== "anonymous").map((row) => row.user_id).filter(Boolean)));
 
-  if (userIds.length) {
-    const { data: profiles } = await supabase
-      .from("profiles")
-      .select("id, display_name, username, avatar_url")
-      .in("id", userIds);
-
-    profiles?.forEach((profile) => profilesById.set(profile.id, profile));
+  const engagementClient = entryIds.length ? tryCreateSupabaseAdminClient() : null;
+  const empty = Promise.resolve({ data: [], error: null });
+  const [profiles, counts, viewer, bookmarks] = await Promise.all([
+    userIds.length ? supabase.from("profiles").select("id, display_name, username, avatar_url").in("id", userIds) : empty,
+    engagementClient ? engagementClient.rpc("feed_reaction_counts", { entry_ids: entryIds }) : empty,
+    engagementClient && (userId || guestId) ? engagementClient.from("entry_reactions").select("entry_id, reaction_type").in("entry_id", entryIds).eq(userId ? "user_id" : "guest_id", userId ?? guestId) : empty,
+    engagementClient && (userId || guestId) ? engagementClient.from("entry_bookmarks").select("entry_id").in("entry_id", entryIds).eq(userId ? "user_id" : "guest_id", userId ?? guestId) : empty,
+  ]);
+  for (const result of [profiles, counts, viewer, bookmarks]) {
+    if (result.error) throw new Error(result.error.message);
   }
-
-  if (entryIds.length) {
-    const engagementClient = tryCreateSupabaseAdminClient();
-
-    if (engagementClient) {
-      const { data: reactions, error: reactionsError } = await engagementClient
-        .from("entry_reactions")
-        .select("entry_id, reaction_type")
-        .in("entry_id", entryIds);
-
-      if (reactionsError && !reactionsError.message.includes("'public.entry_reactions'")) {
-        throw new Error(reactionsError.message);
-      }
-
-      reactions?.forEach((reaction) => {
-        const entryReactions = reactionsByEntry.get(reaction.entry_id) ?? emptyFeedReactionCounts();
-        const reactionType = reaction.reaction_type as FeedReactionType;
-        entryReactions[reactionType] += 1;
-        reactionsByEntry.set(reaction.entry_id, entryReactions);
-      });
-
-      if (userId || guestId) {
-        let viewerReactionsQuery = engagementClient.from("entry_reactions").select("entry_id, reaction_type").in("entry_id", entryIds);
-        viewerReactionsQuery = userId ? viewerReactionsQuery.eq("user_id", userId) : viewerReactionsQuery.eq("guest_id", guestId);
-        const { data: viewerReactions, error: viewerReactionsError } = await viewerReactionsQuery;
-
-        if (viewerReactionsError && !viewerReactionsError.message.includes("'public.entry_reactions'")) {
-          throw new Error(viewerReactionsError.message);
-        }
-
-        viewerReactions?.forEach((reaction) => viewerReactionByEntry.set(reaction.entry_id, reaction.reaction_type as FeedReactionType));
-
-        let bookmarksQuery = engagementClient.from("entry_bookmarks").select("entry_id").in("entry_id", entryIds);
-        bookmarksQuery = userId ? bookmarksQuery.eq("user_id", userId) : bookmarksQuery.eq("guest_id", guestId);
-        const { data: bookmarks, error: bookmarksError } = await bookmarksQuery;
-
-        if (bookmarksError && !bookmarksError.message.includes("'public.entry_bookmarks'")) {
-          throw new Error(bookmarksError.message);
-        }
-
-        bookmarks?.forEach((bookmark) => bookmarkedEntryIds.add(bookmark.entry_id));
-      }
-    }
-  }
+  profiles.data?.forEach((profile) => profilesById.set(profile.id, profile));
+  (counts.data as { entry_id: string; reaction_type: FeedReactionType; count: number }[] | null)?.forEach((row) => {
+    const reactions = reactionsByEntry.get(row.entry_id) ?? emptyFeedReactionCounts();
+    reactions[row.reaction_type] = Number(row.count);
+    reactionsByEntry.set(row.entry_id, reactions);
+  });
+  viewer.data?.forEach((reaction) => viewerReactionByEntry.set(reaction.entry_id, reaction.reaction_type as FeedReactionType));
+  bookmarks.data?.forEach((bookmark) => bookmarkedEntryIds.add(bookmark.entry_id));
 
   return {
     items: pageRows.map((row) => {
-      const author = row.user_id ? profilesById.get(row.user_id) ?? null : null;
+      const author = row.visibility !== "anonymous" && row.user_id ? profilesById.get(row.user_id) ?? null : null;
 
       return {
         id: row.id,
