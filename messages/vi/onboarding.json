@@ -8,12 +8,13 @@
   },
   "replay": {
     "calendar": "Xem lại hướng dẫn Lịch",
-    "firstEntry": "Xem lại hướng dẫn Viết"
+    "firstEntry": "Xem lại hướng dẫn Viết",
+    "profile": "Xem lại hướng dẫn Hồ sơ"
   },
   "firstEntry": {
     "gratitude": {
       "title": "Bắt đầu với một điều biết ơn",
-      "content": "Ghi lại một khoảnh khắc nhỏ bạn trân quý hôm nay."
+      "content": "Viết trực tiếp trên sổ. Bắt đầu bằng một điều bạn biết ơn hôm nay."
     },
     "visibility": {
       "title": "Chọn quyền riêng tư",
@@ -21,21 +22,59 @@
     },
     "save": {
       "title": "Lưu ghi chép đầu tiên",
-      "content": "Lưu lần đầu sẽ hoàn tất onboarding."
+      "content": "Lưu để giữ trang này. Sau đó bạn có thể xem trong hồ sơ hoặc viết trang mới."
     }
   },
   "calendar": {
     "desktop": {
-      "filter": { "title": "Chọn khoảng thời gian", "content": "Đổi chế độ năm, sáu tháng, tháng hoặc tuần để xem nhịp điệu của bạn." },
-      "garden": { "title": "Xem khu vườn lớn lên", "content": "Màu sắc và biểu tượng phản ánh số lần bạn ghi trong từng ngày." },
-      "month": { "title": "Khám phá một tháng", "content": "Chuyển tháng, rồi chọn một ngày để tập trung xem lại." },
-      "moments": { "title": "Xem khoảnh khắc của ngày", "content": "Đọc ghi chép của ngày đang chọn hoặc thêm một khoảnh khắc mới." }
+      "filter": {
+        "title": "Chọn khoảng thời gian",
+        "content": "Đổi chế độ năm, sáu tháng, tháng hoặc tuần để xem nhịp điệu của bạn."
+      },
+      "garden": {
+        "title": "Xem khu vườn lớn lên",
+        "content": "Màu sắc và biểu tượng phản ánh số lần bạn ghi trong từng ngày."
+      },
+      "month": {
+        "title": "Khám phá một tháng",
+        "content": "Chuyển tháng, rồi chọn một ngày để tập trung xem lại."
+      },
+      "moments": {
+        "title": "Xem khoảnh khắc của ngày",
+        "content": "Đọc ghi chép của ngày đang chọn hoặc thêm một khoảnh khắc mới."
+      }
     },
     "mobile": {
-      "filter": { "title": "Chọn khoảng thời gian", "content": "Đổi chế độ năm, sáu tháng, tháng hoặc tuần để xem nhịp điệu của bạn." },
-      "garden": { "title": "Xem khu vườn lớn lên", "content": "Màu sắc và biểu tượng phản ánh số lần bạn ghi trong từng ngày." },
-      "month": { "title": "Khám phá một tháng", "content": "Chuyển tháng, rồi chọn một ngày để tập trung xem lại." },
-      "moments": { "title": "Xem khoảnh khắc của ngày", "content": "Đọc ghi chép của ngày đang chọn hoặc thêm một khoảnh khắc mới." }
+      "filter": {
+        "title": "Chọn khoảng thời gian",
+        "content": "Đổi chế độ năm, sáu tháng, tháng hoặc tuần để xem nhịp điệu của bạn."
+      },
+      "garden": {
+        "title": "Xem khu vườn lớn lên",
+        "content": "Màu sắc và biểu tượng phản ánh số lần bạn ghi trong từng ngày."
+      },
+      "month": {
+        "title": "Khám phá một tháng",
+        "content": "Chuyển tháng, rồi chọn một ngày để tập trung xem lại."
+      },
+      "moments": {
+        "title": "Xem khoảnh khắc của ngày",
+        "content": "Đọc ghi chép của ngày đang chọn hoặc thêm một khoảnh khắc mới."
+      }
+    }
+  },
+  "profile": {
+    "edit": {
+      "title": "Chỉnh hồ sơ của bạn",
+      "content": "Cập nhật ảnh đại diện, tên và lời giới thiệu tại đây."
+    },
+    "rhythm": {
+      "title": "Nhìn lại nhịp viết trong tuần",
+      "content": "Các ngày được đánh dấu cho biết khi nào bạn đã ghi lại điều biết ơn."
+    },
+    "entries": {
+      "title": "Đọc lại những điều trân quý",
+      "content": "Nhật ký đã lưu nằm bên dưới. Mở một ghi chép để đọc lại những điều bạn trân quý."
     }
   }
 }

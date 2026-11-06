@@ -8,12 +8,13 @@
   },
   "replay": {
     "calendar": "Replay calendar guide",
-    "firstEntry": "Replay writing guide"
+    "firstEntry": "Replay writing guide",
+    "profile": "Replay profile guide"
   },
   "firstEntry": {
     "gratitude": {
       "title": "Start with one grateful thought",
-      "content": "Write a small moment you appreciate today."
+      "content": "Write directly in your journal. Start with one thing you appreciate today."
     },
     "visibility": {
       "title": "Choose who can see it",
@@ -21,21 +22,59 @@
     },
     "save": {
       "title": "Save your first note",
-      "content": "Your first saved entry completes onboarding."
+      "content": "Save to keep this page. Then view it in your profile or start a new page."
     }
   },
   "calendar": {
     "desktop": {
-      "filter": { "title": "Choose your time range", "content": "Switch between year, six months, month, or week to review your rhythm." },
-      "garden": { "title": "Watch your garden grow", "content": "Colors and symbols show how often you wrote on each day." },
-      "month": { "title": "Explore a month", "content": "Move between months, then select a day to focus your view." },
-      "moments": { "title": "Return to a day's moments", "content": "Read the notes from the selected day, or add another moment." }
+      "filter": {
+        "title": "Choose your time range",
+        "content": "Switch between year, six months, month, or week to review your rhythm."
+      },
+      "garden": {
+        "title": "Watch your garden grow",
+        "content": "Colors and symbols show how often you wrote on each day."
+      },
+      "month": {
+        "title": "Explore a month",
+        "content": "Move between months, then select a day to focus your view."
+      },
+      "moments": {
+        "title": "Return to a day's moments",
+        "content": "Read the notes from the selected day, or add another moment."
+      }
     },
     "mobile": {
-      "filter": { "title": "Choose your time range", "content": "Switch between year, six months, month, or week to review your rhythm." },
-      "garden": { "title": "Watch your garden grow", "content": "Colors and symbols show how often you wrote on each day." },
-      "month": { "title": "Explore a month", "content": "Move between months, then select a day to focus your view." },
-      "moments": { "title": "Return to a day's moments", "content": "Read the notes from the selected day, or add another moment." }
+      "filter": {
+        "title": "Choose your time range",
+        "content": "Switch between year, six months, month, or week to review your rhythm."
+      },
+      "garden": {
+        "title": "Watch your garden grow",
+        "content": "Colors and symbols show how often you wrote on each day."
+      },
+      "month": {
+        "title": "Explore a month",
+        "content": "Move between months, then select a day to focus your view."
+      },
+      "moments": {
+        "title": "Return to a day's moments",
+        "content": "Read the notes from the selected day, or add another moment."
+      }
+    }
+  },
+  "profile": {
+    "edit": {
+      "title": "Make your profile yours",
+      "content": "Update your avatar, name, and bio here."
+    },
+    "rhythm": {
+      "title": "See your weekly writing rhythm",
+      "content": "Marked days show when you recorded something you were grateful for."
+    },
+    "entries": {
+      "title": "Revisit what matters",
+      "content": "Your saved entries are below. Open an entry to revisit what you appreciated."
     }
   }
 }

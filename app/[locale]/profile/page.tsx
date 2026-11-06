@@ -4,6 +4,8 @@ import { localizedLoginHref } from "@/lib/auth/redirects";
 import { loadOwnProfileDashboard } from "@/lib/profile/load-own-profile";
 import { ProfileScreen } from "./_components/profile-screen";
 import { toProfileView } from "./_components/profile-view";
+import { ProfileTourStarterClient } from "./_components/profile-tour-starter-client";
+import { OnboardingTourReplayButton } from "@/components/onboarding-tour-replay-button";
 
 export default async function ProfilePage({
   params,
@@ -26,5 +28,5 @@ export default async function ProfilePage({
   const initialTab =
     requestedTab === "public" || requestedTab === "moments" ? requestedTab : "all";
 
-  return <ProfileScreen initialTab={initialTab} view={view} />;
+  return <><ProfileTourStarterClient userId={dashboard.profile.id} /><ProfileScreen initialTab={initialTab} view={view} /><OnboardingTourReplayButton tour="profile" /></>;
 }
