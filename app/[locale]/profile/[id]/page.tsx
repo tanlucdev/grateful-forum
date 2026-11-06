@@ -1,6 +1,4 @@
 import { z } from "zod";
-import { profileQuerySchema } from "@/lib/profile/pagination";
-import { ProfilePagination } from "../_components/profile-pagination";
 import { Link } from "@/i18n/navigation";
 /* eslint-disable @next/next/no-img-element */
 import { notFound } from "next/navigation";
@@ -9,16 +7,14 @@ import { ReportEntryButton } from "@/components/moderation/report-entry-button";
 import { loadPublicProfile } from "@/lib/profile/load-public-profile";
 
 export default async function PublicProfilePage({
-  params, searchParams,
+  params,
 }: Readonly<{
   params: Promise<{ id: string; locale: string }>;
-  searchParams: Promise<{ cursor?: string; entry?: string }>;
 }>) {
   const { id, locale } = await params;
   const t = await getTranslations("profile");
   if (!z.uuid().safeParse(id).success) notFound();
-  const parsed = profileQuerySchema.safeParse(await searchParams);
-  const profile = await loadPublicProfile(id, parsed.success ? parsed.data : { tab: "all" });
+  const profile = await loadPublicProfile(id);
 
   if (!profile) {
     notFound();
@@ -114,7 +110,6 @@ export default async function PublicProfilePage({
           )}
         </div>
       </section>
-      <ProfilePagination pagination={profile.pagination} />
     </main>
   );
 }

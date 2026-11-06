@@ -69,20 +69,8 @@
     "retry": "Retry"
   },
   "errors": {
-    "dailyLimit": "You have reached today's 3-entry limit. Your draft is still here; save it tomorrow.",
     "authRequired": "Your session has expired. Your writing and selected image remain here. Sign in in a new tab, return here, then save again.",
     "entryFailed": "Could not save. Your writing is still here; please retry."
-  },
-  "quota": {
-    "remaining": "{count, number}/{limit, number} entries left today",
-    "exhausted": "You’ve used today’s writing allowance",
-    "loading": "Checking today’s writing allowance…",
-    "unavailable": "Could not check your writing allowance",
-    "resetHint": "Your allowance refreshes at {time} · Vietnam time.",
-    "exhaustedHint": "More entries available at {time} · Vietnam time. Keep this page open to preserve your draft.",
-    "loadingHint": "You can start writing while you wait.",
-    "unavailableHint": "Your draft is still here. Please try again.",
-    "retry": "Check again"
   },
   "text": {
     "saved": "Saved"

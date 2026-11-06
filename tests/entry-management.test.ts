@@ -28,7 +28,8 @@ for (const file of [
   "lib/feed/queries.ts",
   "lib/feed/mutations.ts",
   "lib/reports/mutations.ts",
-  "supabase/migrations/20261105120000_navigation_read_models.sql",
+  "lib/profile/load-own-profile.ts",
+  "lib/profile/load-public-profile.ts",
   "lib/calendar/queries.ts",
 ]) {
   assert.match(readFileSync(`${root}/${file}`, "utf8"), /owner_deleted_at/);

@@ -1,4 +1,6 @@
-# Context tiếp tục: giới hạn diễn đàn cho khách
+# Ghi chú lịch sử: giới hạn diễn đàn cho khách
+
+Nội dung dưới đây ghi nhận phiên 2026-10-24, không mô tả trạng thái branch hoặc deploy hiện tại. Khi tách branch, phải kiểm tra lại build và deployment tại SHA cụ thể.
 
 Cập nhật: 2026-10-24 (Asia/Ho_Chi_Minh).
 Workspace: `/Users/nguyentanluc/tanlucdev/grateful`.

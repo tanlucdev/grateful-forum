@@ -1,5 +1,7 @@
 # Preview and member-only writing
 
+Verification and migration reports below are historical session notes. They do not establish the migration history or deployment status of the current environment. Recheck each branch at its exact commit before rollout.
+
 Guests may read at most five real public/anonymous posts at `/[locale]/feed/preview`, without pagination or interaction controls. The preview has its own header and no member navigation or personal statistics. Cards remain shared with the full feed.
 
 Writing text, handwriting, or uploading an image requires a valid, non-anonymous Supabase account. Anonymous **post visibility** remains available to members. Supabase anonymous **accounts** cannot write. All three POST endpoints (`/api/entries`, `/api/entries/handwritten`, `/api/entry-media`) return HTTP `401` with `{ "code": "auth_required", "error": "Sign in to write." }` before parsing or uploading when authentication is absent or anonymous. Existing input validation and successful responses remain unchanged for members.
@@ -30,7 +32,7 @@ FEED_TEST_BASE_URL=http://localhost:4317 node --experimental-strip-types tests/f
 supabase db query --linked --file tests/sql/member-entry-access.sql
 ```
 
-The SQL check requires an existing non-admin member. It checks guest and anonymous-account rejection, all three member visibility modes, wrong-owner rejection and legacy transfer, then rolls back.
+The SQL check creates an isolated member fixture inside its transaction. It checks guest and anonymous-account rejection, all three member visibility modes, wrong-owner rejection and legacy transfer, then rolls back the fixture and all writes. Run with SQL errors treated as failures; never select a real account as a fixture.
 
 The following explicitly creates a disposable account, saves images and text/handwriting in all visibility modes against the real configured services, checks member feed access, then deletes its account, entries and Cloudinary assets:
 
