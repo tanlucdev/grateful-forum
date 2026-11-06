@@ -143,14 +143,14 @@ export function MindfulActionsClient({ compact = false, floatingMenu = false, it
     <div className={floatingMenu ? "absolute right-5 top-8 z-20 md:right-7 md:top-10" : "relative ml-auto"}>
       <DropdownMenu onOpenChange={setMenuOpen} open={menuOpen}>
         <DropdownMenuTrigger asChild>
-          <Button aria-label={copy.options} className="rounded-full bg-card/85 shadow-xs backdrop-blur" size="icon-xs" type="button" variant="outline">
+          <Button aria-label={copy.options} className="min-h-11 min-w-11 rounded-full bg-card/85 shadow-xs backdrop-blur" size="icon-xs" type="button" variant="outline">
             <MaterialSymbol className="text-[12px]" name="more_vert" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-36 rounded-lg p-1">
           <DropdownMenuItem asChild>
             <button
-              className="flex w-full items-center gap-1 rounded-md px-1.5 py-1 text-left text-[10px] font-bold leading-4"
+              className="flex min-h-11 w-full items-center gap-2 rounded-md px-2 text-left text-xs font-semibold leading-4"
               onClick={() => {
                 setMenuOpen(false);
                 void bookmark();
@@ -163,7 +163,7 @@ export function MindfulActionsClient({ compact = false, floatingMenu = false, it
           </DropdownMenuItem>
           <DropdownMenuItem asChild variant="destructive">
             <button
-              className="flex w-full items-center gap-1 rounded-md px-1.5 py-1 text-left text-[10px] font-bold leading-4"
+              className="flex min-h-11 w-full items-center gap-2 rounded-md px-2 text-left text-xs font-semibold leading-4"
               onClick={() => {
                 setMenuOpen(false);
                 setReportOpen(true);
@@ -301,7 +301,7 @@ function Reaction({
   return (
     <button
       aria-pressed={active}
-      className={`flex max-w-full items-center gap-1.5 rounded-full px-3.5 py-1.5 font-medium shadow-xs outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 ${
+      className={`flex min-h-11 max-w-full items-center gap-1.5 rounded-full px-3.5 py-1.5 font-medium shadow-xs outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 ${
         active
           ? "bg-accent text-accent-foreground ring-1 ring-ring/30"
           : "bg-card text-muted-foreground ring-1 ring-border hover:bg-muted hover:text-primary hover:ring-ring/20"
