@@ -2,12 +2,8 @@
 
 import { useEffect, useRef } from "react";
 import { useNextStep } from "nextstepjs";
+import { firstEntryTourSelectors } from "@/lib/onboarding/first-entry-tour";
 
-const selectors = [
-  '[data-tour="gratitude-input"]',
-  '[data-tour="visibility"]',
-  '[data-tour="save"]',
-];
 const tourSeenKey = "onboarding:first-entry:seen";
 
 function didSeeTourOnThisDevice() {
@@ -36,7 +32,7 @@ export function OnboardingTourStarterClient({ replay, shouldStart }: Readonly<{ 
     let frame = 0;
     let attempts = 0;
     const startWhenReady = () => {
-      if (selectors.every((selector) => document.querySelector(selector))) {
+      if (firstEntryTourSelectors.every((selector) => document.querySelector(selector))) {
         started.current = true;
         if (!replay) rememberTourOnThisDevice();
         startNextStep("first-entry");

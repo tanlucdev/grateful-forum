@@ -1,9 +1,29 @@
+import { profileTourName, profileTourSelectors, scrollProfileTourTarget } from "../lib/onboarding/profile-tour.ts";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { createOnboardingSeenHandler } from "../lib/onboarding/seen-handler.ts";
 import { createCalendarSeenHandler } from "../lib/onboarding/calendar-seen-handler.ts";
 import { calendarTourSelectors, shouldStartCalendarTour } from "../lib/onboarding/calendar-tour.ts";
 import { shouldStartFirstEntryTour } from "../lib/onboarding/eligibility.ts";
+import { firstEntryTourSelectors, scrollFirstEntryTourTarget } from "../lib/onboarding/first-entry-tour.ts";
+
+const scrollCalls: { selector: string; options: ScrollIntoViewOptions }[] = [];
+Object.defineProperty(globalThis, "document", { configurable: true, value: {
+  querySelector: (selector: string) => ({ scrollIntoView: (options: ScrollIntoViewOptions) => scrollCalls.push({ selector, options }) }),
+} });
+try {
+  // Forward, backward, replay: each destination is positioned before measurement.
+  for (const step of [0, 1, 2, 1, 0, 0]) scrollFirstEntryTourTarget(step);
+  assert.deepEqual(scrollCalls.map(({ selector }) => selector), [0, 1, 2, 1, 0, 0].map((step) => firstEntryTourSelectors[step]));
+  assert.ok(scrollCalls.every(({ options }) => options.behavior === "instant" && options.block === "center"));
+  scrollFirstEntryTourTarget(-1);
+  scrollFirstEntryTourTarget(3);
+  assert.equal(scrollCalls.length, 6);
+  Object.defineProperty(globalThis, "document", { configurable: true, value: { querySelector: () => null } });
+  assert.doesNotThrow(() => scrollFirstEntryTourTarget(0));
+} finally {
+  Reflect.deleteProperty(globalThis, "document");
+}
 
 assert.equal(shouldStartFirstEntryTour({ onboardingCompletedAt: null, replay: false, signedIn: true, tourSeenAt: null }), true);
 assert.equal(shouldStartFirstEntryTour({ onboardingCompletedAt: null, replay: false, signedIn: true, tourSeenAt: "2026-10-23T00:00:00.000Z" }), false);
@@ -82,3 +102,26 @@ assert.match(calendarMigration, /calendar_tour_seen_at timestamptz/);
 assert.doesNotMatch(calendarMigration, /update public\.profiles/i);
 
 console.log("onboarding checks passed");
+
+assert.equal(profileTourName(true), "profile-desktop");
+assert.equal(profileTourName(false), "profile-mobile");
+const previousDocument = globalThis.document;
+const profileScrolls: string[] = [];
+try {
+  globalThis.document = {
+    querySelector: (selector: string) => ({ scrollIntoView: () => profileScrolls.push(selector) }),
+  } as unknown as Document;
+  for (const desktop of [true, false]) {
+    const selectors = profileTourSelectors(desktop);
+    assert.equal(new Set(selectors).size, 3);
+    for (const step of [0, 1, 2, 1, 0]) scrollProfileTourTarget(step, desktop);
+    assert.deepEqual(profileScrolls.splice(0), [0, 1, 2, 1, 0].map((step) => selectors[step]));
+    scrollProfileTourTarget(-1, desktop);
+    scrollProfileTourTarget(3, desktop);
+    assert.equal(profileScrolls.length, 0);
+  }
+  globalThis.document = { querySelector: () => null } as unknown as Document;
+  assert.doesNotThrow(() => scrollProfileTourTarget(0, true));
+} finally {
+  globalThis.document = previousDocument;
+}
