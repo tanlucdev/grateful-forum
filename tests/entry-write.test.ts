@@ -210,3 +210,70 @@ assert.equal(
 );
 
 console.log("entry write checks passed");
+
+// Composer limits, save gating, URL selection and API-to-profile metadata round trip.
+const { validComposerEntry, canSubmitEntry, selectJournalEntry } = await import("../lib/entries/composer.ts");
+const { createEntry: saveComposerEntry } = await import("../lib/api/entries.ts");
+const { createEntry: insertComposerEntry } = await import("../lib/entries/mutations.ts");
+const { toEntryMetadata } = await import("../lib/entries/records.ts");
+const id = "d660d150-dc69-4afe-83fb-d00f23eb09e7";
+const otherId = "2954d4eb-784e-44ab-b009-de8dd4b1284e";
+assert.equal(canSubmitEntry(true, false, false), true);
+assert.equal(canSubmitEntry(false, false, false), false);
+assert.equal(canSubmitEntry(true, true, false), false);
+assert.equal(canSubmitEntry(true, false, true), false);
+assert.deepEqual(selectJournalEntry([], id), { index: 0, unavailable: true });
+assert.deepEqual(selectJournalEntry([{ id }, { id: otherId }], otherId), { index: 1, unavailable: false });
+for (const requested of ["invalid", "../../other", "58c7cd36-c4bc-42e7-8f0a-18194af1e4ca"]) {
+  assert.deepEqual(selectJournalEntry([{ id }], requested), { index: 0, unavailable: true });
+}
+assert.deepEqual(selectJournalEntry([{ id }]), { index: 0, unavailable: false });
+const draft = { visibility: "private" as const, gratitudes: Array.from({ length: 10 }, (_, i) => `Điều ${i + 1}\nCảm ơn`), reflection: "Ghi thêm\nTiếng Việt", mood: "calm", space: "Bàn nhỏ", washi: "warm", quote: "Một ngày đẹp", sticker: "sprout-calm", imageUrl: "https://example.com/photo.png" };
+assert.equal(validComposerEntry(draft), true);
+assert.equal(validComposerEntry({ ...draft, gratitudes: [] }), false);
+assert.equal(validComposerEntry({ ...draft, gratitudes: ["x".repeat(1001)] }), false);
+assert.equal(validComposerEntry({ ...draft, quote: "x".repeat(241) }), false);
+assert.equal(validComposerEntry({ ...draft, gratitudes: Array(10).fill("x".repeat(1000)), reflection: "x" }), false);
+assert.equal(validComposerEntry({ ...draft, sticker: null, washi: null, quote: null, imageUrl: null }), true);
+let stored: Record<string, unknown> = {};
+let requests = 0;
+const repository = {
+  from(table: string) {
+    assert.equal(table, "entries");
+    return { insert(row: Record<string, unknown>) { stored = row; return { select: () => ({ single: async () => ({ data: { id, created_at: "2026-10-27T03:00:00Z" }, error: null }) }) }; } };
+  },
+};
+globalThis.fetch = (async (path, options) => {
+  requests++;
+  assert.equal(path, "/api/entries");
+  const input = createEntryRequestSchema.parse(JSON.parse(String(options?.body)));
+  const entry = await insertComposerEntry(repository as unknown as Parameters<typeof insertComposerEntry>[0], input, "account-owner");
+  return Response.json({ saved: true, entry });
+}) as typeof fetch;
+try {
+  const result = await saveComposerEntry(draft);
+  assert.equal(result.saved, true);
+  assert.equal(requests, 1);
+  assert.equal(stored.user_id, "account-owner");
+  const metadata = toEntryMetadata({ ...stored, entry_kind: "text", handwriting_preview_url: null } as unknown as Parameters<typeof toEntryMetadata>[0]);
+  assert.deepEqual(metadata.gratitudes, draft.gratitudes);
+  for (const field of ["reflection", "mood", "space", "washi", "quote", "sticker", "imageUrl"] as const) assert.equal(metadata[field], draft[field]);
+  assert.equal(stored.content, composeEntryContent(draft));
+  if (result.saved) assert.equal(selectJournalEntry([{ id: otherId }, result.entry], result.entry.id).index, 1);
+  globalThis.fetch = (async () => Response.json({ code: "auth_required" }, { status: 401 })) as typeof fetch;
+  await assert.rejects(() => saveComposerEntry(draft), (error: unknown) => error instanceof ApiClientError && error.code === "auth_required");
+  assert.equal(draft.gratitudes.length, 10);
+  assert.equal(draft.imageUrl, "https://example.com/photo.png");
+} finally { globalThis.fetch = originalFetch; }
+console.log("composer save and profile round-trip checks passed");
+
+// Quota checks preserve the auth error code needed for sign-in recovery.
+const { getEntryQuota } = await import("../lib/api/entries.ts");
+globalThis.fetch = (async (path, options) => {
+  assert.equal(path, "/api/entries/quota");
+  assert.equal(options?.cache, "no-store");
+  return Response.json({ code: "auth_required", error: "Sign in to write." }, { status: 401 });
+}) as typeof fetch;
+try {
+  await assert.rejects(getEntryQuota, (error: unknown) => error instanceof ApiClientError && error.code === "auth_required");
+} finally { globalThis.fetch = originalFetch; }
