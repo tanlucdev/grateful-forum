@@ -1,8 +1,8 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { uploadEntryMedia } from "@/lib/entry-media/mutations";
 import type { EntryVisibility, InkDocument } from "./types";
-import { createHandwrittenEntry } from "./mutations";
 import { getEntryDailyQuota } from "./daily-quota-repository";
+import { createHandwrittenEntry } from "./mutations";
 
 export async function saveHandwrittenEntry(
   supabase: SupabaseClient,

@@ -1,4 +1,5 @@
 import { MaterialSymbol } from "@/components/ui/material-symbol";
+import { Link } from "@/i18n/navigation";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { ProfileEditModalButton } from "../profile-modals-client";
 import { Avatar, MilestoneCard, Pill } from "../profile-desktop-cards";
@@ -59,7 +60,7 @@ function DesktopHero({ view }: Readonly<{ view: ProfileView }>) {
               </div>
             </div>
           </div>
-          <div className="xl:shrink-0" data-tour="profile-desktop-edit"><ProfileEditModalButton view={view} /></div>
+          <div className="flex flex-wrap gap-2 xl:shrink-0" data-tour="profile-desktop-edit"><Link className="inline-flex min-h-11 items-center rounded-xl bg-muted px-4 text-sm font-semibold text-primary" href="/write?tour=first-entry">{t("onboarding.replay")}</Link><ProfileEditModalButton view={view} /></div>
         </div>
         <WeeklyRhythm view={view} />
       </div>
@@ -71,6 +72,7 @@ function WeeklyRhythm({ view }: Readonly<{ view: ProfileView }>) {
   const t = useTranslations("profile");
   const locale = useLocale();
   const activeCount = view.weeklyRhythm.filter((day) => day.active).length;
+  const weekday = new Intl.DateTimeFormat(locale, { weekday: "short", timeZone: "UTC" });
 
   return (
     <div data-tour="profile-desktop-rhythm" className="flex flex-col gap-4 border-t border-primary/10 pt-5 md:flex-row md:items-center md:justify-between">
@@ -89,8 +91,8 @@ function WeeklyRhythm({ view }: Readonly<{ view: ProfileView }>) {
       <div className="grid w-full shrink-0 grid-cols-7 gap-1.5 md:w-72 lg:w-80">
         {view.weeklyRhythm.map((day) => (
           <div className={`${day.active ? "bg-accent/35" : "bg-muted opacity-70"} flex flex-col items-center gap-1 rounded-lg py-1.5`} key={day.date}>
-            <span className={`text-[10px] ${day.isToday ? "font-bold text-primary" : "text-muted-foreground"}`}>{day.label}</span>
-            <span aria-label={t("a11y.rhythmDay", { day: day.label, count: day.count })} className={`${day.active ? "bg-primary text-primary-foreground" : day.isToday ? "bg-card text-primary ring-1 ring-primary/35" : "bg-input text-muted-foreground"} flex h-6 w-6 items-center justify-center rounded-full text-[12px]`} title={new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(new Date(`${day.date}T12:00:00Z`))}>
+            <span className={`text-[10px] ${day.isToday ? "font-bold text-primary" : "text-muted-foreground"}`}>{weekday.format(new Date(`${day.date}T12:00:00Z`))}</span>
+            <span aria-label={t("a11y.rhythmDay", { day: weekday.format(new Date(`${day.date}T12:00:00Z`)), count: day.count })} className={`${day.active ? "bg-primary text-primary-foreground" : day.isToday ? "bg-card text-primary ring-1 ring-primary/35" : "bg-input text-muted-foreground"} flex h-6 w-6 items-center justify-center rounded-full text-[12px]`} title={new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(new Date(`${day.date}T12:00:00Z`))}>
               {day.active ? (day.count > 2 ? "🌸" : day.count === 2 ? "🌿" : "🌱") : "·"}
             </span>
           </div>
