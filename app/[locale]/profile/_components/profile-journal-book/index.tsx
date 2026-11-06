@@ -1,147 +1,116 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
 
-import type { JournalEntry } from "@/lib/profile/types";
-import { HandwritingViewer } from "@/components/entries/handwriting-viewer";
+import { useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "@/i18n/navigation";
+import { journalPageHref } from "@/lib/profile/pagination";
+import { useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { JournalBookFrame, JournalBookPage } from "@/components/entries/journal-book-frame";
+import { StickerIcon } from "@/components/entries/sticker-icons";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
+import { selectJournalEntry } from "@/lib/entries/composer";
+import { getSticker } from "@/lib/entries/stickers";
+import type { JournalEntry } from "@/lib/profile/types";
 import { Link } from "@/i18n/navigation";
-import { useTranslations } from "next-intl";
-import { formatRelative, profileAssets, type ProfileView, visibilityLabel } from "../profile-view";
+import type { ProfileView } from "../profile-view";
 import { EntryActionsClient } from "../entry-actions-client";
 
-export function ProfileJournalBook({
-  mobile = false,
-  view,
-}: Readonly<{ mobile?: boolean; view: ProfileView }>) {
-  const entries = view.entries.slice(0, mobile ? 1 : 2);
-
-  return (
-    <div className={`relative ${mobile ? "pt-4" : ""}`}>
-      <div className="absolute -top-1 left-12 z-20 flex flex-col items-center drop-shadow-sm">
-        <div className="flex h-8 w-5 items-center justify-center rounded-t-sm bg-gradient-to-b from-primary to-[var(--leaf-deep)] text-accent">
-          <MaterialSymbol className="text-sm" name="spa" />
-        </div>
-        <div className="h-0 w-0 border-l-[10px] border-r-[10px] border-t-[8px] border-l-transparent border-r-transparent border-t-[var(--leaf-deep)]" />
-      </div>
-      <div className="absolute -top-1 right-8 z-20 rotate-3 bg-accent/90 px-3 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary shadow-sm">
-        🌿 An Yên • 24.10
-      </div>
-      <div className="rounded-[24px] border border-[#cde0d6] bg-[#e2ede8] p-2.5 shadow-sm sm:p-3">
-        <div className="relative overflow-hidden rounded-[18px] border border-[#ede7dc] bg-[#fdfbf7] shadow-sm">
-          <div className="pointer-events-none absolute bottom-0 left-2.5 top-0 z-10 flex w-4 flex-col justify-around py-8">
-            {Array.from({ length: 5 }, (_, index) => (
-              <span className="h-2.5 w-2.5 rounded-full border border-[#968774]/40 bg-[#b8a896] shadow-inner" key={index} />
-            ))}
-          </div>
-          <div className={`pl-8 pr-4 ${mobile ? "py-5" : "grid gap-0 py-6 md:grid-cols-2 md:pl-0 md:pr-0"}`}>
-            {entries.length ? (
-              entries.map((entry, index) => (
-                <NotebookPage entry={entry} index={index} key={entry.id} />
-              ))
-            ) : (
-              <EmptyNotebookPage />
-            )}
-          </div>
-          <div className="h-2 w-full bg-gradient-to-t from-[#ede6d8]/50 to-transparent" />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function NotebookPage({
-  entry,
-  index,
-}: Readonly<{ entry: JournalEntry; index: number }>) {
+export function ProfileJournalBook({ mobile = false, view }: Readonly<{ mobile?: boolean; view: ProfileView }>) {
   const t = useTranslations("profile");
-  const handwritten = entry.entryKind === "handwritten";
-  const gratitudeItems = handwritten ? [] : entry.metadata.gratitudes.length
-    ? entry.metadata.gratitudes.slice(0, 3)
-    : [entry.content];
-  const quote = handwritten ? "" : entry.metadata.quote || entry.metadata.reflection || entry.content;
-  const date = formatRelative(entry.createdAt, "vi");
+  const w = useTranslations("write");
+  const router = useRouter();
+  const pathname = usePathname();
+  const search = useSearchParams().toString();
+  const pageSize = mobile ? 1 : 2;
+  const selection = selectJournalEntry(view.entries, view.requestedEntry);
+  const [selectedId, setSelectedId] = useState(view.entries[view.initialEdge === "last" ? Math.max(0, view.entries.length - pageSize) : selection.index]?.id);
+  const index = Math.max(0, view.entries.findIndex((entry) => entry.id === selectedId));
+  const entries = view.entries.slice(index, index + pageSize);
 
   return (
-    <section className={`relative flex flex-col justify-between ${index === 0 ? "border-b border-[#e5dccf] bg-gradient-to-r md:border-b-0 md:border-r" : "bg-gradient-to-l"} from-[#fdfbf7] to-[#f6f1e7] p-5 sm:p-8`}>
-      {index === 1 ? (
-        <div className="absolute right-5 top-4 z-10 flex h-12 w-12 rotate-6 flex-col items-center justify-center rounded-full border-2 border-card/60 bg-gradient-to-br from-[#c84b4f] to-[#9b2a2e] p-2 text-primary-foreground shadow-lg">
-          <span className="w-full rounded-full border border-dashed border-card/70 py-1 text-center text-[8px] font-bold tracking-widest">TÂM AN</span>
+    <section className="min-w-0 space-y-4 [overflow-wrap:anywhere]">
+      {selection.unavailable ? <p role="status" className="text-sm text-muted-foreground">{w("book.entryUnavailable")}</p> : null}
+      {!entries.length ? (
+        <div className="rounded-2xl bg-card p-6 text-center">
+          <p>{w("book.empty")}</p>
+          <Link className="mt-3 inline-flex min-h-11 items-center rounded-xl bg-primary px-4 font-semibold text-primary-foreground" href="/write">{w("book.newPage")}</Link>
         </div>
-      ) : null}
-      <div>
-        <div className={`mb-4 flex items-start justify-between border-b border-[#ebdcca] pb-3 ${index === 1 ? "pr-12" : ""}`}>
-          <div>
-            <span className="block text-[10px] font-bold uppercase tracking-widest text-primary/80">
-              BEGRATEFUL DIARY • P.{24 + index}
-            </span>
-            <div className="mt-1 flex items-center gap-1.5">
-              <MaterialSymbol className="text-sm text-muted-foreground" name="calendar_today" />
-              <span className="text-xs font-semibold text-foreground">{date}</span>
-            </div>
-            <span className="mt-0.5 block text-[10px] text-muted-foreground">Mùa Thu Tĩnh Lặng 🍃</span>
-          </div>
-        </div>
-        <div className="mb-4 rounded-2xl border border-[#ede3d4] bg-[#f5f1e8] p-3 shadow-sm">
-          <div className="flex items-center justify-between gap-2">
-            <span className="inline-flex items-center rounded-full border border-[#eae3d5] bg-card px-2 py-0.5 text-[10px] font-bold text-primary shadow-sm">
-              {entry.metadata.mood || "Bình thản & Ấm áp"}
-            </span>
-            <span className="text-[10px] text-muted-foreground">{index === 0 ? "06:45 AM" : visibilityLabel(entry.visibility)}</span>
-          </div>
-          {quote ? <p className="mt-1.5 line-clamp-4 whitespace-pre-wrap text-xs italic leading-relaxed text-muted-foreground">“{quote}”</p> : null}
-        </div>
-        {entry.entryKind === "handwritten" ? <Link aria-label={t("actions.viewEntry")} className="mt-3 flex h-36 items-center justify-center overflow-hidden rounded-xl border border-[#ede5d8] bg-[#fffdf8] p-2 shadow-sm" href={`/entries/${entry.id}`}>{entry.handwritingData ? <HandwritingViewer className="h-32 w-auto max-w-full rounded-lg" document={entry.handwritingData} label={t("actions.viewEntry")} /> : entry.handwritingPreviewUrl ? <img alt="" className="h-32 w-full rounded-lg object-cover" src={entry.handwritingPreviewUrl} /> : <span className="flex h-32 items-center justify-center gap-2 text-xs font-semibold text-primary"><MaterialSymbol name="edit" />{t("actions.viewEntry")}</span>}</Link> : null}
-        {!handwritten ? <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-1.5 text-primary">
-            <MaterialSymbol className="text-lg" name="favorite" />
-            <span className="text-xs font-bold">3 Điều biết ơn hôm nay</span>
-          </div>
-          {gratitudeItems.map((item, gratitudeIndex) => (
-            <div className="flex items-start gap-2.5 rounded-xl border border-[#eee8dc] bg-card p-2.5 shadow-sm" key={`${entry.id}-${gratitudeIndex}`}>
-              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-bold text-primary shadow-sm">
-                {gratitudeIndex + 1}
-              </span>
-              <p className="line-clamp-3 flex-1 text-xs leading-snug text-foreground">{item}</p>
-            </div>
-          ))}
-        </div> : null}
-        {!handwritten && entry.metadata.imageUrl ? (
-          <div className="mt-3 overflow-hidden rounded-xl border border-[#ede5d8] bg-card p-2 shadow-sm">
-            <img alt="" className="h-32 w-full rounded-lg object-cover" src={entry.metadata.imageUrl} />
-          </div>
-        ) : !handwritten && index === 0 ? (
-          <div className="mt-3 overflow-hidden rounded-xl border border-[#ede5d8] bg-card p-2 shadow-sm">
-            <img alt="" className="h-32 w-full rounded-lg object-cover" src={profileAssets.coffeeDesktop} />
-          </div>
-        ) : null}
-        {!handwritten && index === 0 ? (
-          <div className="mt-3 flex items-center gap-2.5 rounded-xl border border-[#cbe1d5] bg-[#dbeee5] p-2.5 shadow-sm">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#c2dcd0] bg-card text-base shadow-sm">🌱</span>
-            <p className="text-[11px] leading-tight text-muted-foreground">
-              <strong className="font-semibold text-primary">Bé Mầm nhắn nhủ:</strong> Mỗi hơi thở chánh niệm là một hạt giống bình an đâm chồi.
-            </p>
-          </div>
-        ) : null}
-      </div>
-      <div className="mt-4 flex items-center justify-between gap-2 border-t border-[#ebdcca] pt-3 text-[11px] text-muted-foreground">
-        <span className="flex items-center gap-1">
-          <MaterialSymbol className="text-sm text-primary" name="pin_drop" />
-          {entry.metadata.space || "Góc nhỏ bình yên"}
-        </span>
-        <div className="flex items-center gap-1">
-          <span className="font-bold text-[#b5a796]">Trang {24 + index}</span>
-          <EntryActionsClient entry={entry} />
-        </div>
-      </div>
+      ) : (
+        <>
+          <JournalBookFrame label={w("creative.diaryTitle")} mobile={mobile} washi={entries[0].metadata.washi}>
+            {entries.map((entry, offset) => <NotebookPage entry={entry} index={offset} key={entry.id} page={view.pagination.start + index + offset + 1} />)}
+          </JournalBookFrame>
+          <nav aria-label={w("book.navigation")} className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-card p-3">
+            <button className="min-h-11 rounded-lg px-3 font-semibold text-primary disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" disabled={index === 0 && !view.pagination.previous} onClick={() => index === 0 && view.pagination.previous ? router.push(journalPageHref(pathname, search, view.pagination.previous, "last")) : setSelectedId(view.entries[Math.max(0, index - pageSize)].id)} type="button">{t("pagination.previous")}</button>
+            <span aria-live="polite" className="text-sm">{t("book.position", { first: view.pagination.start + index + 1, last: view.pagination.start + index + entries.length, total: view.pagination.total })}</span>
+            <button className="min-h-11 rounded-lg px-3 font-semibold text-primary disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" disabled={index + pageSize >= view.entries.length && !view.pagination.next} onClick={() => index + pageSize >= view.entries.length && view.pagination.next ? router.push(journalPageHref(pathname, search, view.pagination.next)) : setSelectedId(view.entries[index + pageSize].id)} type="button">{t("pagination.next")}</button>
+          </nav>
+        </>
+      )}
     </section>
   );
 }
 
-function EmptyNotebookPage() {
+function NotebookPage({ entry, index, page }: Readonly<{ entry: JournalEntry; index: number; page: number }>) {
+  const t = useTranslations("profile");
+  const w = useTranslations("write");
+  const locale = useLocale();
+  const number = new Intl.NumberFormat(locale);
+  const date = new Date(entry.createdAt);
+  const { metadata } = entry;
+  const handwritten = entry.entryKind === "handwritten";
+  const gratitudes = metadata.gratitudes;
+  const mood = metadata.mood && (["calm", "light", "hopeful", "reflective"].includes(metadata.mood)
+    ? w(`moods.${metadata.mood as "calm" | "light" | "hopeful" | "reflective"}`)
+    : metadata.mood);
+
   return (
-    <div className="p-8 text-center text-muted-foreground">
-      <MaterialSymbol className="mx-auto mb-2 block text-3xl text-primary" name="auto_stories" />
-      <p className="text-sm font-semibold">Chưa có nhật ký để mở sổ</p>
-    </div>
+    <JournalBookPage index={index}>
+      <div className="space-y-4">
+        <header className="border-b border-[#ebdcca] pb-3">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-primary">{w("creative.diaryTitle")} · {t("book.page", { number: page })}</p>
+          <div className="mt-1 flex items-center gap-2 text-sm font-semibold">
+            <MaterialSymbol className="text-base text-muted-foreground" name="calendar_today" />
+            <time dateTime={entry.createdAt}>{new Intl.DateTimeFormat(locale, { dateStyle: "long" }).format(date)}</time>
+          </div>
+        </header>
+        <div className="journal-mood">
+          <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+            {mood ? <span className="rounded-full bg-card px-2 py-1 font-bold text-primary shadow-sm">{mood}</span> : null}
+            <span className="text-muted-foreground">{new Intl.DateTimeFormat(locale, { timeStyle: "short" }).format(date)} · {t(`visibility.${entry.visibility}`)}</span>
+          </div>
+          {metadata.quote ? <blockquote className="mt-2 whitespace-pre-wrap text-sm italic leading-relaxed text-muted-foreground">{metadata.quote}</blockquote> : null}
+        </div>
+        {handwritten ? (
+          <Link aria-label={t("actions.viewEntry")} className="block rounded-xl bg-[#fffdf8] p-2 text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href={`/entries/${entry.id}`}>
+            {entry.handwritingPreviewUrl ? <img alt={t("actions.viewEntry")} className="h-auto w-full rounded-lg" src={entry.handwritingPreviewUrl} /> : <span className="inline-flex min-h-11 items-center">{t("actions.viewEntry")}</span>}
+          </Link>
+        ) : gratitudes.length ? (
+          <div>
+            <h2 className="mb-2 flex items-center gap-2 text-sm font-bold text-primary"><MaterialSymbol name="favorite" />{t("book.gratitudes", { count: gratitudes.length })}</h2>
+            <ol className="space-y-2">
+              {gratitudes.map((item, itemIndex) => (
+                <li className="journal-gratitude" key={itemIndex}>
+                  <span aria-hidden="true" className="journal-number">{number.format(itemIndex + 1)}</span>
+                  <p className="min-w-0 whitespace-pre-wrap text-sm leading-relaxed">{item}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        ) : <p className="whitespace-pre-wrap text-sm leading-relaxed">{entry.content}</p>}
+        {metadata.imageUrl ? <div className="journal-photo"><img alt={w("creative.image")} className="h-auto w-full rounded-lg" loading="lazy" src={metadata.imageUrl} /></div> : null}
+        {metadata.reflection || (metadata.sticker && getSticker(metadata.sticker)) ? (
+          <div className="journal-reflection">
+            {metadata.sticker && getSticker(metadata.sticker) ? <StickerIcon className="h-12 w-12 shrink-0" id={metadata.sticker} /> : null}
+            {metadata.reflection ? <p className="min-w-0 whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground">{metadata.reflection}</p> : null}
+          </div>
+        ) : null}
+      </div>
+      <footer className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-[#ebdcca] pt-3 text-xs text-muted-foreground">
+        {metadata.space ? <span className="flex min-w-0 items-start gap-1"><MaterialSymbol className="shrink-0 text-base text-primary" name="pin_drop" /><span className="min-w-0">{metadata.space}</span></span> : null}
+        <div className="ml-auto flex shrink-0 items-center gap-1"><span className="font-semibold">{t("book.page", { number: page })}</span><EntryActionsClient entry={entry} /></div>
+      </footer>
+    </JournalBookPage>
   );
 }

@@ -1,0 +1,37 @@
+/* One focus contour, including controls rendered in decoration dialogs. */
+.journal-controls :is(button, a[href], input, textarea):focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+  box-shadow: none;
+}
+
+.journal-controls .journal-field:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: none;
+}
+
+.journal-controls .journal-field[aria-invalid="true"]:focus {
+  border-color: var(--destructive);
+}
+
+.journal-controls .bg-primary:focus-visible {
+  outline-color: var(--primary-foreground);
+  outline-offset: -4px;
+}
+
+.journal-controls :is(.journal-search, input.sr-only):focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+@media (hover: hover) {
+  .journal-controls button:not(:disabled):not([aria-pressed="true"]):not(.bg-primary):not(.text-destructive):hover {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+
+  .journal-controls .bg-primary:not(:disabled):hover {
+    background-color: var(--primary-hover);
+  }
+}

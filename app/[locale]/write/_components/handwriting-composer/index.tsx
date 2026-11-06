@@ -126,7 +126,7 @@ export const HandwritingComposer = forwardRef<HandwritingComposerHandle, Props>(
   }
 
   function clear() {
-    if (document.strokes.length && window.confirm(t("handwriting.clearConfirm"))) commit({ ...document, strokes: [] });
+    if (document.strokes.length) commit({ ...document, strokes: [] });
   }
 
   return <section className="space-y-3" aria-label={t("handwriting.canvasLabel")}>

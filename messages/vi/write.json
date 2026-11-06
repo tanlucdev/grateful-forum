@@ -1,18 +1,94 @@
 {
-  "method": { "label": "Cách viết", "text": "Gõ chữ", "handwritten": "Viết tay" },
-  "mode": { "label": "Chế độ viết", "minimal": "Đơn giản", "creative": "Trang trí sổ" },
-  "gratitudes": { "title": "Điều bạn biết ơn hôm nay", "progress": "{count}/3", "field": "Điều biết ơn {number}", "placeholder": "Điều bạn biết ơn {number}", "remove": "Xóa điều biết ơn {number}", "add": "Thêm điều biết ơn" },
-  "details": { "title": "Không gian ghi chép" },
-  "moods": { "calm": "Bình thản", "light": "Nhẹ lòng", "hopeful": "Hy vọng", "reflective": "Lắng đọng" },
-  "space": { "label": "Không gian", "placeholder": "Ví dụ: góc bàn nhỏ", "recentLabel": "Không gian gần đây" },
-  "reflection": { "title": "Ghi thêm nếu bạn muốn", "placeholder": "Một dòng nữa, nếu bạn muốn giữ lại." },
-  "creative": { "washi": "Washi", "quote": "Quote", "sticker": "Sticker", "image": "Ảnh", "none": "Không dùng", "calm": "An yên", "warm": "Ấm áp" },
-  "picker": { "current": "Sticker hiện tại", "currentValue": "Sticker: {value}", "dialog": "Chọn sticker", "title": "Chọn sticker Bé Mầm", "count": "{count} sticker SVG", "close": "Đóng popup", "search": "Tìm theo id, nhãn, tag...", "empty": "Không tìm thấy sticker phù hợp.", "groups": { "all": "Tất cả", "sprout": "Bé Mầm", "moment": "Khoảnh khắc", "nature": "Thiên nhiên", "badge": "Dấu ấn" } },
-  "visibility": { "label": "Quyền riêng tư", "private": "Riêng tư", "public": "Công khai", "anonymous": "Ẩn danh" },
-  "save": { "action": "Lưu", "saving": "Đang lưu", "retry": "Thử lại" },
-  "errors": { "entryFailed": "entry_failed" },
-  "text": { "saved": "Đã lưu" },
+  "method": {
+    "label": "Cách viết",
+    "text": "Gõ chữ",
+    "handwritten": "Viết tay"
+  },
+  "gratitudes": {
+    "title": "Điều bạn biết ơn hôm nay",
+    "progress": "{count, number}/{total, number}",
+    "field": "Điều biết ơn {number}",
+    "placeholder": "Điều bạn biết ơn {number}",
+    "remove": "Xóa điều biết ơn {number}",
+    "add": "Thêm điều biết ơn"
+  },
+  "moods": {
+    "calm": "Bình thản",
+    "light": "Nhẹ lòng",
+    "hopeful": "Hy vọng",
+    "reflective": "Lắng đọng"
+  },
+  "space": {
+    "label": "Không gian",
+    "placeholder": "Ví dụ: góc bàn nhỏ",
+    "recentLabel": "Không gian gần đây"
+  },
+  "reflection": {
+    "title": "Ghi thêm nếu bạn muốn",
+    "placeholder": "Một dòng nữa, nếu bạn muốn giữ lại."
+  },
+  "creative": {
+    "washi": "Washi",
+    "quote": "Quote",
+    "sticker": "Sticker",
+    "image": "Ảnh",
+    "none": "Không dùng",
+    "calm": "An yên",
+    "warm": "Ấm áp",
+    "title": "Trang trí trang sổ",
+    "quotePlaceholder": "Một câu bạn muốn giữ lại…",
+    "chooseImage": "Chọn ảnh kỷ niệm",
+    "imageHint": "Ảnh sẽ được lưu cùng bài viết.",
+    "removeImage": "Bỏ ảnh đã chọn",
+    "diaryTitle": "Cuốn sổ biết ơn",
+    "memories": "Kỷ niệm hôm nay"
+  },
+  "picker": {
+    "title": "Chọn sticker Bé Mầm",
+    "count": "{count} sticker SVG",
+    "search": "Tìm theo id, nhãn, tag...",
+    "empty": "Không tìm thấy sticker phù hợp.",
+    "groups": {
+      "all": "Tất cả",
+      "sprout": "Bé Mầm",
+      "moment": "Khoảnh khắc",
+      "nature": "Thiên nhiên",
+      "badge": "Dấu ấn"
+    }
+  },
+  "visibility": {
+    "label": "Quyền riêng tư",
+    "private": "Riêng tư",
+    "public": "Công khai",
+    "anonymous": "Ẩn danh"
+  },
+  "save": {
+    "signInNewTab": "Đăng nhập trong tab mới",
+    "action": "Lưu",
+    "saving": "Đang lưu",
+    "retry": "Thử lại"
+  },
+  "errors": {
+    "dailyLimit": "Bạn đã đủ 3 bài hôm nay. Bản nháp vẫn ở đây; bạn có thể lưu vào ngày mai.",
+    "authRequired": "Phiên đăng nhập đã hết. Nội dung và ảnh vẫn được giữ ở đây. Đăng nhập trong tab mới, quay lại rồi bấm Lưu.",
+    "entryFailed": "Không lưu được bài. Nội dung vẫn còn; vui lòng thử lại."
+  },
+  "quota": {
+    "remaining": "Hôm nay còn {count, number}/{limit, number} lượt viết",
+    "exhausted": "Bạn đã dùng hết lượt viết hôm nay",
+    "loading": "Đang xem lượt viết hôm nay…",
+    "unavailable": "Chưa kiểm tra được lượt viết",
+    "resetHint": "Lượt viết được làm mới lúc {time} · giờ Việt Nam.",
+    "exhaustedHint": "Có lượt mới lúc {time} · giờ Việt Nam. Giữ trang này mở để không mất nội dung đang viết.",
+    "loadingHint": "Bạn có thể bắt đầu viết trong lúc chờ.",
+    "unavailableHint": "Nội dung đang viết vẫn ở đây. Bạn thử lại nhé.",
+    "retry": "Kiểm tra lại"
+  },
+  "text": {
+    "saved": "Đã lưu"
+  },
   "handwriting": {
+    "clearCancel": "Hủy",
     "history": "Lịch sử nét vẽ",
     "inkColor": "Màu mực",
     "chooseColor": "Chọn màu mực",
@@ -25,8 +101,68 @@
     "hex": "Mã HEX",
     "hexHelp": "Nhập # và 6 ký tự từ 0–9, A–F.",
     "pageNavigation": "Cuộn trang viết tay",
-    "title": "Viết tay", "canvasLabel": "Trang viết tay", "toolLabel": "Dụng cụ viết", "paperStyleLabel": "Kiểu giấy", "stampLabel": "Dấu góc",
-    "ruled": "Có dòng", "blank": "Trống", "dot": "Chấm", "grid": "Ô lưới", "stamp": { "none": "Không dùng", "sprout": "Mầm", "heart": "Tim", "star": "Sao", "sun": "Mặt trời", "moon": "Mặt trăng", "flower": "Hoa" },
-    "color": "Màu mực {color}", "pen": "Bút", "highlighter": "Bút đánh dấu", "eraser": "Tẩy vùng", "pan": "Di chuyển", "undo": "Hoàn tác", "redo": "Làm lại", "clear": "Xóa trang", "clearConfirm": "Xóa toàn bộ nét viết trên trang này?", "size": "Cỡ nét", "thin": "Mảnh", "medium": "Vừa", "bold": "Đậm", "opacity": "Độ mờ", "zoom": "Thu phóng", "decorate": "Trang trí trang", "help": "Nét viết được giữ nguyên khi chưa đồng bộ.", "saved": "Đã lưu trang viết tay.", "pending": "Đã giữ trên thiết bị, chưa đồng bộ.", "mediaUnavailable": "Đã giữ trên thiết bị, media_unavailable.", "previewUploadFailed": "Đã giữ trên thiết bị, media_upload_failed.", "previewUnavailable": "Đã giữ trên thiết bị, chưa tạo được ảnh xem trước.", "type": "Gõ chữ", "handwrite": "Viết tay", "back": "Về hồ sơ"
+    "title": "Viết tay",
+    "canvasLabel": "Trang viết tay",
+    "toolLabel": "Dụng cụ viết",
+    "paperStyleLabel": "Kiểu giấy",
+    "stampLabel": "Dấu góc",
+    "ruled": "Có dòng",
+    "blank": "Trống",
+    "dot": "Chấm",
+    "grid": "Ô lưới",
+    "stamp": {
+      "none": "Không dùng",
+      "sprout": "Mầm",
+      "heart": "Tim",
+      "star": "Sao",
+      "sun": "Mặt trời",
+      "moon": "Mặt trăng",
+      "flower": "Hoa"
+    },
+    "color": "Màu mực {color}",
+    "pen": "Bút",
+    "highlighter": "Bút đánh dấu",
+    "eraser": "Tẩy vùng",
+    "pan": "Di chuyển",
+    "undo": "Hoàn tác",
+    "redo": "Làm lại",
+    "clear": "Xóa trang",
+    "clearConfirm": "Xóa toàn bộ nét viết trên trang này?",
+    "size": "Cỡ nét",
+    "thin": "Mảnh",
+    "medium": "Vừa",
+    "bold": "Đậm",
+    "opacity": "Độ mờ",
+    "zoom": "Thu phóng",
+    "decorate": "Trang trí trang",
+    "help": "Nét viết được giữ nguyên khi chưa đồng bộ.",
+    "saved": "Đã lưu trang viết tay.",
+    "pending": "Đã giữ trên thiết bị, chưa đồng bộ.",
+    "mediaUnavailable": "Đã giữ trên thiết bị, media_unavailable.",
+    "previewUploadFailed": "Đã giữ trên thiết bị, media_upload_failed.",
+    "previewUnavailable": "Đã giữ trên thiết bị, chưa tạo được ảnh xem trước.",
+    "type": "Gõ chữ",
+    "handwrite": "Viết tay",
+    "back": "Về hồ sơ"
+  },
+  "book": {
+    "gratitudeRequiredShort": "Thêm ít nhất một điều biết ơn để lưu.",
+    "gratitudeRequired": "Viết ít nhất một điều biết ơn ở trang bên trái để lưu. Phần “Ghi thêm” là nội dung bổ sung.",
+    "handwritingRequired": "Viết một nét trên trang để lưu.",
+    "addMood": "Thêm cảm xúc",
+    "done": "Xong",
+    "removeQuote": "Bỏ trích dẫn",
+    "imageHint": "JPEG, PNG, WebP, GIF hoặc AVIF · tối đa 5 MB",
+    "invalidImage": "Chọn ảnh đúng định dạng, tối đa 5 MB. Ảnh trước vẫn được giữ nguyên.",
+    "finish": "Hoàn thành trang viết",
+    "savedAt": "Đã lưu lúc {time}",
+    "unsaved": "Chưa lưu",
+    "viewProfile": "Xem trong hồ sơ",
+    "newPage": "Viết trang mới",
+    "invalidContent": "Mỗi điều biết ơn tối đa 1.000 ký tự; tổng bài tối đa 10.000 ký tự. Rút gọn nội dung rồi thử lại.",
+    "entryUnavailable": "Bài này không còn khả dụng. Đang mở bài mới nhất hiện có.",
+    "empty": "Chưa có nhật ký để mở sổ.",
+    "navigation": "Các bài trong sổ",
+    "position": "{current, number} / {total, number}"
   }
 }

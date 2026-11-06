@@ -1,5 +1,5 @@
-import { MaterialSymbol } from "@/components/ui/material-symbol";
 import { Link } from "@/i18n/navigation";
+import { MaterialSymbol } from "@/components/ui/material-symbol";
 import { useTranslations } from "next-intl";
 import { ProfileEditModalButton } from "../profile-modals-client";
 import { ProfileJournalBook } from "../profile-journal-book";
@@ -13,10 +13,8 @@ export function MobileProfile({ view }: Readonly<{ view: ProfileView }>) {
         <div className="pointer-events-none absolute -right-12 top-10 h-48 w-48 rounded-full bg-accent/30 blur-3xl" />
         <ProfileBrief view={view} />
         <WeeklyRhythm view={view} />
-        <MobileTabs view={view} />
-        <MobileControls />
-        <ProfileJournalBook mobile view={view} />
-        <MobilePageControls total={view.entryCount} />
+        <div data-tour="profile-mobile-entries"><MobileTabs view={view} /><MobileControls /></div>
+        <ProfileJournalBook key={`${view.pagination.start}-${view.requestedEntry}-${view.initialEdge}`} mobile view={view} />
       </main>
     </div>
   );
@@ -26,7 +24,7 @@ function ProfileBrief({ view }: Readonly<{ view: ProfileView }>) {
   const t = useTranslations("profile");
   return (
     <section className="relative z-10 flex flex-col gap-3 rounded-xl bg-card/85 p-4 shadow-sm backdrop-blur-md">
-      <div className="flex items-center gap-3">
+      <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3">
         <div className="relative shrink-0">
           <div className="h-16 w-16 rounded-full bg-accent p-1 shadow-sm">
             <span className="block h-full w-full overflow-hidden rounded-full bg-card bg-cover bg-center" style={{ backgroundImage: `url(${view.avatarMobile})` }} />
@@ -36,8 +34,8 @@ function ProfileBrief({ view }: Readonly<{ view: ProfileView }>) {
           </span>
         </div>
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <h1 className="truncate text-xl font-semibold leading-7 text-foreground">{view.displayName}</h1>
+          <div className="flex flex-wrap items-center gap-2">
+            <h1 className="min-w-0 [overflow-wrap:anywhere] text-xl font-semibold leading-7 text-foreground">{view.displayName}</h1>
             <span className="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-accent/60 px-2 py-0.5 text-[10px] font-semibold text-primary">
               <MaterialSymbol className="text-xs" fill name="eco" />
               {t("rank")}
@@ -45,12 +43,7 @@ function ProfileBrief({ view }: Readonly<{ view: ProfileView }>) {
           </div>
           <p className="mt-0.5 line-clamp-1 text-xs leading-4 text-muted-foreground">{view.bio || t("defaultBio")}</p>
         </div>
-        <div className="flex items-center gap-1">
-          <Link aria-label={t("onboarding.replay")} className="inline-flex min-h-11 items-center rounded-xl bg-muted px-3 text-xs font-semibold text-primary" href="/write?tour=first-entry">
-            {t("onboarding.replay")}
-          </Link>
-          <ProfileEditModalButton variant="icon" view={view} />
-        </div>
+        <div data-tour="profile-mobile-edit"><ProfileEditModalButton variant="icon" view={view} /></div>
       </div>
       <div className="flex items-center justify-between gap-1.5 pt-1">
         <MobileStat value={view.entryCount} label={t("mobile.entries")} tone="primary" />
@@ -85,8 +78,8 @@ function WeeklyRhythm({ view }: Readonly<{ view: ProfileView }>) {
   const activeCount = view.weeklyRhythm.filter((day) => day.active).length;
 
   return (
-    <section className="relative z-10 mt-3 flex flex-col gap-2 rounded-xl bg-card p-3.5 shadow-sm">
-      <div className="flex items-center justify-between gap-2">
+    <section data-tour="profile-mobile-rhythm" className="relative z-10 mt-3 flex flex-col gap-2 rounded-xl bg-card p-3.5 shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-1.5">
           <MaterialSymbol className="text-lg text-primary" fill name="potted_plant" />
           <span className="text-xs font-semibold text-foreground">{t("rhythm.title")}</span>
@@ -111,17 +104,13 @@ function MobileTabs({ view }: Readonly<{ view: ProfileView }>) {
   const t = useTranslations("profile");
   return (
     <div className="relative z-10 -mx-1 mt-4 flex gap-2 overflow-x-auto py-1">
-      <button className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-muted px-3.5 py-1.5 text-xs font-medium text-muted-foreground shadow-sm" type="button">
-        {t("tabs.all", { count: view.entryCount })}
-      </button>
-      <button className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-gradient-to-r from-primary to-[var(--leaf-deep)] px-4 py-1.5 text-xs font-semibold text-primary-foreground shadow-sm" type="button">
+      <Link className="inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full bg-muted px-3.5 py-1.5 text-xs font-medium text-muted-foreground shadow-sm" href="/profile?tab=all">{t("tabs.all", { count: view.entryCount })}</Link>
+      <button className="inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full bg-gradient-to-r from-primary to-[var(--leaf-deep)] px-4 py-1.5 text-xs font-semibold text-primary-foreground shadow-sm" type="button">
         <MaterialSymbol className="text-base" name="auto_stories" />
         {t("tabs.journal")}
       </button>
-      <button className="inline-flex shrink-0 rounded-full bg-muted px-3.5 py-1.5 text-xs font-medium text-muted-foreground shadow-sm" type="button">
-        {t("tabs.public", { count: view.publicCount })}
-      </button>
-      <button className="inline-flex shrink-0 rounded-full bg-muted px-3.5 py-1.5 text-xs font-medium text-muted-foreground shadow-sm" type="button">
+      <Link className="inline-flex min-h-11 shrink-0 items-center rounded-full bg-muted px-3.5 py-1.5 text-xs font-medium text-muted-foreground shadow-sm" href="/profile?tab=public">{t("tabs.public", { count: view.publicCount })}</Link>
+      <button className="inline-flex min-h-11 shrink-0 items-center rounded-full bg-muted px-3.5 py-1.5 text-xs font-medium text-muted-foreground shadow-sm" type="button">
         {t("tabs.moments", { count: 4 })}
       </button>
     </div>
@@ -131,15 +120,15 @@ function MobileTabs({ view }: Readonly<{ view: ProfileView }>) {
 function MobileControls() {
   const t = useTranslations("profile");
   return (
-    <div className="relative z-10 mt-2 flex items-center justify-between gap-2">
-      <div className="flex items-center rounded-xl bg-muted p-1 shadow-sm">
-        <button aria-label={t("a11y.grid")} className="flex h-7 w-7 items-center justify-center rounded-lg text-muted-foreground" title={t("a11y.grid")} type="button">
+    <div className="relative z-10 mt-2 flex flex-wrap items-center justify-between gap-2">
+      <div className="flex shrink-0 items-center rounded-xl bg-muted p-1 shadow-sm">
+        <button aria-label={t("a11y.grid")} className="flex h-11 w-11 items-center justify-center rounded-lg text-muted-foreground" title={t("a11y.grid")} type="button">
           <MaterialSymbol className="text-lg" name="grid_view" />
         </button>
-        <button aria-label={t("a11y.list")} className="flex h-7 w-7 items-center justify-center rounded-lg text-muted-foreground" title={t("a11y.list")} type="button">
+        <button aria-label={t("a11y.list")} className="flex h-11 w-11 items-center justify-center rounded-lg text-muted-foreground" title={t("a11y.list")} type="button">
           <MaterialSymbol className="text-lg" name="stream" />
         </button>
-        <button aria-label={t("a11y.journal")} className="flex h-7 w-7 items-center justify-center rounded-lg bg-card text-primary shadow-sm" title={t("a11y.journal")} type="button">
+        <button aria-label={t("a11y.journal")} className="flex h-11 w-11 items-center justify-center rounded-lg bg-card text-primary shadow-sm" title={t("a11y.journal")} type="button">
           <MaterialSymbol className="text-lg" name="auto_stories" />
         </button>
       </div>
@@ -149,34 +138,6 @@ function MobileControls() {
             {tag}
           </span>
         ))}
-      </div>
-    </div>
-  );
-}
-
-function MobilePageControls({ total }: Readonly<{ total: number }>) {
-  const t = useTranslations("profile");
-  return (
-    <div className="relative z-10 mt-4 flex flex-col gap-2.5 rounded-xl bg-card p-3 shadow-sm">
-      <div className="flex items-center justify-between">
-        <button className="inline-flex items-center gap-1 rounded-lg bg-muted px-3 py-1.5 text-xs font-medium text-muted-foreground" type="button">
-          <MaterialSymbol className="text-sm" name="arrow_back" />
-          {t("pagination.previous")}
-        </button>
-        <button className="inline-flex items-center gap-1 rounded-lg bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground" type="button">
-          {t("pagination.next")}
-          <MaterialSymbol className="text-sm" name="arrow_forward" />
-        </button>
-      </div>
-      <div className="flex flex-col items-center gap-1 text-center">
-        <span className="text-xs font-bold text-foreground">{t("pagination.page", { total: Math.max(total, 1) })}</span>
-        <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
-          <span>Tháng 9</span>
-          <div className="h-1.5 w-24 overflow-hidden rounded-full bg-input">
-            <div className="h-full w-[65%] bg-primary" />
-          </div>
-          <span className="font-bold text-primary">Tháng 10</span>
-        </div>
       </div>
     </div>
   );

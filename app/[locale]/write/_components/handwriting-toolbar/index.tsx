@@ -1,9 +1,10 @@
 "use client";
 
-import { useId } from "react";
+import { useId, type ComponentProps } from "react";
 import { useFormatter, useTranslations } from "next-intl";
 import { Eraser, Hand, Highlighter, Pencil, Redo2, Trash2, Undo2, type LucideIcon } from "lucide-react";
-import { Slider } from "radix-ui";
+import { AlertDialog, Slider } from "radix-ui";
+import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { InkTool } from "@/lib/entries/types";
 import { InkColorPicker } from "../ink-color-picker";
@@ -35,7 +36,20 @@ export function HandwritingToolbar(props: Props) {
       <div className="flex gap-1" role="group" aria-label={t("history")}>
         <Tool disabled={!props.canUndo} icon={Undo2} label={t("undo")} onClick={props.onUndo} />
         <Tool disabled={!props.canRedo} icon={Redo2} label={t("redo")} onClick={props.onRedo} />
-        <Tool danger disabled={!props.canClear} icon={Trash2} label={t("clear")} onClick={props.onClear} />
+        <AlertDialog.Root>
+          <AlertDialog.Trigger asChild><Tool danger disabled={!props.canClear} icon={Trash2} label={t("clear")} /></AlertDialog.Trigger>
+          <AlertDialog.Portal>
+            <AlertDialog.Overlay className="fixed inset-0 z-50 bg-black/10 supports-backdrop-filter:backdrop-blur-xs" />
+            <AlertDialog.Content className="journal-controls fixed top-1/2 left-1/2 z-50 grid w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-popover p-4 text-popover-foreground shadow-lg outline-none">
+              <AlertDialog.Title className="text-base font-semibold">{t("clear")}</AlertDialog.Title>
+              <AlertDialog.Description className="text-sm text-muted-foreground">{t("clearConfirm")}</AlertDialog.Description>
+              <div className="flex justify-end gap-2">
+                <AlertDialog.Cancel asChild><Button className="min-h-11" variant="outline">{t("clearCancel")}</Button></AlertDialog.Cancel>
+                <AlertDialog.Action asChild><Button className="min-h-11" disabled={!props.canClear} onClick={props.onClear} variant="destructive">{t("clear")}</Button></AlertDialog.Action>
+              </div>
+            </AlertDialog.Content>
+          </AlertDialog.Portal>
+        </AlertDialog.Root>
       </div>
     </div>
     <div className="flex flex-wrap items-center gap-3 border-t border-border pt-3">
@@ -56,8 +70,8 @@ export function HandwritingToolbar(props: Props) {
   </div>;
 }
 
-function Tool({ active, danger, disabled, icon: Icon, label, onClick, showLabel }: Readonly<{ active?: boolean; danger?: boolean; disabled?: boolean; icon: LucideIcon; label: string; onClick: () => void; showLabel?: boolean }>) {
-  return <button aria-label={label} aria-pressed={active} className={`flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-xl px-3 text-xs font-semibold transition-colors outline-offset-2 focus-visible:outline-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-35 ${active ? "bg-primary text-primary-foreground" : danger ? "text-destructive enabled:hover:bg-destructive/10" : "text-foreground enabled:hover:bg-card"}`} disabled={disabled} onClick={onClick} title={label} type="button"><Icon aria-hidden="true" className="size-[18px] shrink-0" />{showLabel ? label : null}</button>;
+function Tool({ active, danger, disabled, icon: Icon, label, showLabel, ...buttonProps }: Readonly<{ active?: boolean; danger?: boolean; icon: LucideIcon; label: string; showLabel?: boolean } & Omit<ComponentProps<"button">, "children" | "className">>) {
+  return <button aria-label={label} aria-pressed={active} className={`flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-xl px-3 ${showLabel ? "text-[11px] font-medium" : "text-xs font-semibold"} transition-colors outline-offset-2 focus-visible:outline-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-35 ${active ? "bg-primary text-primary-foreground" : danger ? "text-destructive enabled:hover:bg-destructive/10" : "text-foreground enabled:hover:bg-card"}`} disabled={disabled} title={label} type="button" {...buttonProps}><Icon aria-hidden="true" className={`${showLabel ? "size-4" : "size-[18px]"} shrink-0`} />{showLabel ? label : null}</button>;
 }
 
 export function InkSlider({ disabled, label, max, min = 0, onChange, step = 1, value, valueText, className = "" }: Readonly<{ disabled?: boolean; label: string; max: number; min?: number; onChange: (value: number) => void; step?: number; value: number; valueText: string; className?: string }>) {
@@ -66,7 +80,7 @@ export function InkSlider({ disabled, label, max, min = 0, onChange, step = 1, v
     <div className="flex items-center justify-between gap-2 text-xs"><span className="font-semibold text-muted-foreground" id={id}>{label}</span><output className="tabular-nums text-muted-foreground">{valueText}</output></div>
     <Slider.Root aria-labelledby={id} className={`relative flex h-8 w-full touch-none items-center select-none data-disabled:opacity-35 ${className}`} disabled={disabled} max={max} min={min} onValueChange={([next]) => onChange(next)} step={step} value={[value]}>
       <Slider.Track className="relative h-1.5 grow overflow-hidden rounded-full bg-primary/15"><Slider.Range className="absolute h-full rounded-full bg-primary" /></Slider.Track>
-      <Slider.Thumb aria-label={label} aria-valuetext={valueText} className="block size-4 rounded-full border-2 border-primary bg-card shadow-sm outline-offset-4 focus-visible:outline-2 focus-visible:outline-ring before:absolute before:-inset-3 before:content-['']" />
+      <Slider.Thumb aria-label={label} aria-valuetext={valueText} className="block size-4 rounded-full border-2 border-primary bg-card shadow-sm focus-visible:bg-primary focus-visible:outline-none before:absolute before:-inset-3.5 before:content-['']" />
     </Slider.Root>
   </div>;
 }

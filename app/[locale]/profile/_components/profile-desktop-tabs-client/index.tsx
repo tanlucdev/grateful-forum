@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "@/i18n/navigation";
+import { ProfilePagination } from "../profile-pagination";
+import { useTranslations } from "next-intl";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
 import { ProfileJournalBook } from "../profile-journal-book";
 import { MomentsTab } from "../profile-moments-tab";
@@ -16,22 +18,37 @@ export function ProfileDesktopTabs({
   view,
 }: Readonly<{ initialTab: Tab; view: ProfileView }>) {
   const t = useTranslations("profile");
-  const [tab, setTab] = useState<Tab>(initialTab);
-  const [layout, setLayout] = useState<LayoutMode>("journal");
+  const router = useRouter();
+  const pathname = usePathname();
+  const search = useSearchParams();
+  const tab = initialTab;
+  function setTab(value: Tab, layout?: LayoutMode) {
+    const next = new URLSearchParams(search.toString());
+    next.set("tab", value); if (layout) next.set("layout", layout); next.delete("cursor"); next.delete("entry"); next.delete("edge");
+    router.push(`${pathname}?${next}`);
+  }
+  const requestedLayout = search.get("layout");
+  const layout: LayoutMode = requestedLayout === "grid" || requestedLayout === "list" ? requestedLayout : "journal";
+  function setLayout(value: LayoutMode) {
+    const next = new URLSearchParams(search.toString()); next.set("layout", value);
+    router.push(`${pathname}?${next}`);
+  }
   const entries = tab === "public" ? view.entries.filter((entry) => entry.visibility === "public" || entry.visibility === "anonymous") : view.entries;
 
   return (
     <section className="flex flex-col space-y-4">
-      <div className="flex flex-col items-stretch justify-between gap-4 rounded-2xl border border-primary/10 bg-muted/80 p-2 shadow-sm lg:flex-row lg:items-center">
-        <div className="flex flex-wrap items-center gap-1.5 overflow-x-auto">
+      <div data-tour="profile-desktop-entries" className="rounded-2xl border border-primary/10 bg-muted/80 p-2 xl:flex xl:items-center xl:gap-3">
+        <div className="grid min-w-0 grid-cols-3 gap-1.5 xl:flex xl:flex-1 xl:flex-wrap">
           <DesktopTab active={tab === "all"} count={view.entryCount} label={t("desktopTabs.all")} onClick={() => setTab("all")} />
           <DesktopTab active={tab === "public"} count={view.publicCount} label={t("desktopTabs.public")} onClick={() => setTab("public")} />
           <DesktopTab active={tab === "moments"} count={0} label={t("desktopTabs.moments")} onClick={() => setTab("moments")} />
+        </div>
+        <div className="mt-2 flex flex-wrap items-center justify-between gap-3 border-t border-primary/10 pt-2 xl:mt-0 xl:shrink-0 xl:border-0 xl:pt-0">
           <button
-            className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold shadow-sm transition-all ${layout === "journal" && tab !== "moments" ? "bg-primary text-primary-foreground" : "bg-card/70 text-muted-foreground hover:text-primary"}`}
+            aria-pressed={layout === "journal" && tab !== "moments"}
+            className={`inline-flex min-h-11 items-center gap-1.5 whitespace-nowrap rounded-xl px-3.5 py-2 text-xs font-bold shadow-sm transition-all ${layout === "journal" && tab !== "moments" ? "bg-primary text-primary-foreground" : "bg-card/70 text-muted-foreground hover:text-primary"}`}
             onClick={() => {
-              setTab("all");
-              setLayout("journal");
+              setTab("all", "journal");
             }}
             type="button"
           >
@@ -39,22 +56,21 @@ export function ProfileDesktopTabs({
             <span>{t("tabs.journal")}</span>
             <span className="rounded-md bg-card/20 px-1.5 py-0.5 text-[9px] uppercase tracking-wider">{t("desktopTabs.new")}</span>
           </button>
+          {tab === "moments" ? null : (
+            <ListControls layout={layout} onChange={setLayout} />
+          )}
         </div>
-        {tab === "moments" ? null : (
-          <ListControls layout={layout} onChange={setLayout} />
-        )}
       </div>
-      {tab === "moments" || layout !== "journal" ? null : <FilterBar />}
       {tab === "moments" ? (
         <MomentsTab layout={layout === "journal" ? "list" : layout} />
       ) : layout === "journal" ? (
-        <ProfileJournalBook view={{ ...view, entries }} />
+        <ProfileJournalBook key={`${view.pagination.start}-${view.requestedEntry}-${view.initialEdge}-${tab}`} view={{ ...view, entries }} />
       ) : tab === "public" ? (
         <PublicTab entries={entries} layout={layout} />
       ) : (
         <AllTab entries={entries} layout={layout} />
       )}
-      {tab === "moments" || layout !== "journal" ? null : <PageControls total={Math.max(view.entryCount, entries.length)} />}
+      {layout !== "journal" && tab !== "moments" ? <ProfilePagination pagination={view.pagination} /> : null}
     </section>
   );
 }
@@ -67,12 +83,13 @@ function DesktopTab({
 }: Readonly<{ active?: boolean; count: number; label: string; onClick?: () => void }>) {
   return (
     <button
-      className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-xl px-3.5 py-2 text-xs font-semibold transition-colors ${active ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:bg-card/70 hover:text-foreground"}`}
+      aria-pressed={active}
+      className={`inline-flex min-h-11 min-w-0 items-center justify-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold transition-colors ${active ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:bg-card/70 hover:text-foreground"}`}
       onClick={onClick}
       type="button"
     >
-      <span>{label}</span>
-      <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold leading-none ${active ? "bg-primary/10 text-primary" : "bg-secondary text-muted-foreground"}`}>
+      <span className="min-w-0 text-center">{label}</span>
+      <span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-bold leading-none ${active ? "bg-primary/10 text-primary" : "bg-secondary text-muted-foreground"}`}>
         {count}
       </span>
     </button>
@@ -86,92 +103,35 @@ function ListControls({
   layout: LayoutMode;
   onChange: (layout: LayoutMode) => void;
 }>) {
+  const t = useTranslations("profile");
   return (
-    <div className="inline-flex self-end rounded-xl border border-primary/10 bg-card/95 p-1 shadow-sm lg:self-auto">
+    <div className="ml-auto inline-flex shrink-0 rounded-xl border border-primary/10 bg-card/95 p-1 shadow-sm">
       <button
         aria-pressed={layout === "grid"}
-        className={`inline-flex h-8 w-8 items-center justify-center rounded-lg transition-all ${layout === "grid" ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+        className={`inline-flex h-11 w-11 items-center justify-center rounded-lg transition-all ${layout === "grid" ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
         onClick={() => onChange("grid")}
-        title="Dạng lưới"
+        title={t("a11y.grid")}
         type="button"
       >
         <MaterialSymbol className="text-lg" name="grid_view" strokeWidth={1.6} />
       </button>
       <button
         aria-pressed={layout === "list"}
-        className={`inline-flex h-8 w-8 items-center justify-center rounded-lg transition-all ${layout === "list" ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+        className={`inline-flex h-11 w-11 items-center justify-center rounded-lg transition-all ${layout === "list" ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
         onClick={() => onChange("list")}
-        title="Dạng danh sách"
+        title={t("a11y.list")}
         type="button"
       >
         <MaterialSymbol className="text-lg" name="stream" strokeWidth={1.6} />
       </button>
       <button
         aria-pressed={layout === "journal"}
-        className={`inline-flex h-8 w-8 items-center justify-center rounded-lg transition-all ${layout === "journal" ? "bg-accent text-primary shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+        className={`inline-flex h-11 w-11 items-center justify-center rounded-lg transition-all ${layout === "journal" ? "bg-accent text-primary shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
         onClick={() => onChange("journal")}
-        title="Cuốn sổ tay"
+        title={t("a11y.journal")}
         type="button"
       >
         <MaterialSymbol className="text-lg" name="auto_stories" strokeWidth={1.6} />
-      </button>
-    </div>
-  );
-}
-
-function FilterBar() {
-  const t = useTranslations("profile");
-  return (
-    <div className="flex flex-wrap items-center justify-between gap-3 px-2 text-xs text-muted-foreground">
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="flex items-center gap-1 font-bold text-foreground">
-          <MaterialSymbol className="text-sm text-primary" name="tune" />
-          {t("filters.label")}
-        </span>
-        {[t("filters.all"), t("filters.family"), t("filters.work"), t("filters.nature")].map((chip, index) => (
-          <button
-            className={`rounded-lg border px-2.5 py-1 font-medium shadow-sm ${index === 0 ? "border-primary/20 bg-card text-primary" : "border-primary/10 bg-muted text-muted-foreground hover:border-primary/30"}`}
-            key={chip}
-            type="button"
-          >
-            {chip}
-          </button>
-        ))}
-      </div>
-      <span className="flex items-center gap-1.5 font-semibold text-primary">
-        <MaterialSymbol className="text-sm" name="auto_stories" />
-        {t("desktopTabs.readingMode")}
-      </span>
-    </div>
-  );
-}
-
-function PageControls({ total }: Readonly<{ total: number }>) {
-  const t = useTranslations("profile");
-  const locale = useLocale();
-  const month = (index: number) => new Intl.DateTimeFormat(locale, { month: "long", timeZone: "UTC" }).format(new Date(Date.UTC(2024, index, 1)));
-  return (
-    <div className="flex flex-col items-center justify-between gap-4 rounded-2xl border border-primary/10 bg-muted/70 p-4 shadow-sm sm:flex-row">
-      <button className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-card px-4 py-2 text-xs font-bold text-foreground shadow-sm transition-colors hover:border-primary/30 hover:text-primary" type="button">
-        <MaterialSymbol className="text-sm" name="arrow_back" />
-        <span>{t("pagination.previous")}</span>
-      </button>
-      <div className="flex flex-col items-center gap-1 text-center">
-        <span className="flex items-center gap-1.5 text-xs font-bold text-foreground">
-          <MaterialSymbol className="text-sm text-primary" name="auto_stories" />
-          {t("pagination.spread", { total: Math.max(total, 1) })}
-        </span>
-        <div className="flex items-center gap-2 text-[10px] font-medium text-muted-foreground">
-          <span>{month(8)}</span>
-          <div className="h-1.5 w-24 overflow-hidden rounded-full bg-input">
-            <div className="h-full w-[65%] bg-primary" />
-          </div>
-          <span className="font-bold text-primary">{month(9)}</span>
-        </div>
-      </div>
-      <button className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-bold text-primary-foreground shadow-sm transition-colors hover:bg-[var(--leaf-deep)]" type="button">
-        <span>{t("pagination.next")}</span>
-        <MaterialSymbol className="text-sm" name="arrow_forward" />
       </button>
     </div>
   );

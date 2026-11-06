@@ -13,6 +13,9 @@ export const profileAssets = {
 };
 
 export type ProfileView = {
+  requestedEntry?: string;
+  pagination: ProfileDashboard["pagination"];
+  initialEdge?: "first" | "last";
   avatarDesktop: string;
   avatarMobile: string;
   bio: string;
@@ -45,12 +48,13 @@ export function toProfileView(dashboard: ProfileDashboard): ProfileView {
     displayName,
     email: dashboard.profile.email || "",
     entries,
+    pagination: dashboard.pagination,
     entryCount: dashboard.entryCount,
-    publicCount: entries.filter((entry) => entry.visibility === "public" || entry.visibility === "anonymous").length,
+    publicCount: dashboard.statistics.publicTotal,
     shareUrl: `begrateful.app/share/${shareSlug}`,
     streak: dashboard.streak,
-    weeklyRhythm: makeWeeklyRhythm(entries, dashboard.timezone, now),
-    monthlyRhythm: makeMonthlyRhythm(entries, dashboard.timezone, now),
+    weeklyRhythm: makeWeeklyRhythm([], dashboard.timezone, now).map((day) => ({ ...day, count: dashboard.statistics.weekBuckets[day.date] ?? 0, active: (dashboard.statistics.weekBuckets[day.date] ?? 0) > 0 })),
+    monthlyRhythm: { ...makeMonthlyRhythm([], dashboard.timezone, now), activeDays: dashboard.statistics.currentMonthActiveDays, completionRate: dashboard.statistics.currentMonthActiveDays / makeMonthlyRhythm([], dashboard.timezone, now).totalDays },
     username,
   };
 }
