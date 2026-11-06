@@ -1,4 +1,3 @@
-import { recordRenderTiming, startRenderTiming } from "@/lib/supabase/timing";
 import { Suspense } from "react";
 import { DesktopAside } from "./_components/feed-shell";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -10,7 +9,6 @@ import { PublicFeedClient } from "./_components/public-feed-client";
 import { feedPageQuerySchema } from "@/lib/feed/validation";
 
 export default async function FeedPage({ params, searchParams }: Readonly<{ params: Promise<{ locale: string }>; searchParams: Promise<{ visibility?: string }> }>) {
-  const started = startRenderTiming();
   const { locale } = await params;
   const user = await getCurrentUser();
   if (!user) redirect(`/${locale}/feed/preview`);
@@ -18,8 +16,6 @@ export default async function FeedPage({ params, searchParams }: Readonly<{ para
   const parsed = feedPageQuerySchema.safeParse({ cursor: null, visibility: (await searchParams).visibility });
   const visibility = parsed.success ? parsed.data.visibility : "all";
   const initialPage = await loadFeedPage(null, visibility);
-
-  recordRenderTiming("feed", started, initialPage);
 
   return <PublicFeedClient key={`${user.id}-${visibility}`} initialPage={initialPage} initialVisibility={visibility} aside={<Suspense fallback={<Skeleton className="hidden h-60 rounded-2xl lg:block lg:col-span-4" />}><FeedAside /></Suspense>} />;
 }
