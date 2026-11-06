@@ -60,20 +60,20 @@ export async function loadFeedPage(cursor?: string | null, visibility: FeedVisib
 
   const engagementClient = entryIds.length ? tryCreateSupabaseAdminClient() : null;
   const empty = Promise.resolve({ data: [], error: null });
-  const [profiles, counts, viewer, bookmarks] = await Promise.all([
+  const [profiles, reactions, viewer, bookmarks] = await Promise.all([
     userIds.length ? supabase.from("profiles").select("id, display_name, username, avatar_url").in("id", userIds) : empty,
-    engagementClient ? engagementClient.rpc("feed_reaction_counts", { entry_ids: entryIds }) : empty,
+    engagementClient ? engagementClient.from("entry_reactions").select("entry_id, reaction_type").in("entry_id", entryIds) : empty,
     engagementClient && (userId || guestId) ? engagementClient.from("entry_reactions").select("entry_id, reaction_type").in("entry_id", entryIds).eq(userId ? "user_id" : "guest_id", userId ?? guestId) : empty,
     engagementClient && (userId || guestId) ? engagementClient.from("entry_bookmarks").select("entry_id").in("entry_id", entryIds).eq(userId ? "user_id" : "guest_id", userId ?? guestId) : empty,
   ]);
-  for (const result of [profiles, counts, viewer, bookmarks]) {
+  for (const result of [profiles, reactions, viewer, bookmarks]) {
     if (result.error) throw new Error(result.error.message);
   }
   profiles.data?.forEach((profile) => profilesById.set(profile.id, profile));
-  (counts.data as { entry_id: string; reaction_type: FeedReactionType; count: number }[] | null)?.forEach((row) => {
-    const reactions = reactionsByEntry.get(row.entry_id) ?? emptyFeedReactionCounts();
-    reactions[row.reaction_type] = Number(row.count);
-    reactionsByEntry.set(row.entry_id, reactions);
+  reactions.data?.forEach((row) => {
+    const counts = reactionsByEntry.get(row.entry_id) ?? emptyFeedReactionCounts();
+    counts[row.reaction_type as FeedReactionType] += 1;
+    reactionsByEntry.set(row.entry_id, counts);
   });
   viewer.data?.forEach((reaction) => viewerReactionByEntry.set(reaction.entry_id, reaction.reaction_type as FeedReactionType));
   bookmarks.data?.forEach((bookmark) => bookmarkedEntryIds.add(bookmark.entry_id));

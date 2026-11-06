@@ -1,15 +1,12 @@
+-- Run with psql -v ON_ERROR_STOP=1. Fixtures and writes are rolled back.
 begin;
 
--- Exercise actual RLS roles; every insert and legacy migration is rolled back.
-select set_config('test.member_id', id::text, true)
-from auth.users u where not is_anonymous
-and not exists (select 1 from public.admin_roles a where a.user_id = u.id) limit 1;
-
-do $$ begin
-  if nullif(current_setting('test.member_id', true), '') is null then
-    raise exception 'A non-anonymous fixture account is required';
-  end if;
-end $$;
+select set_config('test.member_id', gen_random_uuid()::text, true);
+insert into auth.users (id, email, is_anonymous, raw_user_meta_data)
+values (current_setting('test.member_id')::uuid,
+        'member-rls-' || current_setting('test.member_id') || '@example.invalid',
+        false, '{}'::jsonb);
+>>>>>>> origin/main
 
 set local role anon;
 select set_config('request.jwt.claims', '{"role":"anon"}', true);
@@ -45,7 +42,6 @@ do $$ begin
 end $$;
 
 reset role;
--- Legacy transfer still uses the existing admin path; no INSERT policy is involved.
 do $$ declare legacy_id uuid; target_id uuid := current_setting('test.member_id')::uuid;
 begin
   insert into public.entries (guest_id, content) values (gen_random_uuid(), 'Legacy transfer check') returning id into legacy_id;
