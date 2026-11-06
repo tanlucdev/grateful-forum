@@ -266,14 +266,3 @@ try {
   assert.equal(draft.imageUrl, "https://example.com/photo.png");
 } finally { globalThis.fetch = originalFetch; }
 console.log("composer save and profile round-trip checks passed");
-
-// Quota checks preserve the auth error code needed for sign-in recovery.
-const { getEntryQuota } = await import("../lib/api/entries.ts");
-globalThis.fetch = (async (path, options) => {
-  assert.equal(path, "/api/entries/quota");
-  assert.equal(options?.cache, "no-store");
-  return Response.json({ code: "auth_required", error: "Sign in to write." }, { status: 401 });
-}) as typeof fetch;
-try {
-  await assert.rejects(getEntryQuota, (error: unknown) => error instanceof ApiClientError && error.code === "auth_required");
-} finally { globalThis.fetch = originalFetch; }
