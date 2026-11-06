@@ -6,3 +6,15 @@ export async function queryCalendarData(supabase: SupabaseClient, userId: string
   if (selected.error) throw new Error(selected.error.message);
   return { selected: selected.data ?? [] };
 }
+
+export async function queryCalendarTimezone(supabase: SupabaseClient, userId: string) {
+  const profile = await supabase.from("profiles").select("timezone").eq("id", userId).maybeSingle();
+  if (profile.error) throw new Error(profile.error.message);
+  const timezone = profile.data?.timezone ?? "Asia/Ho_Chi_Minh";
+  try {
+    new Intl.DateTimeFormat("en-US", { timeZone: timezone });
+    return timezone;
+  } catch {
+    return "Asia/Ho_Chi_Minh";
+  }
+}
