@@ -59,7 +59,7 @@ export function RewardCollectionClient({ badges, timezone }: { badges: RewardBad
         </div>
       </div>
       <p aria-live="polite" className="sr-only">{t("results", { count: format.number(visible.length) })}</p>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 xl:grid-cols-4">
         {visible.map((badge) => (
           <Dialog key={badge.id}>
             <DialogTrigger asChild>
@@ -67,7 +67,7 @@ export function RewardCollectionClient({ badges, timezone }: { badges: RewardBad
                 className={`group flex min-w-0 flex-col overflow-hidden rounded-2xl bg-card text-center shadow-card transition-shadow hover:shadow-md ${badge.status === "growing" ? "ring-1 ring-amber-200" : ""}`}
                 type="button"
               >
-                <div className="flex w-full flex-1 flex-col items-center px-4 pb-4 pt-3">
+                <div className="flex w-full flex-1 flex-col items-center px-3 pb-4 pt-3 sm:px-4">
                   <span className={`mb-2 inline-flex items-center gap-1 self-end rounded-full px-2.5 py-1 text-xs font-bold ${statusColors[badge.status]}`}>
                     <MaterialSymbol className="text-sm" name={badge.status === "locked" ? "lock" : badge.status === "earned" ? "check_circle" : "schedule"} />
                     {t(`status.${badge.status}`)}
@@ -77,7 +77,7 @@ export function RewardCollectionClient({ badges, timezone }: { badges: RewardBad
                   <p className="mt-1 text-xs leading-5 text-muted-foreground">{t(`badges.${badge.id}.subtitle`)}</p>
                   <p className="mt-2 text-xs leading-4 text-muted-foreground">{t(`badges.${badge.id}.description`)}</p>
                 </div>
-                <div className={`w-full space-y-2 px-4 py-3 text-xs ${badge.status === "growing" ? "bg-amber-50/70 text-amber-800" : badge.status === "locked" ? "bg-stone-50 text-stone-600" : "bg-secondary/60 text-primary"}`}>
+                <div className={`w-full space-y-2 px-3 py-3 text-xs sm:px-4 ${badge.status === "growing" ? "bg-amber-50/70 text-amber-800" : badge.status === "locked" ? "bg-stone-50 text-stone-600" : "bg-secondary/60 text-primary"}`}>
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-left font-semibold">{progressText(badge)}</span>
                     <MaterialSymbol className="shrink-0 text-lg" name={badge.status === "locked" ? "lock" : "arrow_forward"} />
