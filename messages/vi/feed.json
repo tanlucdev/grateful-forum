@@ -68,5 +68,69 @@
     "unlike": "Bỏ yêu thích"
   },
   "companion": {},
-  "quotes": []
+  "quotes": [],
+  "lab": {
+    "label": "Bản thử giao diện",
+    "notice": "Dữ liệu mẫu · Thích/lưu chỉ để thử.",
+    "original": "Feed hiện tại",
+    "title": "Những điều nhỏ, đáng biết ơn.",
+    "description": "Dừng lại một chút. Đọc những điều nhỏ bé đang làm ai đó mỉm cười.",
+    "prompt": "Hôm nay, điều gì khiến bạn thấy biết ơn?",
+    "promptHelp": "Một điều nhỏ thôi cũng đáng được ghi lại.",
+    "community": "Những chia sẻ",
+    "saved": "Đã lưu",
+    "all": "Tất cả",
+    "text": "Bài viết",
+    "photos": "Có ảnh",
+    "contentFilters": "Lọc nội dung",
+    "viewFilters": "Chọn danh sách bài viết",
+    "like": "Gửi một lời đồng cảm",
+    "unlike": "Bỏ đồng cảm",
+    "save": "Lưu bài viết",
+    "unsave": "Bỏ lưu bài viết",
+    "emptyTitle": "Chưa có bài viết ở đây",
+    "emptyBody": "Thử bộ lọc khác hoặc lưu một chia sẻ khiến bạn thấy đồng cảm.",
+    "reset": "Xem tất cả chia sẻ",
+    "asideTitle": "Đọc chậm một chút.",
+    "asideBody": "Không cần theo kịp tất cả. Một câu chuyện nhỏ cũng có thể làm ngày của bạn nhẹ hơn.",
+    "asideLink": "Dành một khoảng lặng để viết",
+    "end": "Bạn đã đọc hết những chia sẻ minh họa.",
+    "anonymous": "Một người bạn ẩn danh",
+    "public": "Chia sẻ công khai",
+    "anonymousLabel": "Chia sẻ ẩn danh",
+    "today": "Hôm nay",
+    "yesterday": "Hôm qua",
+    "photoAlt": "Một góc cây xanh trong chậu nhỏ",
+    "quoteLabel": "Một câu để mang theo",
+    "samples": {
+      "first": {
+        "name": "Minh An",
+        "body": "Sáng nay, mình dậy sớm hơn một chút. Không vội mở điện thoại, chỉ ngồi bên cửa sổ và uống hết một ly nước ấm.\n\nHóa ra, một ngày tốt lành có thể bắt đầu từ những điều rất nhỏ.",
+        "mood": "Bình yên",
+        "space": "Ở nhà"
+      },
+      "second": {
+        "name": "",
+        "body": "Có những ngày chẳng có gì đặc biệt, nhưng khi viết lại, mình nhận ra vẫn có nhiều điều đáng trân trọng.",
+        "one": "Mẹ gọi điện, chỉ để hỏi hôm nay mình ăn gì.",
+        "two": "Một người lạ giữ cửa thang máy đợi mình.",
+        "three": "Mình đã cho phép bản thân nghỉ ngơi mà không thấy có lỗi.",
+        "mood": "Ấm áp",
+        "space": ""
+      },
+      "third": {
+        "name": "Thảo Nhi",
+        "body": "Chiếc cây nhỏ trên bàn vừa ra một chiếc lá mới. Mình đã tưởng nó không lớn nữa.\n\nCó lẽ mình cũng vậy. Có những thay đổi cần thời gian, chỉ là chưa nhìn thấy ngay thôi.",
+        "mood": "Hy vọng",
+        "space": "Góc làm việc"
+      },
+      "fourth": {
+        "name": "Hoàng Nam",
+        "body": "Hôm nay mình hoàn thành việc đã trì hoãn cả tuần. Chưa hoàn hảo, nhưng đã bắt đầu. Biết ơn một người bạn đã ngồi làm việc cùng mình suốt buổi chiều.",
+        "quote": "Bạn không cần làm mọi thứ hôm nay. Chỉ cần bắt đầu từ một điều nhỏ.",
+        "mood": "Nhẹ nhõm",
+        "space": ""
+      }
+    }
+  }
 }
