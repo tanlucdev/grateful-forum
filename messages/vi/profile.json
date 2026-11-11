@@ -5,7 +5,7 @@
   "rhythm": { "title": "Nhịp điệu tuần này", "active": "{count}/7 chồi xanh thắp sáng", "written": "Tuần này bạn đã viết nhật ký {count} ngày", "none": "Tuần này chưa có ngày viết nhật ký" },
   "monthRhythm": { "title": "Nhịp điệu biết ơn tháng này", "description": "Đã viết {count, number}/{total, number} ngày trong tháng này ({rate})" },
   "tabs": { "all": "Tất cả ({count})", "journal": "Cuốn sổ ký ức", "public": "Công khai ({count})", "moments": "Khoảnh khắc ({count})" },
-  "desktopTabs": { "all": "Tất cả nhật ký", "public": "Công khai", "moments": "Bộ sưu tập khoảnh khắc", "new": "Mới", "readingMode": "Chế độ đọc lật trang" },
+  "desktopTabs": { "all": "Tất cả", "public": "Công khai", "moments": "Khoảnh khắc", "new": "Mới", "readingMode": "Chế độ đọc lật trang" },
   "filters": { "label": "Lọc theo:", "all": "Tất cả", "family": "#gia đình", "work": "#công việc", "nature": "#thiên nhiên", "newest": "Mới nhất" },
   "visibility": { "private": "Riêng tư", "public": "Công khai", "anonymous": "Ẩn danh" },
   "empty": { "journalTitle": "Chưa có nhật ký", "journalDescription": "Những điều biết ơn của bạn sẽ xuất hiện ở đây.", "momentsTitle": "Chưa có khoảnh khắc", "momentsDescription": "Ảnh từ nhật ký của bạn sẽ xuất hiện ở đây." },

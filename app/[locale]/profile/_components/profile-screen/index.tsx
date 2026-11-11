@@ -9,7 +9,7 @@ export function ProfileScreen({
   return (
     <div className="min-h-svh font-[family-name:var(--font-quicksand)] text-foreground">
       <DesktopProfile initialTab={initialTab} view={view} />
-      <MobileProfile view={view} />
+      <MobileProfile initialTab={initialTab} view={view} />
     </div>
   );
 }

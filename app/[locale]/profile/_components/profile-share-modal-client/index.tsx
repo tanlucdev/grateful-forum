@@ -92,7 +92,7 @@ export function ProfileShareModalButton({ view }: Readonly<{ view: ProfileView }
 
               <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-3">
-                  <button className="inline-flex min-w-0 w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-xs font-semibold leading-4 text-primary-foreground shadow-md transition-all hover:bg-[var(--leaf-deep)]" type="button">
+                  <button className="inline-flex min-w-0 w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-xs font-semibold leading-4 text-primary-foreground shadow-md transition-[color,background-color,border-color,box-shadow,opacity,transform,translate,scale] hover:bg-[var(--leaf-deep)]" type="button">
                     <MaterialSymbol className="text-base" name="rss_feed" />
                     <span className="text-center">{t("feed")}</span>
                   </button>
