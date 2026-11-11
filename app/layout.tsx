@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import type { ReactNode } from "react";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { Analytics } from "@vercel/analytics/next";
 
 const geist = localFont({
   src: "./fonts/geist.ttf",
@@ -38,6 +39,7 @@ export default async function RootLayout({
     <html data-scroll-behavior="smooth" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
       <body className={`${manrope.className} ${quicksand.variable}`} suppressHydrationWarning>
         {children}
+        <Analytics />
       </body>
     </html>
   );
