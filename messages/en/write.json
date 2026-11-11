@@ -10,7 +10,9 @@
     "field": "Gratitude {number}",
     "placeholder": "Something you are grateful for {number}",
     "remove": "Remove gratitude {number}",
-    "add": "Add gratitude"
+    "add": "Add gratitude",
+    "paragraphPlaceholder": "What are you grateful for today?",
+    "paragraphLabel": "Your gratitude"
   },
   "moods": {
     "calm": "Calm",
@@ -24,24 +26,40 @@
     "recentLabel": "Recent spaces"
   },
   "reflection": {
-    "title": "Add more if you want",
-    "placeholder": "One more line, if you want to keep it."
+    "title": "More about today",
+    "placeholder": "Write a little more about your day, if you like…",
+    "optional": "Optional"
   },
   "creative": {
-    "washi": "Washi",
+    "washi": "Decorative tape",
     "quote": "Quote",
     "sticker": "Sticker",
     "image": "Image",
     "none": "None",
-    "calm": "Calm",
-    "warm": "Warm",
+    "calm": "Mint",
+    "warm": "Warm pink",
     "title": "Decorate your page",
     "quotePlaceholder": "A thought you want to keep…",
     "chooseImage": "Choose a memory photo",
     "imageHint": "Your photo will be saved with this entry.",
     "removeImage": "Remove selected photo",
     "diaryTitle": "Gratitude journal",
-    "memories": "Today’s memories"
+    "memories": "Today’s memories",
+    "washiDescription": "Washi is patterned paper tape for decorating your journal.",
+    "cream": "Cream",
+    "sky": "Sky blue",
+    "dots": "Polka dots",
+    "stripes": "Stripes",
+    "gingham": "Gingham",
+    "leaves": "Little leaves",
+    "toolsTitle": "Make it your own",
+    "tools": {
+      "image": "Memory photo",
+      "sticker": "Sticker",
+      "washi": "Washi tape",
+      "quote": "Quote"
+    },
+    "added": "Added"
   },
   "picker": {
     "title": "Choose a Sprout sticker",
@@ -110,8 +128,8 @@
     },
     "color": "Ink color {color}",
     "pen": "Pen",
-    "highlighter": "Highlighter",
-    "eraser": "Area eraser",
+    "highlighter": "Highlight",
+    "eraser": "Erase",
     "pan": "Pan",
     "undo": "Undo",
     "redo": "Redo",
@@ -132,11 +150,12 @@
     "previewUnavailable": "Kept on this device; preview unavailable.",
     "type": "Type",
     "handwrite": "Handwrite",
-    "back": "Back to profile"
+    "back": "Back to profile",
+    "customize": "Customize"
   },
   "book": {
     "gratitudeRequiredShort": "Add at least one gratitude to save.",
-    "gratitudeRequired": "Write at least one gratitude on the left page to save. The reflection section is additional content.",
+    "gratitudeRequired": "Write at least one gratitude to save. The content below is optional.",
     "handwritingRequired": "Draw a stroke on the page to save.",
     "addMood": "Add a feeling",
     "done": "Done",
@@ -164,5 +183,15 @@
     "loadingHint": "You can start writing while you wait.",
     "unavailableHint": "Your draft is still here. Please try again.",
     "retry": "Check again"
+  },
+  "navigation": {
+    "back": "Go back",
+    "discard": "Leave this page? Unsaved writing will be lost.",
+    "title": "Leave your writing?",
+    "continue": "Keep writing",
+    "leave": "Leave page"
+  },
+  "extras": {
+    "title": "A little more about today"
   }
 }
