@@ -10,6 +10,7 @@ import { getStickerLabel } from "@/lib/entries/stickers";
 import type { DisplayItem } from "../feed-data";
 import { toneClasses } from "../feed-data";
 import { MindfulActionsClient } from "../feed-actions-client";
+import { FeedEntryPreviewClient } from "../feed-entry-preview-client";
 
 const feedCardCopy = {
   vi: {
@@ -38,7 +39,7 @@ const feedCardCopy = {
 
 export function MobileFeedCard({ item, locale, priorityImage = false, readOnly = false }: Readonly<{ item: DisplayItem; locale: AppLocale; priorityImage?: boolean; readOnly?: boolean }>) {
   return (
-    <article className="relative w-full min-w-0 [overflow-wrap:anywhere] rounded-3xl border border-border bg-card p-5 shadow-card">
+    <article className="relative w-full min-w-0 [overflow-wrap:anywhere] rounded-3xl border border-border bg-card p-4 pb-2 shadow-card">
       <Tape locale={locale} tone={item.tone} />
       <div className="mt-2 flex items-start justify-between gap-3 pr-8">
         <div className="flex w-full min-w-0 items-center gap-3">
@@ -52,8 +53,10 @@ export function MobileFeedCard({ item, locale, priorityImage = false, readOnly =
         </div>
       </div>
       <EntryBody item={item} locale={locale} mobile priorityImage={priorityImage} />
-      <Tags item={item} locale={locale} />
-      {readOnly ? <FeedReactionSummary item={item} /> : <MindfulActionsClient item={item} compact floatingMenu />}
+      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+        <Tags item={item} locale={locale} />
+        {readOnly ? <FeedReactionSummary item={item} /> : <MindfulActionsClient item={item} compact floatingMenu />}
+      </div>
     </article>
   );
 }
@@ -63,7 +66,7 @@ export function DesktopFeedCard({ item, locale, priorityImage = false, readOnly 
   const copy = feedCardCopy[locale];
 
   return (
-    <article className="relative w-full min-w-0 [overflow-wrap:anywhere] rounded-3xl border border-border bg-card p-7 shadow-card transition-shadow hover:shadow-md">
+    <article className="relative w-full min-w-0 [overflow-wrap:anywhere] rounded-3xl border border-border bg-card p-7 pb-3 shadow-card transition-shadow hover:shadow-md">
       <Tape locale={locale} tone={item.tone} />
       <div className="mt-2 flex flex-col items-start justify-between gap-3 pr-9 xl:flex-row xl:gap-4">
         <div className="flex w-full min-w-0 items-center gap-3">
@@ -82,8 +85,10 @@ export function DesktopFeedCard({ item, locale, priorityImage = false, readOnly 
         </div>
       </div>
       <EntryBody item={item} locale={locale} priorityImage={priorityImage} />
-      <Tags item={item} locale={locale} />
-      {readOnly ? <FeedReactionSummary item={item} /> : <MindfulActionsClient item={item} floatingMenu />}
+      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+        <Tags item={item} locale={locale} />
+        {readOnly ? <FeedReactionSummary item={item} /> : <MindfulActionsClient item={item} floatingMenu />}
+      </div>
     </article>
   );
 }
@@ -95,24 +100,25 @@ function EntryBody({ item, locale, mobile = false, priorityImage = false }: Read
   const hasMetadata = item.metadata.gratitudes.length || item.metadata.reflection || item.metadata.quote || item.metadata.imageUrl;
 
   if (!hasMetadata) {
-    return <p className="mt-4 whitespace-pre-wrap text-[15px] font-medium leading-relaxed text-foreground">{item.content}</p>;
+    const content = <p className="whitespace-pre-wrap text-[15px] font-medium leading-relaxed text-foreground">{item.content}</p>;
+    return mobile ? <FeedEntryPreviewClient key={item.id}>{content}</FeedEntryPreviewClient> : <div className="mt-4">{content}</div>;
   }
 
-  return (
-    <div className={`${mobile ? "mt-4 gap-3" : "mt-4 gap-4"} flex flex-col`}>
+  const content = (
+    <div className={`${mobile ? "gap-2" : "gap-4"} flex flex-col`}>
       {item.metadata.quote ? (
         <p className={`${mobile ? "text-sm" : "text-[15px]"} whitespace-pre-wrap border-l-2 border-accent pl-4 italic leading-relaxed text-foreground`}>
           “{item.metadata.quote}”
         </p>
       ) : null}
       {item.metadata.gratitudes.length ? (
-        <ul className="space-y-2.5">
+        <ul className={mobile ? "space-y-2" : "space-y-2.5"}>
           {item.metadata.gratitudes.map((text, index) => (
-            <li className="flex min-w-0 items-start gap-3 rounded-2xl border border-border bg-muted/50 p-3.5" key={`${index}-${text}`}>
-              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-bold text-accent-foreground">
-                {index + 1}
+            <li className={mobile ? "flex min-w-0 items-start gap-2" : "flex min-w-0 items-start gap-3 rounded-2xl border border-border bg-muted/50 p-3.5"} key={`${index}-${text}`}>
+              <span className={mobile ? "w-5 shrink-0 text-sm font-semibold leading-relaxed text-primary" : "mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-bold text-accent-foreground"}>
+                {index + 1}{mobile ? "." : null}
               </span>
-              <p className={`${mobile ? "text-[14px]" : "text-sm"} min-w-0 whitespace-pre-wrap leading-relaxed text-foreground`}>
+              <p className="min-w-0 whitespace-pre-wrap text-sm leading-relaxed text-foreground">
                 {text}
               </p>
             </li>
@@ -120,12 +126,18 @@ function EntryBody({ item, locale, mobile = false, priorityImage = false }: Read
         </ul>
       ) : null}
       {item.metadata.reflection ? (
-        <p className={`${mobile ? "text-[15px]" : "text-[15px]"} whitespace-pre-wrap font-medium leading-relaxed text-foreground`}>
+        <p className={`${mobile ? "text-sm" : "text-[15px] font-medium"} whitespace-pre-wrap leading-relaxed text-foreground`}>
           {item.metadata.reflection}
         </p>
       ) : null}
-      {item.metadata.imageUrl || !item.metadata.gratitudes.length ? <Polaroid item={item} locale={locale} mobile={mobile} priorityImage={priorityImage} /> : null}
     </div>
+  );
+
+  return (
+    <>
+      {mobile ? <FeedEntryPreviewClient key={item.id}>{content}</FeedEntryPreviewClient> : <div className="mt-4">{content}</div>}
+      {item.metadata.imageUrl || !item.metadata.gratitudes.length ? <div className="mt-3"><Polaroid item={item} locale={locale} mobile={mobile} priorityImage={priorityImage} /></div> : null}
+    </>
   );
 }
 
@@ -145,7 +157,7 @@ function Polaroid({ item, locale, mobile, priorityImage }: Readonly<{ item: Disp
           {imageUrl ? null : (
             <Image alt="" className="object-cover" fill loading={priorityImage ? "eager" : undefined} sizes={mobile ? "260px" : "384px"} src={fallback} />
           )}
-          <span className="absolute bottom-2 left-2 rounded bg-black/40 px-2 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
+          <span className="absolute bottom-2 left-2 rounded bg-black/40 px-2 py-0.5 text-[11px] font-medium text-white backdrop-blur-sm">
             📷 {caption}
           </span>
         </div>
@@ -192,7 +204,7 @@ export function Author({ item, mobile = false }: Readonly<{ item: DisplayItem; m
 
   if (item.profileHref) {
     return (
-      <Link className={`${className} inline-block max-w-full min-h-11 min-w-11 py-3`} href={item.profileHref}>
+      <Link className={`${className} relative block max-w-full min-w-11 after:absolute after:inset-x-0 after:top-1/2 after:h-11 after:-translate-y-1/2`} href={item.profileHref}>
         {item.authorName}
       </Link>
     );
@@ -238,7 +250,7 @@ function Tape({ locale, tone }: Readonly<{ locale: AppLocale; tone: DisplayItem[
   const label = tone === "tertiary" ? copy.seedQuietly : tone === "mint" ? copy.smallMoment : copy.gratefulToday;
 
   return (
-    <div className={`absolute -top-2.5 left-8 flex h-6 w-32 items-center justify-center text-[10px] font-bold tracking-wider [clip-path:polygon(3%_0%,97%_0%,100%_50%,97%_100%,3%_100%,0%_50%)] ${toneClass}`}>
+    <div className={`absolute -top-2.5 left-8 flex h-6 w-32 items-center justify-center text-[11px] font-bold tracking-wider [clip-path:polygon(3%_0%,97%_0%,100%_50%,97%_100%,3%_100%,0%_50%)] ${toneClass}`}>
       {label}
     </div>
   );
@@ -252,7 +264,7 @@ function Tags({ item, locale }: Readonly<{ item: DisplayItem; locale: AppLocale 
   }
 
   return (
-    <div className="mt-4 flex flex-wrap gap-2">
+    <div className="flex min-w-0 basis-40 grow flex-wrap gap-2">
       {tags.map((label) => (
         <span className="max-w-full truncate rounded-lg bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground" key={label}>
           #{String(label).replace(/\s+/g, "_").toLowerCase()}
@@ -265,5 +277,13 @@ function Tags({ item, locale }: Readonly<{ item: DisplayItem; locale: AppLocale 
 function FeedReactionSummary({ item }: Readonly<{ item: DisplayItem }>) {
   const t = useTranslations("feed");
   const locale = useLocale();
-  return <ul aria-label={t("preview.reactions")} className="mt-4 flex flex-wrap gap-4 text-sm text-muted-foreground">{(["empathy", "healing_energy", "refreshing"] as const).map((type) => <li className="inline-flex items-center gap-1.5" key={type}><MaterialSymbol aria-hidden="true" name={type === "empathy" ? "volunteer_activism" : type === "healing_energy" ? "auto_awesome" : "psychiatry"} /><span>{t(`preview.${type}`)}: {new Intl.NumberFormat(locale).format(item.reactions[type])}</span></li>)}</ul>;
+  const total = Object.values(item.reactions).reduce((sum, count) => sum + count, 0);
+  if (!total) return null;
+  return (
+    <p className="flex items-center gap-1.5 text-xs text-muted-foreground" title={t("favorite.like")}>
+      <MaterialSymbol className="text-base" name="favorite" strokeWidth={1.8} />
+      <span className="sr-only">{t("favorite.like")}: </span>
+      <span className="tabular-nums">{new Intl.NumberFormat(locale).format(total)}</span>
+    </p>
+  );
 }

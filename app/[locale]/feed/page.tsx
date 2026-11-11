@@ -17,7 +17,7 @@ export default async function FeedPage({ params, searchParams }: Readonly<{ para
   const visibility = parsed.success ? parsed.data.visibility : "all";
   const initialPage = await loadFeedPage(null, visibility);
 
-  return <PublicFeedClient key={`${user.id}-${visibility}`} initialPage={initialPage} initialVisibility={visibility} aside={<Suspense fallback={<Skeleton className="hidden h-60 rounded-2xl lg:block lg:col-span-4" />}><FeedAside /></Suspense>} />;
+  return <PublicFeedClient key={`${user.id}-${visibility}`} initialPage={initialPage} initialVisibility={visibility} aside={<Suspense key="feed-aside" fallback={<Skeleton className="hidden h-60 rounded-2xl lg:block lg:col-span-4" />}><FeedAside /></Suspense>} />;
 }
 
 async function FeedAside() { return <DesktopAside weeklyRhythm={await loadFeedWeeklyRhythm()} />; }
