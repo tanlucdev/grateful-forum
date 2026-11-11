@@ -5,6 +5,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
+  --default-transition-duration: var(--motion-feedback);
+  --default-transition-timing-function: var(--motion-ease-out);
   --color-surface: #f4fbf8;
   --color-surface-white: #ffffff;
   --color-surface-container: #e8efec;
@@ -30,6 +32,13 @@
 }
 
 :root {
+  /* Motion UI project defaults: https://motion-ui.200lab.io/#agents */
+  --motion-feedback: 150ms;
+  --motion-enter: 220ms;
+  --motion-exit: 150ms;
+  --motion-panel: 300ms;
+  --motion-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --motion-ease-in: cubic-bezier(0.42, 0, 1, 1);
   --bg: #f4fbf8;
   --surface: #ffffff;
   --surface-raised: #ffffff;
@@ -159,9 +168,11 @@ a {
   color: var(--text);
 }
 
-:focus-visible {
-  outline: 3px solid var(--focus);
-  outline-offset: 3px;
+@layer base {
+  :focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 3px;
+  }
 }
 
 ::placeholder {
@@ -186,14 +197,25 @@ select {
   font: inherit;
 }
 
-button,
-a {
-  transition:
-    background-color 160ms ease,
-    border-color 160ms ease,
-    color 160ms ease,
-    box-shadow 160ms ease,
-    transform 160ms ease;
+@layer base {
+  :where(button, a) {
+    transition-property: background-color, border-color, color, box-shadow, opacity, transform, translate, scale;
+    transition-duration: var(--motion-feedback);
+    transition-timing-function: var(--motion-ease-out);
+  }
+}
+
+/* Shared overlay behavior also covers Radix content rendered in portals. */
+:is(.motion-popover, .motion-panel)[data-state="open"] {
+  animation-duration: var(--motion-enter);
+  animation-timing-function: var(--motion-ease-out);
+}
+.motion-panel[data-state="open"] {
+  animation-duration: var(--motion-panel);
+}
+:is(.motion-popover, .motion-panel)[data-state="closed"] {
+  animation-duration: var(--motion-exit);
+  animation-timing-function: var(--motion-ease-in);
 }
 
 button:not(:disabled),
@@ -375,15 +397,15 @@ a:active {
 }
 
 .landing-float-gentle {
-  animation: landing-float-gentle 6s ease-in-out infinite;
+  animation: landing-float-gentle 3s ease-in-out 1;
 }
 
 .landing-mascot-breathe {
-  animation: landing-mascot-breathe 4.5s ease-in-out infinite;
+  animation: landing-mascot-breathe 3s ease-in-out 1;
 }
 
 .landing-tape {
-  animation: landing-tape-wiggle 5s ease-in-out infinite;
+  animation: landing-tape-wiggle 3s ease-in-out 1;
 }
 
 .landing-cta-shine {
@@ -395,7 +417,7 @@ a:active {
     rgba(255, 255, 255, 0.18),
     transparent
   );
-  animation: landing-cta-shine 2.4s ease-in-out infinite;
+  animation: landing-cta-shine 600ms ease-in-out 1;
 }
 
 .landing-badge-shine {
@@ -407,7 +429,7 @@ a:active {
     rgba(255, 255, 255, 0.08),
     transparent
   );
-  animation: landing-cta-shine 3s ease-in-out infinite;
+  animation: landing-cta-shine 600ms ease-in-out 1;
 }
 
 .landing-badge-marquee {
@@ -439,42 +461,21 @@ a:active {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .landing-motion *,
-  .landing-motion *::before,
-  .landing-motion *::after {
-    animation-duration: 0.001ms !important;
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
     scroll-behavior: auto !important;
-    transition-duration: 0.001ms !important;
   }
-
-  .landing-motion .landing-cta-shine {
-    animation-duration: 4s !important;
-    animation-iteration-count: infinite !important;
-    opacity: 0.55;
+  .landing-badge-marquee, .landing-community-marquee {
+    animation: none !important;
+    transform: none !important;
   }
-
-  .landing-motion .landing-badge-shine {
-    animation-duration: 5s !important;
-    animation-iteration-count: infinite !important;
-    opacity: 0.45;
-  }
-
-  .landing-motion .landing-badge-marquee {
-    animation-duration: 80s !important;
-    animation-iteration-count: infinite !important;
-  }
-
-  .landing-motion .landing-community-marquee {
-    animation-duration: 80s !important;
-    animation-iteration-count: infinite !important;
-  }
-
-  .landing-motion .landing-float-gentle,
-  .landing-motion .landing-mascot-breathe,
-  .landing-motion .landing-tape {
-    animation-duration: 24s !important;
-    animation-iteration-count: infinite !important;
+  .landing-badge-marquee-mask, .landing-community-marquee-mask {
+    overflow-x: auto;
   }
 }
 

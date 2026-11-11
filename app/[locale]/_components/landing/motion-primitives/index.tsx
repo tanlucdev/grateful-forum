@@ -4,12 +4,13 @@ import { motion } from "framer-motion";
 import { useLocale } from "next-intl";
 import { useEffect, useState, type ReactNode } from "react";
 
+import { motionDuration, motionEaseOut } from "@/lib/motion";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
 
-export const landingEase = [0.16, 1, 0.3, 1] as const;
+export const landingEase = motionEaseOut;
 
 export function useLandingReducedMotion() {
-  const [reduceMotion, setReduceMotion] = useState(false);
+  const [reduceMotion, setReduceMotion] = useState(true);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -26,7 +27,7 @@ export function tapLift(reduceMotion = false) {
   return reduceMotion
     ? { transition: { duration: 0.01 } }
     : {
-        transition: { duration: 0.28, ease: landingEase },
+        transition: { duration: motionDuration.feedback, ease: landingEase },
         whileHover: { y: -2 },
         whileTap: { scale: 0.98, y: 1 },
       };
@@ -36,7 +37,7 @@ export function softPress(reduceMotion = false) {
   return reduceMotion
     ? { transition: { duration: 0.01 } }
     : {
-        transition: { duration: 0.22, ease: landingEase },
+        transition: { duration: motionDuration.feedback, ease: landingEase },
         whileHover: { y: -1 },
         whileTap: { scale: 0.97, y: 1 },
       };
@@ -46,7 +47,7 @@ export function activeChip(reduceMotion = false) {
   return reduceMotion
     ? { transition: { duration: 0.01 } }
     : {
-        transition: { duration: 0.26, ease: landingEase },
+        transition: { duration: motionDuration.panel, ease: landingEase },
       };
 }
 
@@ -54,19 +55,7 @@ export function Reveal({
   children,
   className = "",
 }: Readonly<{ children: ReactNode; className?: string }>) {
-  const reduceMotion = useLandingReducedMotion();
-
-  return (
-    <motion.div
-      className={`landing-reveal ${className}`.trim()}
-      initial={false}
-      transition={reduceMotion ? { duration: 0.01 } : { duration: 0.45, ease: "easeOut" }}
-      viewport={{ amount: 0.26, once: true }}
-      whileInView={reduceMotion ? { opacity: 1 } : { y: 0 }}
-    >
-      {children}
-    </motion.div>
-  );
+  return <div className={`landing-reveal ${className}`.trim()}>{children}</div>;
 }
 
 export function ProgressBar({
@@ -74,26 +63,20 @@ export function ProgressBar({
   delay = 0,
   value,
 }: Readonly<{ className?: string; delay?: number; value: number }>) {
+  const reduceMotion = useLandingReducedMotion();
   return (
     <motion.div
       className={`${className} h-full rounded-full`}
-      initial={{ scaleX: 0 }}
+      initial={false}
       style={{ transformOrigin: "left center" }}
-      transition={{ delay, duration: 0.7, ease: "easeOut" }}
-      viewport={{ amount: 0.4, once: true }}
-      whileInView={{ scaleX: value }}
+      transition={{ delay: reduceMotion ? 0 : Math.min(delay, 0.2), duration: reduceMotion ? 0 : motionDuration.panel, ease: landingEase }}
+      animate={{ scaleX: value }}
     />
   );
 }
 
 export function LiveDot() {
-  return (
-    <motion.span
-      className="h-1.5 w-1.5 rounded-full bg-primary"
-      animate={{ opacity: [1, 0.4, 1] }}
-      transition={{ duration: 1.5, ease: "easeInOut", repeat: Infinity }}
-    />
-  );
+  return <span className="h-1.5 w-1.5 rounded-full bg-primary" />;
 }
 
 export function ShimmerCTA({

@@ -1,8 +1,10 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import Image from "next/image";
-import { useLocale } from "next-intl";
+import { Pause, Play } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 
 import { loginHref } from "@/lib/auth/redirects";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
@@ -53,6 +55,38 @@ const bottomCopy = {
   },
 } as const;
 
+function Marquee({ children, kind }: Readonly<{ children: ReactNode; kind: "badge" | "community" }>) {
+  const t = useTranslations("landing");
+  const locale = useLocale() as "vi" | "en";
+  const [paused, setPaused] = useState(false);
+  const [pageVisible, setPageVisible] = useState(true);
+  useEffect(() => {
+    const sync = () => setPageVisible(!document.hidden);
+    sync();
+    document.addEventListener("visibilitychange", sync);
+    return () => document.removeEventListener("visibilitychange", sync);
+  }, []);
+  const PlaybackIcon = paused ? Play : Pause;
+  const ref = useRef<HTMLDivElement>(null);
+  const visible = useInView(ref);
+  const reduceMotion = useLandingReducedMotion();
+  return (
+    <div ref={ref}>
+      <div className="mx-auto mb-2 flex max-w-7xl justify-end px-4 lg:px-margin-desktop">
+        <button aria-pressed={paused} className="inline-flex min-h-11 items-center gap-2 rounded-full px-3 text-xs font-semibold text-primary focus-visible:outline-2 focus-visible:outline-ring motion-reduce:hidden" onClick={() => setPaused(!paused)} type="button">
+          <PlaybackIcon aria-hidden="true" className="size-4" />
+          {t(paused ? "motion.resume" : "motion.pause")}
+        </button>
+      </div>
+      <div aria-label={kind === "badge" ? bottomCopy[locale].badgesTitle : bottomCopy[locale].communityTitle} className={`landing-${kind}-marquee-mask overflow-hidden`} role="region" tabIndex={reduceMotion ? 0 : undefined}>
+        <div className={`landing-${kind}-marquee flex w-max`} style={{ animationPlayState: paused || !visible || !pageVisible || reduceMotion ? "paused" : undefined }}>
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function repeatMarqueeItems<T>(items: readonly T[], cycles: number) {
   return Array.from({ length: cycles }, () => items).flat();
 }
@@ -68,8 +102,7 @@ export function BadgesSection() {
         <div className="mx-auto max-w-md px-4 lg:max-w-7xl lg:px-margin-desktop">
           <SectionHeader copy={copy.badgesCopy} title={copy.badgesTitle} />
         </div>
-        <div className="landing-badge-marquee-mask overflow-hidden">
-          <div className="landing-badge-marquee flex w-max">
+        <Marquee kind="badge">
             {Array.from({ length: MARQUEE_GROUPS }).map((_, groupIndex) => (
               <div aria-hidden={groupIndex > 0} className="flex shrink-0 gap-3 pr-3 lg:gap-6 lg:pr-6" key={groupIndex}>
                 {marqueeBadges.map((item, index) => (
@@ -82,8 +115,7 @@ export function BadgesSection() {
                 ))}
               </div>
             ))}
-          </div>
-        </div>
+        </Marquee>
       </section>
     </Reveal>
   );
@@ -105,8 +137,7 @@ export function CommunitySection() {
             </div>
           </div>
         </div>
-        <div className="landing-community-marquee-mask overflow-hidden">
-          <div className="landing-community-marquee flex w-max">
+        <Marquee kind="community">
             {Array.from({ length: MARQUEE_GROUPS }).map((_, groupIndex) => (
               <div aria-hidden={groupIndex > 0} className="flex shrink-0 gap-4 pr-4 lg:gap-6 lg:pr-6" key={groupIndex}>
                 {marqueeCards.map((item, index) => (
@@ -116,8 +147,7 @@ export function CommunitySection() {
                 ))}
               </div>
             ))}
-          </div>
-        </div>
+        </Marquee>
       </section>
     </Reveal>
   );

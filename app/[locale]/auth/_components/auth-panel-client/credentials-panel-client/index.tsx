@@ -61,8 +61,8 @@ export function CredentialsPanelClient({
           {banner?.tone === "error" ? (
             <div className="relative flex items-start gap-3 rounded-2xl border border-destructive/20 bg-destructive/5 p-3.5 shadow-sm" role="alert">
               <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive"><Info className="h-[17px] w-[17px]" /></div>
-              <div className="pr-5"><p className="text-[13px] font-semibold leading-5 text-destructive">{banner.title}</p><p className="mt-0.5 text-[12px] leading-[17px] text-destructive/80">{banner.body}</p></div>
-              <button aria-label={t("a11y.dismissBanner")} className="absolute top-2.5 right-2.5 flex h-6 w-6 items-center justify-center rounded-full text-destructive/70" onClick={onDismissBanner} type="button"><X className="h-[15px] w-[15px]" /></button>
+              <div className="min-w-0 pr-8 [overflow-wrap:anywhere]"><p className="text-[13px] font-semibold leading-5 text-destructive">{banner.title}</p><p className="mt-0.5 text-[12px] leading-[17px] text-destructive/80">{banner.body}</p></div>
+              <button aria-label={t("a11y.dismissBanner")} className="absolute top-0 right-0 flex h-11 w-11 items-center justify-center rounded-full text-destructive/70" onClick={onDismissBanner} type="button"><X className="h-[15px] w-[15px]" /></button>
             </div>
           ) : null}
           {isSignup ? <div className="rounded-2xl bg-accent/30 p-4"><p className="text-sm leading-5 font-semibold text-foreground">{t("signupNotice")}</p></div> : null}
@@ -91,7 +91,7 @@ export function CredentialsPanelClient({
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between gap-3">
               <Label className="ml-1 text-xs leading-4 text-muted-foreground" htmlFor="password">{t("labels.password")}</Label>
-              {!isSignup ? <button className="text-[13px] font-medium text-primary hover:underline" onClick={() => onChangeView("forgot")} type="button">{t("forgot")}</button> : null}
+              {!isSignup ? <button className="min-h-11 rounded-xl px-2 text-[13px] font-medium text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring" onClick={() => onChangeView("forgot")} type="button">{t("forgot")}</button> : null}
             </div>
             <div className="relative">
               <Input
