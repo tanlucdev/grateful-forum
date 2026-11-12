@@ -1,16 +1,136 @@
 {
   "dailyPractice": "<strong>Chỉ 5 phút mỗi ngày</strong> để bày tỏ lòng biết ơn.",
   "loadError": "Chưa tải được bài viết. Bạn thử lại nhé.",
+  "entryPreview": {
+    "showMore": "Xem thêm",
+    "showLess": "Thu gọn"
+  },
   "anonymous": "Ẩn danh",
   "public": "Công khai",
   "anonymousShare": "Chia sẻ ẩn danh",
   "publicShare": "Chia sẻ công khai",
-  "relative": { "minute": "{count} phút trước", "hour": "{count} giờ trước", "yesterday": "Hôm qua", "day": "{count} ngày trước" },
-  "filters": { "visibility": "Người chia sẻ", "visibilityAll": "Tất cả", "visibilityAnonymous": "Ẩn danh", "visibilityPublic": "Không ẩn danh", "all": "Tất cả hạt mầm", "ordinary": "Khoảnh khắc đời thường", "polaroid": "Có ảnh Polaroid" },
-  "empty": { "ordinaryTitle": "Chưa có khoảnh khắc đời thường", "ordinaryDescription": "Các chia sẻ không kèm ảnh Polaroid sẽ xuất hiện tại đây.", "polaroidTitle": "Chưa có ảnh Polaroid", "polaroidDescription": "Các chia sẻ có ảnh đính kèm sẽ xuất hiện tại đây.", "publicTitle": "Chưa có chia sẻ công khai", "publicDescription": "Các bài viết public hoặc anonymous sẽ xuất hiện tại đây." },
-  "loading": "Đang tải thêm...", "done": "Bạn đã xem hết.", "noPublic": "Chưa có chia sẻ công khai.", "eyebrow": "Dòng Chảy Lành", "title": "Những hạt mầm được gieo hôm nay", "description": "Đọc một điều biết ơn của người khác để nhắc nhở chính mình về hạnh phúc bình dị.", "showAll": "Xem tất cả", "scrollToTop": "Lên đầu trang",
-  "rhythm": {"title": "Nhịp điệu tuần này", "garden": "Vườn hoa 365", "habit": "Duy trì thói quen viết để tâm trí thêm vững vàng:", "watered": "Tuần này đã tưới:", "days": "{count, number} ngày", "rate": "Tỷ lệ: {rate}", "day": "{date}, {count, number} bài biết ơn"},
-  "preview": {"brand": "Grateful Forum", "write": "Viết lời biết ơn", "label": "Xem thử", "invitation": "Đăng nhập để xem thêm và viết lời biết ơn của bạn.", "reactions": "Số tương tác", "empathy": "Đồng cảm", "healing_energy": "Năng lượng lành", "refreshing": "Tưới mát", "title": "Đăng nhập để xem thêm", "description": "Bạn có thể xem trước tối đa 5 bài chia sẻ. Đăng nhập để tiếp tục khám phá diễn đàn.", "login": "Đăng nhập và xem tiếp"},
+  "relative": {
+    "minute": "{count} phút trước",
+    "hour": "{count} giờ trước",
+    "yesterday": "Hôm qua",
+    "day": "{count} ngày trước"
+  },
+  "filters": {
+    "content": "Nội dung",
+    "visibility": "Người chia sẻ",
+    "visibilityAll": "Tất cả",
+    "visibilityAnonymous": "Ẩn danh",
+    "visibilityPublic": "Không ẩn danh",
+    "all": "Tất cả",
+    "ordinary": "Đời thường",
+    "polaroid": "Polaroid"
+  },
+  "empty": {
+    "ordinaryTitle": "Chưa có khoảnh khắc đời thường",
+    "ordinaryDescription": "Các chia sẻ không kèm ảnh Polaroid sẽ xuất hiện tại đây.",
+    "polaroidTitle": "Chưa có ảnh Polaroid",
+    "polaroidDescription": "Các chia sẻ có ảnh đính kèm sẽ xuất hiện tại đây.",
+    "publicTitle": "Chưa có chia sẻ công khai",
+    "publicDescription": "Các bài viết public hoặc anonymous sẽ xuất hiện tại đây."
+  },
+  "loading": "Đang tải thêm...",
+  "done": "Bạn đã xem hết.",
+  "noPublic": "Chưa có chia sẻ công khai.",
+  "eyebrow": "Dòng Chảy Lành",
+  "title": "Những hạt mầm được gieo hôm nay",
+  "description": "Đọc một điều biết ơn của người khác để nhắc nhở chính mình về hạnh phúc bình dị.",
+  "showAll": "Xem tất cả",
+  "scrollToTop": "Lên đầu trang",
+  "rhythm": {
+    "title": "Nhịp điệu tuần này",
+    "garden": "Vườn hoa 365",
+    "habit": "Duy trì thói quen viết để tâm trí thêm vững vàng:",
+    "watered": "Tuần này đã tưới:",
+    "days": "{count, number} ngày",
+    "rate": "Tỷ lệ: {rate}",
+    "day": "{date}, {count, number} bài biết ơn"
+  },
+  "preview": {
+    "brand": "Grateful Forum",
+    "write": "Viết lời biết ơn",
+    "label": "Xem thử",
+    "invitation": "Đăng nhập để xem thêm và viết lời biết ơn của bạn.",
+    "reactions": "Số tương tác",
+    "empathy": "Đồng cảm",
+    "healing_energy": "Năng lượng lành",
+    "refreshing": "Tưới mát",
+    "title": "Đăng nhập để xem thêm",
+    "description": "Bạn có thể xem trước tối đa 5 bài chia sẻ. Đăng nhập để tiếp tục khám phá diễn đàn.",
+    "login": "Đăng nhập và xem tiếp"
+  },
+  "favorite": {
+    "like": "Yêu thích",
+    "unlike": "Bỏ yêu thích"
+  },
   "companion": {},
-  "quotes": []
+  "quotes": [],
+  "lab": {
+    "label": "Bản thử giao diện",
+    "notice": "Dữ liệu mẫu · Thích/lưu chỉ để thử.",
+    "original": "Feed hiện tại",
+    "title": "Những điều nhỏ, đáng biết ơn.",
+    "description": "Dừng lại một chút. Đọc những điều nhỏ bé đang làm ai đó mỉm cười.",
+    "prompt": "Hôm nay, điều gì khiến bạn thấy biết ơn?",
+    "promptHelp": "Một điều nhỏ thôi cũng đáng được ghi lại.",
+    "community": "Những chia sẻ",
+    "saved": "Đã lưu",
+    "all": "Tất cả",
+    "text": "Bài viết",
+    "photos": "Có ảnh",
+    "contentFilters": "Lọc nội dung",
+    "viewFilters": "Chọn danh sách bài viết",
+    "like": "Gửi một lời đồng cảm",
+    "unlike": "Bỏ đồng cảm",
+    "save": "Lưu bài viết",
+    "unsave": "Bỏ lưu bài viết",
+    "emptyTitle": "Chưa có bài viết ở đây",
+    "emptyBody": "Thử bộ lọc khác hoặc lưu một chia sẻ khiến bạn thấy đồng cảm.",
+    "reset": "Xem tất cả chia sẻ",
+    "asideTitle": "Đọc chậm một chút.",
+    "asideBody": "Không cần theo kịp tất cả. Một câu chuyện nhỏ cũng có thể làm ngày của bạn nhẹ hơn.",
+    "asideLink": "Dành một khoảng lặng để viết",
+    "end": "Bạn đã đọc hết những chia sẻ minh họa.",
+    "anonymous": "Một người bạn ẩn danh",
+    "public": "Chia sẻ công khai",
+    "anonymousLabel": "Chia sẻ ẩn danh",
+    "today": "Hôm nay",
+    "yesterday": "Hôm qua",
+    "photoAlt": "Một góc cây xanh trong chậu nhỏ",
+    "quoteLabel": "Một câu để mang theo",
+    "samples": {
+      "first": {
+        "name": "Minh An",
+        "body": "Sáng nay, mình dậy sớm hơn một chút. Không vội mở điện thoại, chỉ ngồi bên cửa sổ và uống hết một ly nước ấm.\n\nHóa ra, một ngày tốt lành có thể bắt đầu từ những điều rất nhỏ.",
+        "mood": "Bình yên",
+        "space": "Ở nhà"
+      },
+      "second": {
+        "name": "",
+        "body": "Có những ngày chẳng có gì đặc biệt, nhưng khi viết lại, mình nhận ra vẫn có nhiều điều đáng trân trọng.",
+        "one": "Mẹ gọi điện, chỉ để hỏi hôm nay mình ăn gì.",
+        "two": "Một người lạ giữ cửa thang máy đợi mình.",
+        "three": "Mình đã cho phép bản thân nghỉ ngơi mà không thấy có lỗi.",
+        "mood": "Ấm áp",
+        "space": ""
+      },
+      "third": {
+        "name": "Thảo Nhi",
+        "body": "Chiếc cây nhỏ trên bàn vừa ra một chiếc lá mới. Mình đã tưởng nó không lớn nữa.\n\nCó lẽ mình cũng vậy. Có những thay đổi cần thời gian, chỉ là chưa nhìn thấy ngay thôi.",
+        "mood": "Hy vọng",
+        "space": "Góc làm việc"
+      },
+      "fourth": {
+        "name": "Hoàng Nam",
+        "body": "Hôm nay mình hoàn thành việc đã trì hoãn cả tuần. Chưa hoàn hảo, nhưng đã bắt đầu. Biết ơn một người bạn đã ngồi làm việc cùng mình suốt buổi chiều.",
+        "quote": "Bạn không cần làm mọi thứ hôm nay. Chỉ cần bắt đầu từ một điều nhỏ.",
+        "mood": "Nhẹ nhõm",
+        "space": ""
+      }
+    }
+  }
 }

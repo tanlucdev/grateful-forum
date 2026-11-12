@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useLocale } from "next-intl";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,15 +21,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { deleteFeedBookmark, deleteFeedReaction, saveFeedBookmark, saveFeedReaction } from "@/lib/api/feed";
 import { reportEntry } from "@/lib/api/reports";
 import { applyViewerReaction, toggleBookmark } from "@/lib/feed/engagement-state";
-import type { FeedReactionType } from "@/lib/feed/validation";
 import type { AppLocale } from "@/i18n/routing";
 import type { DisplayItem } from "../feed-data";
-
-const reactionOptions: { type: FeedReactionType; publicLabel: string; anonymousLabel: string; icon: string }[] = [
-  { type: "empathy", publicLabel: "Đồng cảm", anonymousLabel: "Ôm lấy bạn", icon: "volunteer_activism" },
-  { type: "healing_energy", publicLabel: "Gửi năng lượng lành", anonymousLabel: "Cùng cố gắng nhé", icon: "auto_awesome" },
-  { type: "refreshing", publicLabel: "Tưới mát", anonymousLabel: "Tưới mát", icon: "psychiatry" },
-];
+import { FeedLikeClient } from "../feed-like-client";
 
 const actionCopy = {
   vi: {
@@ -47,7 +41,6 @@ const actionCopy = {
     cancel: "Hủy",
     sending: "Đang gửi...",
     submit: "Gửi báo cáo",
-    reactions: reactionOptions,
   },
   en: {
     reactionSaveError: "Could not save reaction.",
@@ -64,15 +57,10 @@ const actionCopy = {
     cancel: "Cancel",
     sending: "Sending...",
     submit: "Send report",
-    reactions: [
-      { type: "empathy", publicLabel: "Empathy", anonymousLabel: "Holding space", icon: "volunteer_activism" },
-      { type: "healing_energy", publicLabel: "Healing energy", anonymousLabel: "Keep going", icon: "auto_awesome" },
-      { type: "refreshing", publicLabel: "Refresh", anonymousLabel: "Refresh", icon: "psychiatry" },
-    ],
   },
 } as const;
 
-export function MindfulActionsClient({ compact = false, floatingMenu = false, item }: Readonly<{ compact?: boolean; floatingMenu?: boolean; item: DisplayItem }>) {
+export function MindfulActionsClient({ floatingMenu = false, item }: Readonly<{ compact?: boolean; floatingMenu?: boolean; item: DisplayItem }>) {
   const locale = useLocale() as AppLocale;
   const copy = actionCopy[locale];
   const [reactions, setReactions] = useState(item.reactions);
@@ -85,9 +73,14 @@ export function MindfulActionsClient({ compact = false, floatingMenu = false, it
   const [status, setStatus] = useState("");
   const [statusKind, setStatusKind] = useState<"error" | "success">("error");
 
-  async function react(type: FeedReactionType) {
+  const reacting = useRef(false);
+
+  async function toggleReaction() {
+    if (reacting.current) return;
+    reacting.current = true;
     const previous = { reactions, viewerReaction };
-    const nextReaction = viewerReaction === type ? null : type;
+    // ponytail: reuse empathy for likes; retain historical types until a DB migration.
+    const nextReaction = viewerReaction ? null : "empathy";
     const optimistic = applyViewerReaction(reactions, viewerReaction, nextReaction);
     setReactions(optimistic.reactions);
     setViewerReaction(optimistic.viewerReaction);
@@ -102,6 +95,8 @@ export function MindfulActionsClient({ compact = false, floatingMenu = false, it
       setViewerReaction(previous.viewerReaction);
       setStatusKind("error");
       setStatus(error instanceof Error ? error.message : copy.reactionSaveError);
+    } finally {
+      reacting.current = false;
     }
   }
 
@@ -143,37 +138,32 @@ export function MindfulActionsClient({ compact = false, floatingMenu = false, it
     <div className={floatingMenu ? "absolute right-5 top-8 z-20 md:right-7 md:top-10" : "relative ml-auto"}>
       <DropdownMenu onOpenChange={setMenuOpen} open={menuOpen}>
         <DropdownMenuTrigger asChild>
-          <Button aria-label={copy.options} className="min-h-11 min-w-11 rounded-full bg-card/85 shadow-xs backdrop-blur" size="icon-xs" type="button" variant="outline">
-            <MaterialSymbol className="text-[12px]" name="more_vert" />
+          <Button aria-label={copy.options} className="min-h-11 min-w-11 rounded-full text-muted-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground" size="icon-xs" type="button" variant="ghost">
+            <MaterialSymbol className="text-base" name="more_vert" strokeWidth={1.8} />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-36 rounded-lg p-1">
-          <DropdownMenuItem asChild>
-            <button
-              className="flex min-h-11 w-full items-center gap-2 rounded-md px-2 text-left text-xs font-semibold leading-4"
-              onClick={() => {
-                setMenuOpen(false);
-                void bookmark();
-              }}
-              type="button"
-            >
-              <MaterialSymbol className="text-[12px]" name={bookmarked ? "bookmark_added" : "bookmark"} />
-              <span>{bookmarked ? copy.unbookmark : copy.bookmark}</span>
-            </button>
+        <DropdownMenuContent align="end" className="w-52 max-w-[calc(100vw-2rem)] rounded-xl p-1.5 shadow-sm" sideOffset={6}>
+          <DropdownMenuItem
+            className="min-h-11 gap-2.5 rounded-lg px-3 text-xs font-medium leading-4"
+            onSelect={() => {
+              setMenuOpen(false);
+              void bookmark();
+            }}
+          >
+            <MaterialSymbol className="text-base text-primary" name={bookmarked ? "bookmark_added" : "bookmark"} strokeWidth={1.8} />
+            <span>{bookmarked ? copy.unbookmark : copy.bookmark}</span>
           </DropdownMenuItem>
-          <DropdownMenuItem asChild variant="destructive">
-            <button
-              className="flex min-h-11 w-full items-center gap-2 rounded-md px-2 text-left text-xs font-semibold leading-4"
-              onClick={() => {
-                setMenuOpen(false);
-                setReportOpen(true);
-                setStatus("");
-              }}
-              type="button"
-            >
-              <MaterialSymbol className="text-[12px]" name="flag" />
-              <span>{copy.reportPost}</span>
-            </button>
+          <DropdownMenuItem
+            className="min-h-11 gap-2.5 rounded-lg px-3 text-xs font-medium leading-4"
+            onSelect={() => {
+              setMenuOpen(false);
+              setReportOpen(true);
+              setStatus("");
+            }}
+            variant="destructive"
+          >
+            <MaterialSymbol className="text-base" name="flag" strokeWidth={1.8} />
+            <span>{copy.reportPost}</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -183,19 +173,12 @@ export function MindfulActionsClient({ compact = false, floatingMenu = false, it
   return (
     <>
       {floatingMenu ? actionMenu : null}
-      <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4 text-xs">
-        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-          {copy.reactions.slice(0, compact ? 2 : 3).map((reaction) => (
-            <Reaction
-              active={viewerReaction === reaction.type}
-              count={reactions[reaction.type]}
-              icon={reaction.icon}
-              key={reaction.type}
-              label={item.isAnonymous ? reaction.anonymousLabel : reaction.publicLabel}
-              onClick={() => void react(reaction.type)}
-            />
-          ))}
-        </div>
+      <div className="flex max-w-full flex-wrap items-center gap-2 text-xs">
+        <FeedLikeClient
+          count={Object.values(reactions).reduce((sum, count) => sum + count, 0)}
+          liked={viewerReaction !== null}
+          onToggle={() => void toggleReaction()}
+        />
         {floatingMenu ? null : actionMenu}
         {status && !reportOpen ? (
           <p className={`basis-full text-xs font-semibold ${statusKind === "success" ? "text-primary" : "text-destructive"}`} role="status">
@@ -282,36 +265,5 @@ function ReportDialog({
         </div>
       </DialogContent>
     </Dialog>
-  );
-}
-
-function Reaction({
-  active,
-  count,
-  icon,
-  label,
-  onClick,
-}: Readonly<{
-  active: boolean;
-  count: number;
-  icon: string;
-  label: string;
-  onClick: () => void;
-}>) {
-  return (
-    <button
-      aria-pressed={active}
-      className={`flex min-h-11 max-w-full items-center gap-1.5 rounded-full px-3.5 py-1.5 font-medium shadow-xs outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 ${
-        active
-          ? "bg-accent text-accent-foreground ring-1 ring-ring/30"
-          : "bg-card text-muted-foreground ring-1 ring-border hover:bg-muted hover:text-primary hover:ring-ring/20"
-      }`}
-      onClick={onClick}
-      type="button"
-    >
-      <MaterialSymbol className="text-base" name={icon} />
-      <span className="truncate">{label}</span>
-      <span className="rounded-full bg-muted px-1.5 text-[11px] font-bold text-primary">{count}</span>
-    </button>
   );
 }

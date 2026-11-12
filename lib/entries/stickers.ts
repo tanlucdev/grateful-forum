@@ -17,7 +17,7 @@ export type Sticker = {
   tags: Record<Locale, readonly string[]>;
 };
 
-export const stickerIconKeys = ["heart", "star", "book", "tea", "coffee", "sun", "moon", "sprout", "flower", "mountain", "cloud", "leaf", "mail", "check", "home", "music", "flag", "drop", "plant"] as const;
+export const stickerIconKeys = ["heart", "star", "book", "tea", "coffee", "sun", "moon", "sprout", "flower", "mountain", "cloud", "leaf", "mail", "check", "home", "music", "flag", "drop", "plant", "utensils", "message", "wind", "desk", "phone", "laugh", "bed", "pause", "stone", "trees", "shell", "bug", "bamboo", "seed", "basket", "headphones", "umbrella", "chef", "notebook", "lantern", "meditate", "wave", "smile", "sleepy"] as const;
 export type StickerIconKey = (typeof stickerIconKeys)[number];
 
 const groupTags: Record<StickerGroup, Record<Locale, readonly string[]>> = {
@@ -27,7 +27,7 @@ const groupTags: Record<StickerGroup, Record<Locale, readonly string[]>> = {
   badge: { vi: ["huy hieu", "dau an"], en: ["badge", "milestone"] },
 };
 
-function makeSticker(group: StickerGroup, slug: string, vi: string, en: string, viTags: readonly string[], enTags: readonly string[]): Sticker {
+function makeSticker(group: StickerGroup, slug: keyof typeof stickerIcons, vi: string, en: string, viTags: readonly string[], enTags: readonly string[]): Sticker {
   return {
     id: `${group}-${slug}`,
     group,
@@ -41,25 +41,83 @@ function makeSticker(group: StickerGroup, slug: string, vi: string, en: string, 
   };
 }
 
-function stickerIconFor(slug: string): StickerIconKey {
-  if (/(coffee)/.test(slug)) return "coffee";
-  if (/(tea|cup|meal)/.test(slug)) return "tea";
-  if (/(read|note|page)/.test(slug)) return "book";
-  if (/(sun|light|lantern)/.test(slug)) return "sun";
-  if (/(moon|night|sleep)/.test(slug)) return "moon";
-  if (/(heart|hug|kind|care)/.test(slug)) return "heart";
-  if (/(star|firefly)/.test(slug)) return "star";
-  if (/(mail|message|call)/.test(slug)) return "mail";
-  if (/(rain|dew|river|ocean)/.test(slug)) return "drop";
-  if (/(mountain|pine|bamboo)/.test(slug)) return "mountain";
-  if (/(cloud|mist)/.test(slug)) return "cloud";
-  if (/(flower|lotus|bloom|meadow|wildflower)/.test(slug)) return "flower";
-  if (/(garden|seed|sprout|pot|root|fern|leaf)/.test(slug)) return "plant";
-  if (/(home|desk)/.test(slug)) return "home";
-  if (/(music)/.test(slug)) return "music";
-  if (/(task|win|first|seven|streak|champion|medal|badge)/.test(slug)) return "check";
-  if (/(brave|flag)/.test(slug)) return "flag";
-  return "sprout";
+const stickerIcons = {
+  "calm": "sprout",
+  "smile": "smile",
+  "tea": "tea",
+  "reading": "book",
+  "sleep": "moon",
+  "wave": "wave",
+  "meditate": "meditate",
+  "raincoat": "cloud",
+  "lantern": "lantern",
+  "notebook": "notebook",
+  "hug": "heart",
+  "umbrella": "umbrella",
+  "chef": "chef",
+  "mail": "mail",
+  "star": "star",
+  "music": "headphones",
+  "sleepy": "sleepy",
+  "brave": "flag",
+  "morning-coffee": "coffee",
+  "sunset-walk": "sun",
+  "warm-meal": "utensils",
+  "kind-message": "message",
+  "completed-task": "check",
+  "quiet-breath": "wind",
+  "first-light": "sun",
+  "clean-desk": "desk",
+  "friend-call": "phone",
+  "tiny-win": "check",
+  "soft-rain": "drop",
+  "homecoming": "home",
+  "moon-note": "moon",
+  "shared-laugh": "laugh",
+  "deep-rest": "bed",
+  "new-page": "book",
+  "slow-break": "pause",
+  "thank-you": "heart",
+  "leaf-dew": "leaf",
+  "meadow-breeze": "wind",
+  "river-stone": "stone",
+  "garden-bloom": "flower",
+  "pine-path": "trees",
+  "cloud-drift": "cloud",
+  "sunrise-field": "sun",
+  "moon-garden": "moon",
+  "rain-sprout": "sprout",
+  "seedling-pot": "plant",
+  "fern-shadow": "leaf",
+  "lotus-pond": "flower",
+  "ocean-shell": "shell",
+  "firefly-night": "bug",
+  "mountain-mist": "mountain",
+  "herb-cup": "tea",
+  "bamboo-light": "bamboo",
+  "wildflower": "flower",
+  "seven-day-seed": "seed",
+  "first-entry": "book",
+  "kind-heart": "heart",
+  "mindful-breath": "wind",
+  "gratitude-star": "star",
+  "garden-keeper": "plant",
+  "brave-share": "flag",
+  "calm-streak": "check",
+  "flower-medal": "flower",
+  "harvest-basket": "basket",
+  "tea-circle": "tea",
+  "sunrise-badge": "sun",
+  "note-keeper": "notebook",
+  "rain-listener": "drop",
+  "care-giver": "heart",
+  "steady-root": "trees",
+  "monthly-bloom": "flower",
+  "quiet-champion": "check",
+} as const satisfies Record<string, StickerIconKey>;
+
+function stickerIconFor(slug: keyof typeof stickerIcons): StickerIconKey {
+  return stickerIcons[slug];
 }
 
 export const stickers = [

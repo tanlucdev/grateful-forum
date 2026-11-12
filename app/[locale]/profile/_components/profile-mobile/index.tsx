@@ -1,20 +1,16 @@
-import { Link } from "@/i18n/navigation";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
 import { useLocale, useTranslations } from "next-intl";
 import { ProfileEditModalButton } from "../profile-modals-client";
-import { ProfileJournalBook } from "../profile-journal-book";
+import { ProfileDesktopTabs } from "../profile-desktop-tabs-client";
 import type { ProfileView } from "../profile-view";
 
-export function MobileProfile({ view }: Readonly<{ view: ProfileView }>) {
+export function MobileProfile({ view, initialTab }: Readonly<{ view: ProfileView; initialTab: "all" | "public" | "moments" }>) {
   return (
     <div className="min-h-svh md:hidden">
-      <main className="relative w-full overflow-hidden px-5 pb-8 pt-6">
-        <div className="pointer-events-none absolute -left-16 -top-16 h-56 w-56 rounded-full bg-accent/40 blur-3xl" />
-        <div className="pointer-events-none absolute -right-12 top-10 h-48 w-48 rounded-full bg-accent/30 blur-3xl" />
+      <main className="relative w-full min-w-0 px-4 pb-8 pt-6">
         <ProfileBrief view={view} />
         <WeeklyRhythm view={view} />
-        <div data-tour="profile-mobile-entries"><MobileTabs view={view} /><MobileControls /></div>
-        <ProfileJournalBook key={view.requestedEntry} mobile view={view} />
+        <div className="mt-4"><ProfileDesktopTabs initialTab={initialTab} mobile view={view} /></div>
       </main>
     </div>
   );
@@ -41,14 +37,13 @@ function ProfileBrief({ view }: Readonly<{ view: ProfileView }>) {
               {t("rank")}
             </span>
           </div>
-          <p className="mt-0.5 line-clamp-1 text-xs leading-4 text-muted-foreground">{view.bio || t("defaultBio")}</p>
+          <p className="mt-0.5 [overflow-wrap:anywhere] text-xs leading-4 text-muted-foreground">{view.bio || t("defaultBio")}</p>
         </div>
         <div data-tour="profile-mobile-edit"><ProfileEditModalButton variant="icon" view={view} /></div>
       </div>
       <div className="flex items-center justify-between gap-1.5 pt-1">
         <MobileStat value={view.entryCount} label={t("mobile.entries")} tone="primary" />
         <MobileStat value={view.streak} label={t("mobile.streak")} suffix="🔥" tone="tertiary" />
-        <MobileStat value={14} label={t("mobile.companion")} suffix="🌱" tone="secondary" />
       </div>
     </section>
   );
@@ -99,48 +94,5 @@ function WeeklyRhythm({ view }: Readonly<{ view: ProfileView }>) {
         ))}
       </div>
     </section>
-  );
-}
-
-function MobileTabs({ view }: Readonly<{ view: ProfileView }>) {
-  const t = useTranslations("profile");
-  return (
-    <div className="relative z-10 -mx-1 mt-4 flex gap-2 overflow-x-auto py-1">
-      <Link className="inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full bg-muted px-3.5 py-1.5 text-xs font-medium text-muted-foreground shadow-sm" href="/profile?tab=all">{t("tabs.all", { count: view.entryCount })}</Link>
-      <button className="inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full bg-gradient-to-r from-primary to-[var(--leaf-deep)] px-4 py-1.5 text-xs font-semibold text-primary-foreground shadow-sm" type="button">
-        <MaterialSymbol className="text-base" name="auto_stories" />
-        {t("tabs.journal")}
-      </button>
-      <Link className="inline-flex min-h-11 shrink-0 items-center rounded-full bg-muted px-3.5 py-1.5 text-xs font-medium text-muted-foreground shadow-sm" href="/profile?tab=public">{t("tabs.public", { count: view.publicCount })}</Link>
-      <button className="inline-flex min-h-11 shrink-0 items-center rounded-full bg-muted px-3.5 py-1.5 text-xs font-medium text-muted-foreground shadow-sm" type="button">
-        {t("tabs.moments", { count: 4 })}
-      </button>
-    </div>
-  );
-}
-
-function MobileControls() {
-  const t = useTranslations("profile");
-  return (
-    <div className="relative z-10 mt-2 flex flex-wrap items-center justify-between gap-2">
-      <div className="flex shrink-0 items-center rounded-xl bg-muted p-1 shadow-sm">
-        <button aria-label={t("a11y.grid")} className="flex h-11 w-11 items-center justify-center rounded-lg text-muted-foreground" title={t("a11y.grid")} type="button">
-          <MaterialSymbol className="text-lg" name="grid_view" />
-        </button>
-        <button aria-label={t("a11y.list")} className="flex h-11 w-11 items-center justify-center rounded-lg text-muted-foreground" title={t("a11y.list")} type="button">
-          <MaterialSymbol className="text-lg" name="stream" />
-        </button>
-        <button aria-label={t("a11y.journal")} className="flex h-11 w-11 items-center justify-center rounded-lg bg-card text-primary shadow-sm" title={t("a11y.journal")} type="button">
-          <MaterialSymbol className="text-lg" name="auto_stories" />
-        </button>
-      </div>
-      <div className="flex min-w-0 gap-1.5 overflow-x-auto">
-        {[t("filters.all"), "#giadinh", "#congviec", "#thiennhien"].map((tag, index) => (
-          <span className={`${index === 0 ? "bg-primary text-primary-foreground" : "bg-card text-muted-foreground"} shrink-0 rounded-lg px-2.5 py-1 text-[10px] font-medium shadow-sm`} key={tag}>
-            {tag}
-          </span>
-        ))}
-      </div>
-    </div>
   );
 }

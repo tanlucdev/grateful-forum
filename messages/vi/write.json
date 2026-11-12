@@ -1,7 +1,7 @@
 {
   "method": {
     "label": "Cách viết",
-    "text": "Gõ chữ",
+    "text": "Đánh máy",
     "handwritten": "Viết tay"
   },
   "gratitudes": {
@@ -10,7 +10,9 @@
     "field": "Điều biết ơn {number}",
     "placeholder": "Điều bạn biết ơn {number}",
     "remove": "Xóa điều biết ơn {number}",
-    "add": "Thêm điều biết ơn"
+    "add": "Thêm điều biết ơn",
+    "paragraphPlaceholder": "Hôm nay, bạn biết ơn điều gì?",
+    "paragraphLabel": "Điều bạn biết ơn"
   },
   "moods": {
     "calm": "Bình thản",
@@ -24,24 +26,40 @@
     "recentLabel": "Không gian gần đây"
   },
   "reflection": {
-    "title": "Ghi thêm nếu bạn muốn",
-    "placeholder": "Một dòng nữa, nếu bạn muốn giữ lại."
+    "title": "Nội dung",
+    "placeholder": "Viết thêm về ngày hôm nay, nếu bạn muốn…",
+    "optional": "Không bắt buộc"
   },
   "creative": {
-    "washi": "Washi",
+    "washi": "Băng keo trang trí",
     "quote": "Quote",
     "sticker": "Sticker",
     "image": "Ảnh",
     "none": "Không dùng",
-    "calm": "An yên",
-    "warm": "Ấm áp",
+    "calm": "Mint",
+    "warm": "Hồng ấm",
     "title": "Trang trí trang sổ",
     "quotePlaceholder": "Một câu bạn muốn giữ lại…",
     "chooseImage": "Chọn ảnh kỷ niệm",
     "imageHint": "Ảnh sẽ được lưu cùng bài viết.",
     "removeImage": "Bỏ ảnh đã chọn",
     "diaryTitle": "Cuốn sổ biết ơn",
-    "memories": "Kỷ niệm hôm nay"
+    "memories": "Kỷ niệm hôm nay",
+    "washiDescription": "Washi là băng keo giấy có họa tiết dùng trang trí sổ.",
+    "cream": "Kem",
+    "sky": "Xanh trời",
+    "dots": "Chấm bi",
+    "stripes": "Kẻ sọc",
+    "gingham": "Caro",
+    "leaves": "Lá nhỏ",
+    "toolsTitle": "Trang trí theo ý bạn",
+    "tools": {
+      "image": "Ảnh kỷ niệm",
+      "sticker": "Sticker",
+      "washi": "Băng keo",
+      "quote": "Trích dẫn"
+    },
+    "added": "Đã thêm"
   },
   "picker": {
     "title": "Chọn sticker Bé Mầm",
@@ -110,8 +128,8 @@
     },
     "color": "Màu mực {color}",
     "pen": "Bút",
-    "highlighter": "Bút đánh dấu",
-    "eraser": "Tẩy vùng",
+    "highlighter": "Đánh dấu",
+    "eraser": "Tẩy",
     "pan": "Di chuyển",
     "undo": "Hoàn tác",
     "redo": "Làm lại",
@@ -132,11 +150,12 @@
     "previewUnavailable": "Đã giữ trên thiết bị, chưa tạo được ảnh xem trước.",
     "type": "Gõ chữ",
     "handwrite": "Viết tay",
-    "back": "Về hồ sơ"
+    "back": "Về hồ sơ",
+    "customize": "Tùy chỉnh"
   },
   "book": {
     "gratitudeRequiredShort": "Thêm ít nhất một điều biết ơn để lưu.",
-    "gratitudeRequired": "Viết ít nhất một điều biết ơn ở trang bên trái để lưu. Phần “Ghi thêm” là nội dung bổ sung.",
+    "gratitudeRequired": "Viết ít nhất một điều biết ơn để lưu. Phần nội dung bên dưới là tùy chọn.",
     "handwritingRequired": "Viết một nét trên trang để lưu.",
     "addMood": "Thêm cảm xúc",
     "done": "Xong",
@@ -164,5 +183,15 @@
     "loadingHint": "Bạn có thể bắt đầu viết trong lúc chờ.",
     "unavailableHint": "Nội dung đang viết vẫn ở đây. Bạn thử lại nhé.",
     "retry": "Kiểm tra lại"
+  },
+  "navigation": {
+    "back": "Quay lại",
+    "discard": "Rời trang? Nội dung chưa lưu sẽ bị mất.",
+    "title": "Rời trang viết?",
+    "continue": "Tiếp tục viết",
+    "leave": "Rời trang"
+  },
+  "extras": {
+    "title": "Thêm chút hôm nay"
   }
 }

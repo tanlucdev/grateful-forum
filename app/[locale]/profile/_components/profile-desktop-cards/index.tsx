@@ -87,7 +87,7 @@ export function EntryImage({
 }: Readonly<{ image: string; label: string; labelAt: string }>) {
   return (
     <div
-      className="relative h-44 overflow-hidden rounded-xl bg-secondary bg-cover bg-center transition-transform duration-500 group-hover:scale-[1.01]"
+      className="relative h-44 overflow-hidden rounded-xl bg-secondary bg-cover bg-center transition-transform duration-(--motion-feedback) group-hover:scale-[1.01]"
       style={{ backgroundImage: `url(${image})` }}
     >
       <span className={`absolute ${labelAt === "top" ? "left-3 top-3" : "bottom-3 right-3"} inline-flex items-center gap-1 rounded-full bg-card/80 px-2.5 py-1 text-[11px] font-medium leading-[14px] text-foreground shadow-sm backdrop-blur-md`}>

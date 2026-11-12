@@ -1,4 +1,5 @@
 {
+  "motion": { "pause": "Pause motion", "resume": "Resume motion" },
   "title": "Grateful Forum",
   "preview": "Preview the forum",
   "previewShort": "Preview",

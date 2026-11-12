@@ -106,11 +106,11 @@ export function ProfileEditModalButton({
                     </div>
                     <div className="flex-1 space-y-2 text-center sm:text-left">
                       <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
-                        <button className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3.5 py-1.5 text-[12px] font-medium leading-4 text-primary-foreground shadow-sm transition-all hover:bg-[var(--leaf-deep)]" type="button">
+                        <button className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3.5 py-1.5 text-[12px] font-medium leading-4 text-primary-foreground shadow-sm transition-[color,background-color,border-color,box-shadow,opacity,transform,translate,scale] hover:bg-[var(--leaf-deep)]" type="button">
                           <MaterialSymbol className="text-sm" name="photo_camera" />
                           <span>Thay đổi ảnh</span>
                         </button>
-                        <button className="inline-flex items-center gap-1.5 rounded-lg border border-border/30 bg-muted px-3.5 py-1.5 text-[12px] font-medium leading-4 text-foreground transition-all hover:bg-input" type="button">
+                        <button className="inline-flex items-center gap-1.5 rounded-lg border border-border/30 bg-muted px-3.5 py-1.5 text-[12px] font-medium leading-4 text-foreground transition-[color,background-color,border-color,box-shadow,opacity,transform,translate,scale] hover:bg-input" type="button">
                           <MaterialSymbol className="text-sm text-primary" name="psychiatry" />
                           <span>Chọn linh vật Mầm khác</span>
                         </button>
@@ -137,7 +137,7 @@ export function ProfileEditModalButton({
                     </div>
                     <div className="relative">
                       <select
-                        className="w-full cursor-pointer appearance-none rounded-xl border border-border/40 bg-muted px-4 py-2.5 text-[16px] leading-6 text-foreground outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+                        className="w-full cursor-pointer appearance-none rounded-xl border border-border/40 bg-muted px-4 py-2.5 text-[16px] leading-6 text-foreground outline-none transition-[color,background-color,border-color,box-shadow,opacity,transform,translate,scale] focus:border-primary focus:ring-2 focus:ring-primary/20"
                         value="tam-hon-an-yen"
                         onChange={() => {}}
                       >
@@ -164,7 +164,7 @@ export function ProfileEditModalButton({
                       <span className="text-[11px] leading-[14px] text-muted-foreground">{bioCount}/120</span>
                     </div>
                     <textarea
-                      className="min-h-20 w-full resize-none rounded-xl border border-border/40 bg-muted px-4 py-2.5 text-[16px] leading-6 text-foreground outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+                      className="min-h-20 w-full resize-none rounded-xl border border-border/40 bg-muted px-4 py-2.5 text-[16px] leading-6 text-foreground outline-none transition-[color,background-color,border-color,box-shadow,opacity,transform,translate,scale] focus:border-primary focus:ring-2 focus:ring-primary/20"
                       maxLength={120}
                       onChange={(event) => setDraft((current) => ({ ...current, bio: event.target.value }))}
                       rows={3}
@@ -182,14 +182,14 @@ export function ProfileEditModalButton({
                 </div>
                 <div className="flex items-center justify-end gap-3 border-t border-border bg-muted/60 px-6 py-4">
                   <button
-                    className="rounded-xl border border-border px-5 py-2.5 text-[14px] font-medium leading-5 text-foreground transition-all hover:bg-input"
+                    className="rounded-xl border border-border px-5 py-2.5 text-[14px] font-medium leading-5 text-foreground transition-[color,background-color,border-color,box-shadow,opacity,transform,translate,scale] hover:bg-input"
                     onClick={() => setOpen(false)}
                     type="button"
                   >
                     Hủy bỏ
                   </button>
                   <button
-                    className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-[14px] font-medium leading-5 text-primary-foreground shadow-md transition-all hover:bg-[var(--primary-hover)] disabled:opacity-60"
+                    className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-[14px] font-medium leading-5 text-primary-foreground shadow-md transition-[color,background-color,border-color,box-shadow,opacity,transform,translate,scale] hover:bg-[var(--primary-hover)] disabled:opacity-60"
                     disabled={saving}
                     onClick={save}
                     type="button"
@@ -217,7 +217,7 @@ function Field({
     <div className="space-y-1.5">
       <label className="block text-[14px] font-semibold leading-5 text-foreground">{label}</label>
       <input
-        className="w-full rounded-xl border border-border/40 bg-muted px-4 py-2.5 text-[16px] leading-6 text-foreground outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+        className="w-full rounded-xl border border-border/40 bg-muted px-4 py-2.5 text-[16px] leading-6 text-foreground outline-none transition-[color,background-color,border-color,box-shadow,opacity,transform,translate,scale] focus:border-primary focus:ring-2 focus:ring-primary/20"
         onChange={(event) => onChange(event.target.value)}
         value={value}
       />

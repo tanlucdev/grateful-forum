@@ -1,5 +1,6 @@
 "use client";
 
+import { createLocalId } from "./local-id.ts";
 import type { EntryVisibility, InkDocument, LocalDraft, LocalEntry, LocalHandwrittenEntry } from "./types";
 
 const KEY = "begrateful.entries";
@@ -24,7 +25,7 @@ export function getLocalDrafts() {
 
 export function addLocalEntry(content: string, visibility: EntryVisibility) {
   const entry: LocalEntry = {
-    id: crypto.randomUUID(),
+    id: createLocalId(),
     content,
     visibility,
     createdAt: new Date().toISOString(),
@@ -36,7 +37,7 @@ export function addLocalEntry(content: string, visibility: EntryVisibility) {
 
 export function addLocalHandwrittenEntry(document: InkDocument, visibility: EntryVisibility) {
   const entry: LocalHandwrittenEntry = {
-    id: crypto.randomUUID(),
+    id: createLocalId(),
     document,
     visibility,
     createdAt: new Date().toISOString(),
@@ -46,7 +47,7 @@ export function addLocalHandwrittenEntry(document: InkDocument, visibility: Entr
 }
 
 export function upsertLocalHandwrittenEntry(id: string | null, document: InkDocument, visibility: EntryVisibility) {
-  const entry = { id: id ?? crypto.randomUUID(), document, visibility, createdAt: new Date().toISOString() };
+  const entry = { id: id ?? createLocalId(), document, visibility, createdAt: new Date().toISOString() };
   const entries = getLocalHandwrittenEntries();
   localStorage.setItem(HANDWRITTEN_KEY, JSON.stringify([entry, ...entries.filter((item) => item.id !== entry.id)]));
   return entry;
@@ -66,7 +67,7 @@ export function getLocalHandwrittenEntries() {
 
 export function addLocalDraft(content: string, mood: string) {
   const draft: LocalDraft = {
-    id: crypto.randomUUID(),
+    id: createLocalId(),
     content,
     createdAt: new Date().toISOString(),
     mood,

@@ -11,7 +11,7 @@ import { MaterialSymbol } from "@/components/ui/material-symbol";
 import { localizedLoginHref, loginHref } from "@/lib/auth/redirects";
 
 import { moods, moodsEn, navItems, navItemsEn } from "../landing-data";
-import { LiveDot, MoodButton, ShimmerCTA, softPress, tapLift, useLandingReducedMotion } from "../motion-primitives";
+import { LiveDot, MoodButton, ShimmerCTA, activeChip, softPress, tapLift, useLandingReducedMotion } from "../motion-primitives";
 
 const SECTION_MARKER_RATIO = 0.38;
 
@@ -93,7 +93,7 @@ export function LandingHeader() {
   }, [localizedNavItems]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-card/60 bg-background/85 px-4 py-3 shadow-sm backdrop-blur-xl lg:fixed lg:left-0 lg:right-0 lg:w-full lg:px-0 lg:py-0">
+    <header className="hidden lg:block sticky top-0 z-50 border-b border-card/60 bg-background/85 px-4 py-3 shadow-sm backdrop-blur-xl lg:fixed lg:left-0 lg:right-0 lg:w-full lg:px-0 lg:py-0">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 lg:h-20 lg:px-margin-desktop">
         <Link className="flex shrink-0 items-center gap-3" href="#home">
           <Image alt="" className="h-9 w-9 object-cover lg:h-10 lg:w-10 " height={40} src="/stitch/landing/mascot.png" width={40} />
@@ -119,6 +119,7 @@ export function LandingHeader() {
                 <motion.span
                   className="absolute inset-0 rounded-xl bg-surface-white shadow-xs"
                   layoutId="landing-nav-indicator"
+                  {...activeChip(Boolean(reduceMotion))}
                 />
               ) : null}
               <span className="relative">{label}</span>
@@ -130,7 +131,7 @@ export function LandingHeader() {
           <Link aria-label={t("preview")} className="inline-flex min-h-11 shrink-0 items-center justify-center whitespace-nowrap rounded-full bg-primary px-4 py-2 text-xs font-bold text-primary-foreground transition hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary lg:text-sm" href="/feed/preview">
             {t("previewShort")}
           </Link>
-          <ShimmerCTA className="inline-flex shrink-0 items-center gap-2 rounded-full border border-primary/30 bg-accent/50 px-3.5 py-1.5 text-xs font-bold text-primary shadow-sm transition-all hover:-translate-y-0.5 active:scale-95 lg:rounded-full lg:px-5 lg:py-2.5 lg:text-sm" href={loginHref("/feed", locale)}>
+          <ShimmerCTA className="inline-flex shrink-0 items-center gap-2 rounded-full border border-primary/30 bg-accent/50 px-3.5 py-1.5 text-xs font-bold text-primary shadow-sm transition-[color,background-color,border-color,box-shadow,opacity,transform,translate,scale] hover:-translate-y-0.5 active:scale-95 lg:rounded-full lg:px-5 lg:py-2.5 lg:text-sm" href={loginHref("/feed", locale)}>
             <span className="sr-only sm:not-sr-only">{copy.login}</span>
             <MaterialSymbol className="text-[18px]" name="eco" />
           </ShimmerCTA>
@@ -162,7 +163,7 @@ export function HeroSection() {
           {copy.description}
         </p>
         <div className="mb-6 flex w-full flex-col gap-2.5 px-2 sm:flex-row lg:mb-8 lg:w-auto lg:px-0">
-          <ShimmerCTA className="inline-flex w-full items-center justify-center gap-2.5 rounded-2xl bg-gradient-to-r from-gradient-start to-gradient-end px-6 py-3.5 text-sm font-bold text-on-primary shadow-[var(--primary-shadow-md)] transition-all hover:-translate-y-0.5 active:scale-95 lg:w-auto lg:text-base" href="/feed/preview">
+          <ShimmerCTA className="inline-flex w-full items-center justify-center gap-2.5 rounded-2xl bg-gradient-to-r from-gradient-start to-gradient-end px-6 py-3.5 text-sm font-bold text-on-primary shadow-[var(--primary-shadow-md)] transition-[color,background-color,border-color,box-shadow,opacity,transform,translate,scale] hover:-translate-y-0.5 active:scale-95 lg:w-auto lg:text-base" href="/feed/preview">
             <span>{copy.explore}</span>
             <MaterialSymbol className="text-[20px]" name="arrow_forward" />
           </ShimmerCTA>

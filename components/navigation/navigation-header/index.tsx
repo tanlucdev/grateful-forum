@@ -5,6 +5,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 
+import { MobileNavigationHeader } from "@/components/navigation/mobile-navigation-header";
 import { LocaleSwitcher } from "@/components/navigation/locale-switcher";
 import { Button } from "@/components/ui/button";
 import {
@@ -44,11 +45,13 @@ const mobileNavItems = [
 ] as const;
 
 export function NavigationHeader({
+  desktopVisible = true,
   locale,
   onSignedOut,
   pathname,
   profile,
 }: Readonly<{
+  desktopVisible?: boolean;
   locale: AppLocale;
   onSignedOut: () => void;
   pathname: string;
@@ -60,7 +63,9 @@ export function NavigationHeader({
   const copy = navigationCopy(t);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-[80] hidden bg-transparent pt-[calc(env(safe-area-inset-top)+8px)] lg:block">
+    <>
+      <MobileNavigationHeader accountControl={profile.signedIn ? <AvatarMenu copy={copy} profile={profile} onSignedOut={onSignedOut} /> : <LoginButton copy={copy} locale={locale} />} />
+    <header className={`${desktopVisible ? "hidden lg:block" : "hidden"} fixed inset-x-0 top-0 z-[80] bg-transparent pt-[calc(env(safe-area-inset-top)+8px)]`}>
       <div className="mx-auto grid h-[60px] max-w-7xl grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 rounded-[20px] border border-border bg-card/90 px-4 shadow-sm backdrop-blur-xl lg:px-5">
         <div className="flex min-w-0 items-center justify-start gap-2.5">
           <Link aria-label="Grateful Forum" className="flex min-w-0 items-center gap-2" href="/feed" onClick={() => setPendingPath("/feed")}>
@@ -108,13 +113,14 @@ export function NavigationHeader({
         </nav>
 
         <div className="flex min-w-0 items-center justify-end">
-          <div className="flex h-10 shrink-0 items-center gap-1 rounded-full border border-border bg-background/65 p-1 shadow-xs backdrop-blur-md">
+          <div className="flex shrink-0 items-center gap-2">
             <LocaleSwitcher />
             {profile.signedIn ? <AvatarMenu copy={copy} profile={profile} onSignedOut={onSignedOut} /> : <LoginButton copy={copy} locale={locale} />}
           </div>
         </div>
       </div>
     </header>
+    </>
   );
 }
 
@@ -188,8 +194,8 @@ export function MobileBottomNavigation({
 
 function LoginButton({ copy, locale }: Readonly<{ copy: ReturnType<typeof navigationCopy>; locale: AppLocale }>) {
   return (
-    <Button asChild className="h-8 rounded-full" size="sm">
-      <Link href={loginHref("/profile", locale)}>
+    <Button asChild className="min-h-11 min-w-11 rounded-full" size="sm">
+      <Link aria-label={copy.login} href={loginHref("/profile", locale)}>
         <MaterialSymbol className="text-[15px]" name="login" />
         <span className="hidden sm:inline">{copy.login}</span>
       </Link>
@@ -220,13 +226,13 @@ function AvatarMenu({
       <DropdownMenuTrigger asChild>
         <button
           aria-label={copy.accountMenu}
-          className="flex cursor-pointer items-center justify-center rounded-full p-0.5 ring-2 ring-primary/20 transition-all hover:ring-primary/40"
+          className="flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-full border border-primary/20 p-0.5 transition-colors hover:border-primary/40 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ring"
           type="button"
         >
           <AvatarImage className="h-8 w-8" profile={profile} />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-72 rounded-2xl border-border bg-card p-3 text-foreground shadow-sm">
+      <DropdownMenuContent align="end" className="z-[90] w-72 rounded-2xl border-border bg-card p-3 text-foreground shadow-sm">
         <div className="mb-2 flex items-center gap-3 rounded-2xl bg-muted p-2.5">
             <AvatarImage className="h-10 w-10 ring-2 ring-primary/20" profile={profile} />
             <div className="min-w-0 flex-1">
@@ -242,7 +248,7 @@ function AvatarMenu({
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild variant="destructive">
-          <button className="flex w-full items-center gap-2.5 rounded-2xl px-3 py-2 text-left text-sm font-medium" onClick={signOut} type="button">
+          <button className="flex min-h-11 w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-sm font-medium" onClick={signOut} type="button">
             <MaterialSymbol className="h-4 w-4 text-lg" name="logout" />
             <span>{copy.logout}</span>
           </button>

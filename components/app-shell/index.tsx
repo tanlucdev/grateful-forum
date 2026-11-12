@@ -1,6 +1,7 @@
 "use client";
 
-import { type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
+import { WriteBottomBarContext } from "./write-bottom-bar-context";
 import { Toaster } from "sonner";
 
 import {
@@ -21,6 +22,7 @@ export function AppShell({
   profile,
 }: Readonly<{ children: ReactNode; locale: AppLocale; profile: AppShellProfile }>) {
   const pathname = usePathname();
+  const [writeBar, setWriteBar] = useState(false);
   const router = useRouter();
   const showHeader = pathname !== "/feed/preview" && appRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`));
 
@@ -30,14 +32,12 @@ export function AppShell({
   }
 
   return (
-    <div
+    <WriteBottomBarContext.Provider value={setWriteBar}><div
       className={`min-h-screen bg-background text-foreground ${
         showHeader ? "journal-write-theme app-garden-bg" : ""
       }`}
     >
-      {showHeader ? (
-        <NavigationHeader key={pathname} locale={locale} pathname={pathname} profile={profile} onSignedOut={onSignedOut} />
-      ) : null}
+      <NavigationHeader desktopVisible={showHeader} key={pathname} locale={locale} pathname={pathname} profile={profile} onSignedOut={onSignedOut} />
       <div
         className={
           showHeader
@@ -47,8 +47,8 @@ export function AppShell({
       >
         {children}
       </div>
-      {showHeader ? <MobileBottomNavigation locale={locale} pathname={pathname} profile={profile} /> : null}
+      {showHeader && !(pathname === "/write" && writeBar) ? <MobileBottomNavigation locale={locale} pathname={pathname} profile={profile} /> : null}
       <Toaster richColors position="top-center" />
-    </div>
+    </div></WriteBottomBarContext.Provider>
   );
 }

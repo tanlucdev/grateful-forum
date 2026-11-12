@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useNextStep } from "nextstepjs";
-import { firstEntryTourSelectors } from "@/lib/onboarding/first-entry-tour";
+import { firstEntryTourName, writingTourSelectors } from "@/lib/onboarding/first-entry-tour";
 
 const tourSeenKey = "onboarding:first-entry:seen";
 
@@ -32,10 +32,11 @@ export function OnboardingTourStarterClient({ replay, shouldStart }: Readonly<{ 
     let frame = 0;
     let attempts = 0;
     const startWhenReady = () => {
-      if (firstEntryTourSelectors.every((selector) => document.querySelector(selector))) {
+      const method = document.querySelector("[data-write-method]")?.getAttribute("data-write-method") === "handwritten" ? "handwritten" : "text";
+      if (writingTourSelectors(method).every((selector) => document.querySelector(selector))) {
         started.current = true;
         if (!replay) rememberTourOnThisDevice();
-        startNextStep("first-entry");
+        startNextStep(firstEntryTourName(method));
         const url = new URL(window.location.href);
         url.searchParams.delete("tour");
         window.history.replaceState(window.history.state, "", `${url.pathname}${url.search}${url.hash}`);

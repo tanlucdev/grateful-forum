@@ -1,16 +1,136 @@
 {
   "dailyPractice": "<strong>Just 5 minutes a day</strong> to express gratitude.",
   "loadError": "Could not load more posts. Please try again.",
+  "entryPreview": {
+    "showMore": "Show more",
+    "showLess": "Show less"
+  },
   "anonymous": "Anonymous",
   "public": "Public",
   "anonymousShare": "Anonymous share",
   "publicShare": "Public share",
-  "relative": { "minute": "{count}m ago", "hour": "{count}h ago", "yesterday": "Yesterday", "day": "{count}d ago" },
-  "filters": { "visibility": "Shared by", "visibilityAll": "Everyone", "visibilityAnonymous": "Anonymous", "visibilityPublic": "With a name", "all": "All seeds", "ordinary": "Everyday moments", "polaroid": "With Polaroids" },
-  "empty": { "ordinaryTitle": "No everyday moments yet", "ordinaryDescription": "Shares without Polaroid photos will appear here.", "polaroidTitle": "No Polaroids yet", "polaroidDescription": "Shares with attached photos will appear here.", "publicTitle": "No public shares yet", "publicDescription": "Public or anonymous posts will appear here." },
-  "loading": "Loading more...", "done": "You have reached the end.", "noPublic": "No public shares yet.", "eyebrow": "Gentle Stream", "title": "Seeds planted today", "description": "Read one grateful note from someone else and remember the quiet happiness nearby.", "showAll": "Show all", "scrollToTop": "Back to top",
-  "rhythm": {"title": "This week’s rhythm", "garden": "365 flower garden", "habit": "Keep writing so your mind feels steadier:", "watered": "Watered this week:", "days": "{count, number} days", "rate": "Rate: {rate}", "day": "{date}, {count, number} gratitude entries"},
-  "preview": {"brand": "Grateful Forum", "write": "Write gratitude", "label": "Preview", "invitation": "Sign in to read more and write your own gratitude.", "reactions": "Reaction counts", "empathy": "Empathy", "healing_energy": "Healing energy", "refreshing": "Refresh", "title": "Sign in to read more", "description": "You can preview up to 5 posts. Sign in to keep exploring the forum.", "login": "Sign in to continue"},
+  "relative": {
+    "minute": "{count}m ago",
+    "hour": "{count}h ago",
+    "yesterday": "Yesterday",
+    "day": "{count}d ago"
+  },
+  "filters": {
+    "content": "Content",
+    "visibility": "Shared by",
+    "visibilityAll": "Everyone",
+    "visibilityAnonymous": "Anonymous",
+    "visibilityPublic": "With a name",
+    "all": "All",
+    "ordinary": "Everyday",
+    "polaroid": "Polaroids"
+  },
+  "empty": {
+    "ordinaryTitle": "No everyday moments yet",
+    "ordinaryDescription": "Shares without Polaroid photos will appear here.",
+    "polaroidTitle": "No Polaroids yet",
+    "polaroidDescription": "Shares with attached photos will appear here.",
+    "publicTitle": "No public shares yet",
+    "publicDescription": "Public or anonymous posts will appear here."
+  },
+  "loading": "Loading more...",
+  "done": "You have reached the end.",
+  "noPublic": "No public shares yet.",
+  "eyebrow": "Gentle Stream",
+  "title": "Seeds planted today",
+  "description": "Read one grateful note from someone else and remember the quiet happiness nearby.",
+  "showAll": "Show all",
+  "scrollToTop": "Back to top",
+  "rhythm": {
+    "title": "This week’s rhythm",
+    "garden": "365 flower garden",
+    "habit": "Keep writing so your mind feels steadier:",
+    "watered": "Watered this week:",
+    "days": "{count, number} days",
+    "rate": "Rate: {rate}",
+    "day": "{date}, {count, number} gratitude entries"
+  },
+  "preview": {
+    "brand": "Grateful Forum",
+    "write": "Write gratitude",
+    "label": "Preview",
+    "invitation": "Sign in to read more and write your own gratitude.",
+    "reactions": "Reaction counts",
+    "empathy": "Empathy",
+    "healing_energy": "Healing energy",
+    "refreshing": "Refresh",
+    "title": "Sign in to read more",
+    "description": "You can preview up to 5 posts. Sign in to keep exploring the forum.",
+    "login": "Sign in to continue"
+  },
+  "favorite": {
+    "like": "Like",
+    "unlike": "Unlike"
+  },
   "companion": {},
-  "quotes": []
+  "quotes": [],
+  "lab": {
+    "label": "Design preview",
+    "notice": "Sample data · Likes/saves are for preview only.",
+    "original": "Current feed",
+    "title": "Small moments. A little gratitude.",
+    "description": "Take a moment. Read the little things making someone smile.",
+    "prompt": "What are you grateful for today?",
+    "promptHelp": "Even the smallest thing is worth remembering.",
+    "community": "Community notes",
+    "saved": "Saved",
+    "all": "All",
+    "text": "Writing",
+    "photos": "With photos",
+    "contentFilters": "Filter content",
+    "viewFilters": "Choose post list",
+    "like": "Send a little empathy",
+    "unlike": "Remove empathy",
+    "save": "Save this note",
+    "unsave": "Unsave this note",
+    "emptyTitle": "No notes here yet",
+    "emptyBody": "Try another filter or save a note that speaks to you.",
+    "reset": "See all notes",
+    "asideTitle": "Read a little slower.",
+    "asideBody": "You don’t have to catch up with everything. One small story can make your day a little lighter.",
+    "asideLink": "Make a little space to write",
+    "end": "You’ve read all the sample notes.",
+    "anonymous": "An anonymous friend",
+    "public": "Public share",
+    "anonymousLabel": "Anonymous share",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "photoAlt": "A small potted green plant",
+    "quoteLabel": "A thought to take with you",
+    "samples": {
+      "first": {
+        "name": "Minh An",
+        "body": "This morning, I woke up a little earlier. Instead of reaching for my phone, I sat by the window and finished a glass of warm water.\n\nIt turns out a good day can begin with something very small.",
+        "mood": "Peaceful",
+        "space": "At home"
+      },
+      "second": {
+        "name": "",
+        "body": "Some days feel ordinary, but writing them down reminds me there are still so many things to appreciate.",
+        "one": "Mum called, just to ask what I had eaten.",
+        "two": "A stranger held the lift door for me.",
+        "three": "I let myself rest without feeling guilty.",
+        "mood": "Warm",
+        "space": ""
+      },
+      "third": {
+        "name": "Thảo Nhi",
+        "body": "The little plant on my desk has a new leaf. I thought it had stopped growing.\n\nMaybe I’m like that too. Some changes need time. We just can’t see them yet.",
+        "mood": "Hopeful",
+        "space": "My workspace"
+      },
+      "fourth": {
+        "name": "Hoàng Nam",
+        "body": "Today I finished something I had put off all week. It isn’t perfect, but I started. I’m grateful for a friend who worked alongside me all afternoon.",
+        "quote": "You don’t have to do everything today. Just start with one small thing.",
+        "mood": "Relieved",
+        "space": ""
+      }
+    }
+  }
 }

@@ -10,7 +10,14 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { loadMoreFeed } from "@/lib/api/feed";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
-import { LocaleSwitcher } from "@/components/navigation/locale-switcher";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import type { FeedPage } from "@/lib/feed/types";
 import type { FeedVisibilityFilter } from "@/lib/feed/validation";
 import type { ReactNode } from "react";
@@ -41,10 +48,6 @@ export function PublicFeedClient({
   const router = useRouter();
   const pathname = usePathname();
   const [filterPending, startFilterTransition] = useTransition();
-  const visibilityControls = <fieldset className="flex min-w-0 flex-wrap items-center gap-1" disabled={filterPending}>
-    <legend className="mb-1 text-xs font-semibold text-muted-foreground">{t("filters.visibility")}</legend>
-    {(["all", "anonymous", "public"] as const).map((value) => <button aria-pressed={initialVisibility === value} className="group min-h-11 min-w-11 rounded-full px-0.5 py-1.5 text-xs font-medium outline-offset-2 focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-60" key={value} onClick={() => startFilterTransition(() => router.replace({ pathname: "/feed", query: { visibility: value } }, { scroll: false }))} type="button"><span className={`inline-flex min-h-8 items-center rounded-full px-3 ${initialVisibility === value ? "bg-primary text-primary-foreground" : "bg-card/80 text-muted-foreground group-hover:bg-muted"}`}>{t(`filters.visibility${value === "all" ? "All" : value === "anonymous" ? "Anonymous" : "Public"}`)}</span></button>)}
-  </fieldset>;
   const dailyPractice = <p className="max-w-prose text-sm leading-relaxed text-muted-foreground">{t.rich("dailyPractice", { strong: (chunks) => <strong className="font-bold text-primary">{chunks}</strong> })}</p>;
   const copy = {
     all: t("filters.all"), ordinary: t("filters.ordinary"), polaroid: t("filters.polaroid"),
@@ -174,7 +177,60 @@ export function PublicFeedClient({
   const feedItems: DisplayItem[] = filteredItems.map((item, index) => toDisplayItem(item, index, locale, displayCopy));
   const status = error || (loading ? copy.loading : !requiresLogin && done && items.length ? copy.done : "");
   const showMobileEnd = !requiresLogin && !loading && !error && done && items.length > 0;
-  const filters = feedFilters.map((item) => ({ ...item, label: copy[item.key] }));
+  const visibilityLabel = t(`filters.visibility${initialVisibility === "all" ? "All" : initialVisibility === "anonymous" ? "Anonymous" : "Public"}`);
+  const filterControls = (
+    <div className="@container w-full min-w-0">
+      <div className="flex min-w-0 flex-col gap-2 @min-[38rem]:flex-row @min-[38rem]:items-center">
+        <div aria-label={t("filters.content")} className="grid min-w-0 flex-1 grid-cols-3 gap-1 rounded-2xl border border-border/60 bg-card/90 p-1" role="group">
+          {feedFilters.map((item) => (
+            <button
+              aria-pressed={filter === item.key}
+              className={`flex min-h-11 min-w-0 items-center justify-center gap-1.5 rounded-xl px-2 py-2 text-xs! leading-4! font-semibold! outline-none transition-colors focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ring ${filter === item.key ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted hover:text-primary"}`}
+              key={item.key}
+              onClick={() => setFilter(item.key)}
+              type="button"
+            >
+              <MaterialSymbol className="hidden shrink-0 text-base @min-[22rem]:inline-flex" name={item.icon} strokeWidth={1.8} />
+              <span>{copy[item.key]}</span>
+            </button>
+          ))}
+        </div>
+        <div className="flex justify-start @min-[38rem]:shrink-0">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                aria-label={`${t("filters.visibility")}: ${visibilityLabel}`}
+                className={`flex min-h-11 min-w-11 max-w-full items-center justify-center gap-2 rounded-full border border-border/60 px-3 text-xs! leading-4! font-medium! outline-none transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ring disabled:opacity-60 ${initialVisibility === "all" ? "bg-card/90 text-muted-foreground" : "bg-accent text-accent-foreground"}`}
+                disabled={filterPending}
+                type="button"
+              >
+                <MaterialSymbol className="text-base" name="tune" strokeWidth={1.8} />
+                <span>{initialVisibility === "all" ? t("filters.visibility") : visibilityLabel}</span>
+                <MaterialSymbol className="text-sm" name="keyboard_arrow_down" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-52 rounded-xl p-1.5">
+              <DropdownMenuLabel className="px-2 py-1.5">{t("filters.visibility")}</DropdownMenuLabel>
+              <DropdownMenuRadioGroup
+                onValueChange={(value) => {
+                  if (value === "all" || value === "anonymous" || value === "public") {
+                    startFilterTransition(() => router.replace({ pathname: "/feed", query: { visibility: value } }, { scroll: false }));
+                  }
+                }}
+                value={initialVisibility}
+              >
+                {(["all", "anonymous", "public"] as const).map((value) => (
+                  <DropdownMenuRadioItem className="min-h-11 rounded-lg text-xs" key={value} value={value}>
+                    {t(`filters.visibility${value === "all" ? "All" : value === "anonymous" ? "Anonymous" : "Public"}`)}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+    </div>
+  );
   const emptyState = filter === "all" ? <FeedEmptyState locale={locale} /> : <FilteredFeedEmptyState filter={filter} onReset={() => setFilter("all")} />;
 
   if (requiresLogin) return <FeedPreviewClient initialPage={page} />;
@@ -183,10 +239,9 @@ export function PublicFeedClient({
     <div aria-busy={filterPending} className="app-garden-bg w-full min-h-svh text-foreground">
       <main className="w-full max-w-full min-h-svh md:mx-auto md:max-w-7xl md:px-6">
         <section className="flex w-full max-w-full min-w-0 flex-col gap-5 px-5 pt-5 md:hidden">
-          <LocaleSwitcher className="self-end" />
           <MobileReflectionBanner />
           {dailyPractice}
-          {visibilityControls}
+          {filterControls}
           <div className="flex flex-col gap-4">
             {feedItems.length ? feedItems.map((item, index) => (
               <MobileFeedCard item={item} key={item.id} locale={locale} priorityImage={index === 0} />
@@ -212,30 +267,9 @@ export function PublicFeedClient({
                       {copy.description}
                     </p>
                   </div>
-                  <LocaleSwitcher className="hidden shrink-0 md:grid lg:hidden" />
                 </div>
                 {dailyPractice}
-                {visibilityControls}
-                <div className="grid w-full grid-cols-1 items-center gap-1 rounded-[24px] border border-border bg-card/90 p-1 text-xs font-bold text-muted-foreground shadow-card backdrop-blur-md lg:grid-cols-3 lg:rounded-full">
-                  {filters.map((item) => {
-                    const active = item.key === filter;
-
-                    return (
-                      <button
-                        aria-pressed={active}
-                        className={`flex min-h-11 min-w-0 items-center justify-center gap-1.5 rounded-full px-3 outline-offset-2 transition ${
-                          active ? "bg-primary text-primary-foreground shadow-sm" : "hover:bg-muted hover:text-primary"
-                        }`}
-                        key={item.key}
-                        onClick={() => setFilter(item.key)}
-                        type="button"
-                      >
-                        <MaterialSymbol className={`shrink-0 text-base ${active ? "text-primary-foreground" : "text-primary"}`} name={item.icon} />
-                        <span className="whitespace-nowrap">{item.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
+                {filterControls}
               </div>
               <div className="flex flex-col gap-5">
                 {feedItems.length ? feedItems.map((item, index) => (
@@ -283,7 +317,7 @@ function FilteredFeedEmptyState({
         <p className="text-sm font-bold leading-5 text-foreground">{copy.title}</p>
         <p className="text-xs leading-4 text-muted-foreground">{copy.description}</p>
       </div>
-      <button className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-bold leading-5 text-primary-foreground" onClick={onReset} type="button">
+      <button className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-transparent bg-primary px-4 py-2 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ring text-sm font-bold leading-5 text-primary-foreground" onClick={onReset} type="button">
         <MaterialSymbol className="text-sm" name="spa" />
         <span>{t("showAll")}</span>
       </button>

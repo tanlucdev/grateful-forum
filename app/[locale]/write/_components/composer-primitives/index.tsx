@@ -1,38 +1,20 @@
-import type { ReactNode } from "react";
+import { Button } from "@/components/ui/button";
+import type { EntryVisibility } from "@/lib/entries/types";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
 
-export function Panel({
-  children,
-  className = "",
-}: Readonly<{ children: ReactNode; className?: string }>) {
-  return <section className={`rounded-2xl bg-card p-4 md:p-6 ${className}`}>{children}</section>;
+export function MethodButton({ active, disabled = false, icon, label, onClick }: Readonly<{ active: boolean; disabled?: boolean; icon: string; label: string; onClick: () => void }>) {
+  return <Button disabled={disabled} aria-pressed={active} variant="ghost" className="write-method-option min-w-0 rounded-full px-2 text-xs sm:px-3 sm:text-sm" onClick={onClick} type="button"><MaterialSymbol className="text-lg" name={icon} />{label}</Button>;
 }
 
-export function SectionTitle({ label }: Readonly<{ helper?: string; label: string }>) {
-  return (
-    <div className="flex flex-wrap items-center justify-between gap-3">
-      <span className="inline-flex min-w-0 items-center gap-1.5 text-[12px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-        <MaterialSymbol className="text-primary" name="texture" />
-        {label}
-      </span>
-    </div>
-  );
-}
-
-export function TinyButton({ bare = false, danger = false, icon, label, onClick }: { bare?: boolean; danger?: boolean; icon: string; label: string; onClick?: () => void }) {
-  return (
-    <button className={`inline-flex items-center gap-1.5 text-[14px] font-semibold ${bare ? "" : "rounded-lg bg-card px-2.5 py-1 text-[12px] leading-4"} ${danger ? "text-destructive" : "text-muted-foreground"}`} onClick={onClick} type="button">
-      <MaterialSymbol name={icon} />
-      <span>{label}</span>
-    </button>
-  );
-}
-
-export function NavItem({ icon, label }: Readonly<{ icon: string; label: string }>) {
-  return (
-    <button className="flex min-h-11 min-w-[56px] flex-col items-center justify-center gap-1 text-muted-foreground" type="button">
-      <MaterialSymbol name={icon} />
-      <span className="text-[11px]">{label}</span>
-    </button>
-  );
+export function Visibility({ disabled, onChange, t, value }: Readonly<{ disabled: boolean; value: EntryVisibility; onChange: (value: EntryVisibility) => void; t: (key: string) => string }>) {
+  return <div className="write-visibility grid min-w-0 gap-1 text-xs font-semibold sm:flex sm:flex-wrap sm:items-center sm:gap-2" data-tour="visibility">
+    <label htmlFor="entry-visibility">{t("visibility.label")}</label>
+    <Select disabled={disabled} onValueChange={(next) => { if (next === "private" || next === "public" || next === "anonymous") onChange(next); }} value={value}>
+      <SelectTrigger className="min-h-11 w-full min-w-0 rounded-xl bg-muted px-3 sm:w-auto sm:min-w-40" id="entry-visibility"><SelectValue /></SelectTrigger>
+      <SelectContent align="start" className="max-w-[calc(100vw-2rem)] rounded-xl p-1" position="popper" sideOffset={4}>
+        {(["private", "public", "anonymous"] as const).map((item) => <SelectItem className="min-h-11 rounded-lg px-3 pr-9" key={item} value={item}>{t(`visibility.${item}`)}</SelectItem>)}
+      </SelectContent>
+    </Select>
+  </div>;
 }
