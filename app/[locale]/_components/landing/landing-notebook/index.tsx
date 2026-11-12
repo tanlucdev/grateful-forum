@@ -4,12 +4,13 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useLocale } from "next-intl";
 import { useState } from "react";
 
+import { motionDuration, motionEaseIn } from "@/lib/motion";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
 
 import { journalSpreads, journalSpreadsEn } from "../landing-data";
 import { Reveal, SectionHeader, Spine, landingEase, softPress, useLandingReducedMotion } from "../motion-primitives";
 
-const sheetDuration = 0.32;
+const sheetDuration = motionDuration.panel;
 
 const notebookCopy = {
   vi: {
@@ -62,6 +63,7 @@ const sheetVariants = {
     scale: 0.992,
     x: direction > 0 ? -14 : 14,
     y: 5,
+    transition: { duration: motionDuration.exit, ease: motionEaseIn },
   }),
 } as const;
 
@@ -111,7 +113,7 @@ export function NotebookSection() {
       <section className="w-full scroll-mt-24 py-16 lg:scroll-mt-28 lg:py-24" id="journal-flipbook">
         <div className="mx-auto max-w-md px-4 lg:max-w-7xl lg:px-margin-desktop">
           <SectionHeader copy={copy.sectionCopy} eyebrow={copy.sectionEyebrow} title={copy.sectionTitle} />
-          <div className="relative mx-auto max-w-5xl rounded-[36px] border-2 border-white/80 bg-gradient-to-br from-[#e4eee7] via-[#dde8e1] to-[#d6e3db] p-3 shadow-[0_24px_60px_rgba(26,47,43,0.08)] transition-transform duration-500 hover:-translate-y-1 sm:p-7 lg:p-9">
+          <div className="relative mx-auto max-w-5xl rounded-[36px] border-2 border-white/80 bg-gradient-to-br from-[#e4eee7] via-[#dde8e1] to-[#d6e3db] p-3 shadow-[0_24px_60px_rgba(26,47,43,0.08)] transition-transform duration-(--motion-feedback) hover:-translate-y-1 sm:p-7 lg:p-9">
             <div className="absolute -top-3 right-16 z-30 flex h-14 w-6 items-end justify-center rounded-b-md bg-gradient-to-b from-[#9cf5c0] via-primary to-[#005231] pb-1.5 shadow-[0_4px_12px_rgba(0,109,67,0.3)] sm:right-28"><span className="h-1.5 w-1.5 rounded-full bg-surface-white" /></div>
             <div className="relative grid overflow-hidden rounded-2xl border border-[#e2d8c9] bg-[#faf6ef] shadow-2xl" style={{ perspective: "1600px" }}>
               <Spine />

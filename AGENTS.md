@@ -33,3 +33,11 @@
 - Group controls by purpose: keep content filters together, view-mode controls together. Use deliberate tablet rows instead of allowing unrelated actions to wrap between tabs. Keep summary modules independent of avatar/text columns so they can use the available width.
 - Keep interactive targets at least 44×44 CSS pixels; preserve visible keyboard focus.
 - Verify affected routes at 320, 390, 768×1024 (iPad Mini), 820, 1024×768, 1280, and 1440 CSS pixels, plus breakpoint boundaries and both locales. Check page overflow, overlapping controls, long content, and empty states. Report any browser verification blockers explicitly.
+
+## Motion
+
+- Use [Motion UI](https://motion-ui.200lab.io/#agents) as the motion reference. When available, use the 200Lab MCP `search` with `types: ["motion"]`, then `get` with `entity: "motion"` to read the full pattern and reduced-motion guidance.
+- Reuse `lib/motion.ts` for Motion transitions and `--motion-*` tokens in `app/globals.css` for CSS. Project defaults: feedback 150ms, menus 220ms, panels 300ms, exits 150ms; ease-out `(0.23, 1, 0.32, 1)` for entry, ease-in for exit.
+- Animate feedback, state, and spatial continuity. Keep repeated typing and keyboard actions instant. Keep initial above-the-fold content visible.
+- Use explicit transition properties; never `transition-all`. Prefer transform and opacity; use grid rows for intrinsic-height disclosure.
+- Respect `prefers-reduced-motion` in CSS and JavaScript. Preserve the state change; remove spatial movement and autonomous loops. Loops longer than five seconds need an accessible pause control and must pause offscreen.
