@@ -31,3 +31,13 @@ supabase db push
 ```
 
 Admins are granted by inserting the user id into `public.admin_roles`.
+
+## Google sign-in
+
+1. Create a **Web application** OAuth client in Google Cloud. Configure its consent screen and test users while the app is in testing.
+2. Add the callback URL shown in **Supabase → Authentication → Sign In / Providers → Google** to Google's authorized redirect URIs (usually `https://<project-ref>.supabase.co/auth/v1/callback`).
+3. Enable Google in Supabase; save the Google client ID and client secret there. Never expose the secret in `NEXT_PUBLIC_*` variables.
+4. In **Supabase → Authentication → URL Configuration**, set the production Site URL and allow each app callback URL, including `http://localhost:3000/auth/callback` and `https://<your-domain>/auth/callback`. Add preview callbacks only for trusted deployments.
+5. Open `/vi/auth` or `/en/auth`, choose Google, finish consent. Verify the requested return page, session after reload, guest data migration, cancellation, and provider-disabled errors.
+
+The app reuses the existing Supabase environment variables and PKCE session callback. No additional package or database migration is required.

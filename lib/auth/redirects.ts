@@ -1,7 +1,7 @@
 const locales = ["vi", "en"] as const;
 
 export function safeAuthRedirect(value: string | null | undefined, fallback = "/feed") {
-  if (!value || !value.startsWith("/") || value.startsWith("//")) {
+  if (!value || !value.startsWith("/") || value.startsWith("//") || /[\\\u0000-\u001f\u007f]/.test(value)) {
     return fallback;
   }
 

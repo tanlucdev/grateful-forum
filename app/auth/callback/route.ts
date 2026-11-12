@@ -11,15 +11,21 @@ export async function GET(request: Request) {
   const code = url.searchParams.get("code");
   const safeNext = safeAuthRedirect(url.searchParams.get("next"), "/vi/feed");
 
-  if (!code) {
-    return NextResponse.redirect(new URL("/?auth=missing-code", url.origin));
+  const locale = safeNext.split("/")[1] === "en" ? "en" : "vi";
+  function failure(reason: "oauth" | "migration") {
+    const target = new URL(`/${locale}/auth`, url.origin);
+    target.searchParams.set("next", safeNext);
+    target.searchParams.set("authError", reason);
+    return NextResponse.redirect(target);
   }
+
+  if (!code || url.searchParams.has("error")) return failure("oauth");
 
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
   if (error || !data.user) {
-    return NextResponse.redirect(new URL("/?auth=failed", url.origin));
+    return failure("oauth");
   }
 
   const guestId = await getGuestId();
@@ -30,9 +36,7 @@ export async function GET(request: Request) {
         userId: data.user.id,
       });
     } catch {
-      return NextResponse.redirect(
-        new URL("/?auth=migration-failed", url.origin),
-      );
+      return failure("migration");
     }
   }
 

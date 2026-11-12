@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { migrateGuestData, registerAccount } from "@/lib/api/auth";
+import { startGoogleSignIn } from "@/lib/auth/google";
 import { normalizeAuthErrorCode } from "@/lib/auth/errors";
 import {
   type AuthFieldErrors,
@@ -36,9 +37,10 @@ type AuthApiMessageKey =
 
 export function AuthPanelClient({
   configured,
+  authError,
   locale,
   returnTo,
-}: Readonly<{ configured: boolean; locale: string; returnTo: string }>) {
+}: Readonly<{ configured: boolean; authError?: "oauth" | "migration"; locale: string; returnTo: string }>) {
   const router = useRouter();
   const t = useTranslations("auth");
   const [view, setView] = useState<AuthView>("signin");
@@ -48,25 +50,31 @@ export function AuthPanelClient({
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [resetSent, setResetSent] = useState(false);
-  const [banner, setBanner] = useState<AuthBanner | null>(null);
+  const [banner, setBanner] = useState<AuthBanner | null>(authError ? {
+    tone: "error",
+    title: t(authError === "migration" ? "banners.migrationFailed" : "banners.processingFailed"),
+    body: t(authError === "migration" ? "apiErrors.migrationFailed" : "google.error"),
+  } : null);
   const supabase = useMemo(
     () => (configured ? createSupabaseBrowserClient() : null),
     [configured],
   );
 
   useEffect(() => {
-    if (!supabase) return;
+    if (!supabase || authError) return;
     supabase.auth.getUser().then(({ data }) => {
       if (data.user) router.replace(returnTo);
     });
-  }, [returnTo, router, supabase]);
+  }, [authError, returnTo, router, supabase]);
 
   function clearFieldError(field: keyof AuthFieldErrors) {
     setFieldErrors((current) => ({ ...current, [field]: undefined }));
   }
 
   function changeView(next: AuthView) {
+    if (loading || googleLoading) return;
     setView(next);
     setBanner(null);
     setFieldErrors({});
@@ -77,8 +85,21 @@ export function AuthPanelClient({
     setBanner({ tone: "error", title, body: authApiMessage(t, code) });
   }
 
+  async function signInWithGoogle() {
+    if (!supabase || loading || googleLoading) return;
+    setGoogleLoading(true);
+    setBanner(null);
+    try {
+      const authorizationUrl = await startGoogleSignIn(supabase, window.location.origin, returnTo, locale);
+      window.location.assign(authorizationUrl);
+    } catch {
+      setBanner({ tone: "error", title: t("banners.processingFailed"), body: t("google.error") });
+      setGoogleLoading(false);
+    }
+  }
+
   async function submitAuth() {
-    if (!supabase) return;
+    if (!supabase || loading || googleLoading) return;
 
     const cleanEmail = email.trim();
     if (view === "forgot") {
@@ -177,7 +198,9 @@ export function AuthPanelClient({
       displayName={displayName}
       email={email}
       fieldErrors={fieldErrors}
-      loading={loading}
+      loading={loading || googleLoading}
+      googleLoading={googleLoading}
+      onGoogleSignIn={() => void signInWithGoogle()}
       onChangeView={changeView}
       onClearFieldError={clearFieldError}
       onDismissBanner={() => setBanner(null)}
