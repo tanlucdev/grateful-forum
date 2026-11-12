@@ -44,7 +44,7 @@ function LiveEntryCard({ entry, grid }: Readonly<{ entry: JournalEntry; grid: bo
   const hasMetadata = entry.metadata.gratitudes.length || entry.metadata.reflection || entry.metadata.quote || entry.metadata.imageUrl;
 
   return (
-    <article className={`${grid ? "min-h-[320px]" : ""} group flex min-w-0 flex-col gap-3 [overflow-wrap:anywhere] rounded-xl bg-card p-5 shadow-sm transition-all duration-300 hover:shadow-md`}>
+    <article className={`${grid ? "min-h-[320px]" : ""} group flex min-w-0 flex-col gap-3 [overflow-wrap:anywhere] rounded-xl bg-card p-5 shadow-sm transition-[color,background-color,border-color,box-shadow,opacity,transform,translate,scale] duration-(--motion-feedback) hover:shadow-md`}>
       <div className="flex items-center justify-between gap-3">
         <span className="text-xs font-medium leading-4 tracking-[0.04em] text-muted-foreground">{formatRelative(entry.createdAt, locale)}</span>
         <div className="flex items-center gap-1">

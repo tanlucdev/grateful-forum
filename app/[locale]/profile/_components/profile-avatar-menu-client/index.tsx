@@ -39,7 +39,7 @@ export function ProfileAvatarMenu({ view }: Readonly<{ view: ProfileView }>) {
         aria-expanded={open}
         aria-haspopup="menu"
         aria-label="Menu tài khoản"
-        className="flex items-center justify-center rounded-full p-0.5 ring-2 ring-primary/20 transition-all hover:ring-primary/40"
+        className="flex items-center justify-center rounded-full p-0.5 ring-2 ring-primary/20 transition-[color,background-color,border-color,box-shadow,opacity,transform,translate,scale] hover:ring-primary/40"
         onClick={() => setOpen((current) => !current)}
         type="button"
       >

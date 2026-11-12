@@ -5,7 +5,7 @@
   "rhythm": { "title": "This week's rhythm", "active": "{count}/7 green shoots lit", "written": "You wrote in your journal {count} days this week", "none": "No journal days yet this week" },
   "monthRhythm": { "title": "This month's gratitude rhythm", "description": "You wrote on {count, number}/{total, number} days this month ({rate})" },
   "tabs": { "all": "All ({count})", "journal": "Memory book", "public": "Public ({count})", "moments": "Moments ({count})" },
-  "desktopTabs": { "all": "All journal entries", "public": "Public", "moments": "Moment collection", "new": "New", "readingMode": "Page-turn reading mode" },
+  "desktopTabs": { "all": "All", "public": "Public", "moments": "Moments", "new": "New", "readingMode": "Page-turn reading mode" },
   "filters": { "label": "Filter:", "all": "All", "family": "#family", "work": "#work", "nature": "#nature", "newest": "Newest" },
   "visibility": { "private": "Private", "public": "Public", "anonymous": "Anonymous" },
   "empty": { "journalTitle": "No journal entries yet", "journalDescription": "Your grateful notes will appear here.", "momentsTitle": "No moments yet", "momentsDescription": "Photos from your journal will appear here." },

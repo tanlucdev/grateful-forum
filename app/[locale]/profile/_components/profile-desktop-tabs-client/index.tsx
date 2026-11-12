@@ -2,7 +2,8 @@
 
 import { useSearchParams } from "next/navigation";
 import { usePathname, useRouter } from "@/i18n/navigation";
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
+import { Button } from "@/components/ui/button";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
 import { ProfileJournalBook } from "../profile-journal-book";
 import { MomentsTab } from "../profile-moments-tab";
@@ -15,15 +16,16 @@ type LayoutMode = "grid" | "journal" | "list";
 export function ProfileDesktopTabs({
   initialTab,
   view,
-}: Readonly<{ initialTab: Tab; view: ProfileView }>) {
+  mobile = false,
+}: Readonly<{ initialTab: Tab; view: ProfileView; mobile?: boolean }>) {
   const t = useTranslations("profile");
   const router = useRouter();
   const pathname = usePathname();
   const search = useSearchParams();
   const tab = initialTab;
-  function setTab(value: Tab, layout?: LayoutMode) {
+  function setTab(value: Tab) {
     const next = new URLSearchParams(search.toString());
-    next.set("tab", value); if (layout) next.set("layout", layout); next.delete("cursor"); next.delete("entry"); next.delete("edge");
+    next.set("tab", value); next.delete("cursor"); next.delete("entry"); next.delete("edge");
     router.push(`${pathname}?${next}`);
   }
   const requestedLayout = search.get("layout");
@@ -35,35 +37,19 @@ export function ProfileDesktopTabs({
   const entries = tab === "public" ? view.entries.filter((entry) => entry.visibility === "public" || entry.visibility === "anonymous") : view.entries;
 
   return (
-    <section className="flex flex-col space-y-4">
-      <div data-tour="profile-desktop-entries" className="rounded-2xl border border-primary/10 bg-muted/80 p-2 xl:flex xl:items-center xl:gap-3">
-        <div className="grid min-w-0 grid-cols-3 gap-1.5 xl:flex xl:flex-1 xl:flex-wrap">
+    <section className="@container flex flex-col space-y-4">
+      <div data-tour={mobile ? "profile-mobile-entries" : "profile-desktop-entries"} className="flex min-w-0 flex-col gap-1 @min-[36rem]:flex-row @min-[36rem]:items-center @min-[36rem]:justify-between @min-[36rem]:gap-4">
+        <div className="grid min-w-0 grid-cols-[auto_auto_auto] border-b border-primary/10 @min-[36rem]:flex">
           <DesktopTab active={tab === "all"} count={view.entryCount} label={t("desktopTabs.all")} onClick={() => setTab("all")} />
           <DesktopTab active={tab === "public"} count={view.publicCount} label={t("desktopTabs.public")} onClick={() => setTab("public")} />
-          <DesktopTab active={tab === "moments"} count={0} label={t("desktopTabs.moments")} onClick={() => setTab("moments")} />
+          <DesktopTab active={tab === "moments"} label={t("desktopTabs.moments")} onClick={() => setTab("moments")} />
         </div>
-        <div className="mt-2 flex flex-wrap items-center justify-between gap-3 border-t border-primary/10 pt-2 xl:mt-0 xl:shrink-0 xl:border-0 xl:pt-0">
-          <button
-            aria-pressed={layout === "journal" && tab !== "moments"}
-            className={`inline-flex min-h-11 items-center gap-1.5 whitespace-nowrap rounded-xl px-3.5 py-2 text-xs font-bold shadow-sm transition-all ${layout === "journal" && tab !== "moments" ? "bg-primary text-primary-foreground" : "bg-card/70 text-muted-foreground hover:text-primary"}`}
-            onClick={() => {
-              setTab("all", "journal");
-            }}
-            type="button"
-          >
-            <MaterialSymbol className="text-sm" name="auto_stories" />
-            <span>{t("tabs.journal")}</span>
-            <span className="rounded-md bg-card/20 px-1.5 py-0.5 text-[9px] uppercase tracking-wider">{t("desktopTabs.new")}</span>
-          </button>
-          {tab === "moments" ? null : (
-            <ListControls layout={layout} onChange={setLayout} />
-          )}
-        </div>
+        {tab !== "moments" ? <ListControls layout={layout} onChange={setLayout} /> : null}
       </div>
       {tab === "moments" ? (
         <MomentsTab layout={layout === "journal" ? "list" : layout} />
       ) : layout === "journal" ? (
-        <ProfileJournalBook key={`${view.requestedEntry}-${tab}`} view={{ ...view, entries }} />
+        <ProfileJournalBook mobile={mobile} key={`${view.requestedEntry}-${tab}`} view={{ ...view, entries }} />
       ) : tab === "public" ? (
         <PublicTab entries={entries} layout={layout} />
       ) : (
@@ -78,19 +64,20 @@ function DesktopTab({
   count,
   label,
   onClick,
-}: Readonly<{ active?: boolean; count: number; label: string; onClick?: () => void }>) {
+}: Readonly<{ active?: boolean; count?: number; label: string; onClick?: () => void }>) {
+  const format = useFormatter();
   return (
-    <button
+    <Button variant="ghost"
       aria-pressed={active}
-      className={`inline-flex min-h-11 min-w-0 items-center justify-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold transition-colors ${active ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:bg-card/70 hover:text-foreground"}`}
+      className={`relative inline-flex h-auto min-h-11 min-w-0 items-center justify-center gap-1 rounded-none px-1.5 py-2 text-xs font-semibold transition-colors @min-[36rem]:px-4 ${active ? "text-primary after:absolute after:inset-x-1.5 after:bottom-0 after:h-0.5 after:rounded-full after:bg-primary" : "text-muted-foreground hover:text-foreground"}`}
       onClick={onClick}
       type="button"
     >
-      <span className="min-w-0 text-center">{label}</span>
-      <span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-bold leading-none ${active ? "bg-primary/10 text-primary" : "bg-secondary text-muted-foreground"}`}>
-        {count}
-      </span>
-    </button>
+      <span className="min-w-0 whitespace-normal text-center leading-4">{label}</span>
+      {count !== undefined ? <span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-bold leading-none ${active ? "bg-primary/10 text-primary" : "bg-secondary text-muted-foreground"}`}>
+        {format.number(count)}
+      </span> : null}
+    </Button>
   );
 }
 
@@ -103,34 +90,34 @@ function ListControls({
 }>) {
   const t = useTranslations("profile");
   return (
-    <div className="ml-auto inline-flex shrink-0 rounded-xl border border-primary/10 bg-card/95 p-1 shadow-sm">
-      <button
+    <div className="ml-auto inline-flex shrink-0 gap-0.5">
+      <Button variant="ghost" size="icon"
         aria-pressed={layout === "grid"}
-        className={`inline-flex h-11 w-11 items-center justify-center rounded-lg transition-all ${layout === "grid" ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+        className={`inline-flex h-11 w-11 items-center justify-center rounded-lg p-0 transition-colors ${layout === "grid" ? "bg-accent text-primary" : "text-muted-foreground hover:text-foreground"}`}
         onClick={() => onChange("grid")}
-        title={t("a11y.grid")}
+        aria-label={t("a11y.grid")}
         type="button"
       >
-        <MaterialSymbol className="text-lg" name="grid_view" strokeWidth={1.6} />
-      </button>
-      <button
+        <MaterialSymbol className="text-[18px]" name="grid_view" strokeWidth={1.6} />
+      </Button>
+      <Button variant="ghost" size="icon"
         aria-pressed={layout === "list"}
-        className={`inline-flex h-11 w-11 items-center justify-center rounded-lg transition-all ${layout === "list" ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+        className={`inline-flex h-11 w-11 items-center justify-center rounded-lg p-0 transition-colors ${layout === "list" ? "bg-accent text-primary" : "text-muted-foreground hover:text-foreground"}`}
         onClick={() => onChange("list")}
-        title={t("a11y.list")}
+        aria-label={t("a11y.list")}
         type="button"
       >
-        <MaterialSymbol className="text-lg" name="stream" strokeWidth={1.6} />
-      </button>
-      <button
+        <MaterialSymbol className="text-[18px]" name="stream" strokeWidth={1.6} />
+      </Button>
+      <Button variant="ghost" size="icon"
         aria-pressed={layout === "journal"}
-        className={`inline-flex h-11 w-11 items-center justify-center rounded-lg transition-all ${layout === "journal" ? "bg-accent text-primary shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+        className={`inline-flex h-11 w-11 items-center justify-center rounded-lg p-0 transition-colors ${layout === "journal" ? "bg-accent text-primary" : "text-muted-foreground hover:text-foreground"}`}
         onClick={() => onChange("journal")}
-        title={t("a11y.journal")}
+        aria-label={t("a11y.journal")}
         type="button"
       >
-        <MaterialSymbol className="text-lg" name="auto_stories" strokeWidth={1.6} />
-      </button>
+        <MaterialSymbol className="text-[18px]" name="auto_stories" strokeWidth={1.6} />
+      </Button>
     </div>
   );
 }

@@ -56,7 +56,6 @@ function DesktopHero({ view }: Readonly<{ view: ProfileView }>) {
               <div className="flex flex-wrap items-center gap-2.5 pt-2">
                 <Pill icon="spa" text={t("stats.entries", { count: number.format(view.entryCount) })} />
                 <Pill icon="local_fire_department" text={t("stats.streak", { count: number.format(view.streak) })} tone="fire" />
-                <Pill icon="nest_eco_leaf" text={t("stats.companion", { count: 14 })} />
               </div>
             </div>
           </div>
