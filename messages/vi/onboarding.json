@@ -76,5 +76,35 @@
       "title": "Đọc lại những điều trân quý",
       "content": "Nhật ký đã lưu nằm bên dưới. Mở một ghi chép để đọc lại những điều bạn trân quý."
     }
+  },
+  "writing": {
+    "text": {
+      "step1": {
+        "title": "Viết một điều biết ơn",
+        "content": "Bắt đầu từ một điều nhỏ. Bạn có thể thêm tối đa 10 điều."
+      },
+      "step2": {
+        "title": "Thêm chút hôm nay",
+        "content": "Ghi nội dung bên dưới các điều biết ơn. Mở mục phụ để thêm cảm xúc, không gian; thêm ảnh hoặc trang trí nếu muốn."
+      },
+      "step3": {
+        "title": "Chọn quyền riêng tư và lưu",
+        "content": "Chọn ai được xem trang viết, rồi bấm Lưu."
+      }
+    },
+    "handwritten": {
+      "step1": {
+        "title": "Chọn công cụ và màu mực",
+        "content": "Chọn Bút hoặc Đánh dấu, màu mực và cỡ nét."
+      },
+      "step2": {
+        "title": "Viết trên trang giấy",
+        "content": "Viết, tẩy hoặc di chuyển trang. Mở Tùy chỉnh để thu phóng; kiểu giấy và dấu nằm dưới trang."
+      },
+      "step3": {
+        "title": "Chọn quyền riêng tư và lưu",
+        "content": "Chọn ai được xem trang viết tay, rồi bấm Lưu."
+      }
+    }
   }
 }

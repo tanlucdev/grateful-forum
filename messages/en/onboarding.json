@@ -76,5 +76,35 @@
       "title": "Revisit what matters",
       "content": "Your saved entries are below. Open an entry to revisit what you appreciated."
     }
+  },
+  "writing": {
+    "text": {
+      "step1": {
+        "title": "Write a grateful thought",
+        "content": "Start with something small. Add up to 10 grateful thoughts."
+      },
+      "step2": {
+        "title": "A little more about today",
+        "content": "Write more below your gratitudes. Open extras for mood and place; add photos or decorations if you like."
+      },
+      "step3": {
+        "title": "Choose privacy and save",
+        "content": "Choose who can see this page, then Save."
+      }
+    },
+    "handwritten": {
+      "step1": {
+        "title": "Choose a tool and ink",
+        "content": "Pick Pen or Highlight, an ink color and stroke size."
+      },
+      "step2": {
+        "title": "Write on the paper",
+        "content": "Write, erase or move the page. Open Customize to zoom; paper and stamps are below the page."
+      },
+      "step3": {
+        "title": "Choose privacy and save",
+        "content": "Choose who can see your handwritten page, then Save."
+      }
+    }
   }
 }

@@ -1,10 +1,14 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useRef } from "react";
+import Image from "next/image";
+import { motionDuration, motionEaseOut } from "@/lib/motion";
+import { Button } from "@/components/ui/button";
+import { useReducedMotion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { markCalendarTourSeen, markOnboardingTourSeen } from "@/lib/api/onboarding";
 import { profileTourName, profileTourSelectors, scrollProfileTourTarget } from "@/lib/onboarding/profile-tour";
-import { firstEntryTourSelectors, scrollFirstEntryTourTarget } from "@/lib/onboarding/first-entry-tour";
+import { firstEntryTourName, writingTourSelectors, scrollFirstEntryTourTarget } from "@/lib/onboarding/first-entry-tour";
 import {
   NextStep,
   useNextStep,
@@ -12,110 +16,46 @@ import {
   type Tour,
 } from "nextstepjs";
 
-function FirstEntryTourCard({
-  arrow,
-  currentStep,
-  nextStep,
-  prevStep,
-  skipTour,
-  step,
-  totalSteps,
-}: Readonly<CardComponentProps>) {
+function WriteTourCard({ arrow, currentStep, nextStep, prevStep, skipTour, step, totalSteps }: Readonly<CardComponentProps>) {
   const t = useTranslations("onboarding");
-  const atStart = currentStep === 0;
-
   if (!step) return null;
-
-  return (
-    <section
-      aria-label={t("card.label")}
-      className="relative w-[min(17.5rem,calc(100vw-1.5rem))] rounded-xl border border-primary/15 bg-card px-5 py-3.5 text-foreground shadow-xl"
-    >
-      {arrow}
-      <p className="origin-left scale-75 text-xs font-bold tracking-wide text-primary">
-        {t("card.progress", { current: currentStep + 1, total: totalSteps })}
-      </p>
-      <h2 className="mt-1.5 text-sm font-bold">{step.title}</h2>
-      <div className="mt-1.5 text-xs leading-4 text-muted-foreground">{step.content}</div>
-      <div className="mt-3 flex items-center justify-between gap-1">
-        <button
-          className="relative min-h-9 shrink-0 rounded-lg border border-border bg-card/80 px-3 text-xs font-semibold text-muted-foreground before:absolute before:-inset-x-1 before:-inset-y-1.5 disabled:opacity-40"
-          disabled={atStart}
-          onClick={prevStep}
-          type="button"
-        >
-          <span className="block scale-75 whitespace-nowrap leading-none">{t("card.back")}</span>
-        </button>
-        <div className="flex shrink-0 items-center gap-0.5">
-          <button
-            className="relative min-h-9 shrink-0 rounded-lg border border-border bg-card/80 px-3 text-xs font-semibold text-muted-foreground before:absolute before:-inset-x-1 before:-inset-y-1.5"
-            onClick={skipTour}
-            type="button"
-          >
-            <span className="block scale-75 whitespace-nowrap leading-none">{t("card.skip")}</span>
-          </button>
-          <button
-            className="relative min-h-9 shrink-0 rounded-lg border border-primary-foreground/40 bg-primary px-4 text-xs font-bold text-primary-foreground before:absolute before:-inset-x-1 before:-inset-y-1.5"
-            onClick={nextStep}
-            type="button"
-          >
-            <span className="block scale-75 whitespace-nowrap leading-none">{t("card.next")}</span>
-          </button>
-        </div>
-      </div>
-    </section>
-  );
+  return <section aria-label={t("card.label")} className="relative w-[min(21rem,calc(100vw-1.5rem))] rounded-xl border border-primary/15 bg-card p-4 text-sm text-foreground shadow-xl">
+    {arrow}
+    <div className="flex items-center gap-2"><Image alt="" src="/stitch/profile/mascot.jpg" width={32} height={32} className="h-auto w-8 shrink-0 rounded-full" /><p className="font-bold text-primary">{t("card.progress", { current: currentStep + 1, total: totalSteps })}</p></div>
+    <h2 className="mt-2 text-base font-bold">{step.title}</h2>
+    <div className="mt-2 leading-5 text-muted-foreground">{step.content}</div>
+    <div className="mt-3 flex flex-wrap items-center justify-between gap-1">
+      <Button variant="ghost" disabled={currentStep === 0} onClick={prevStep} type="button">{t("card.back")}</Button>
+      <Button variant="ghost" onClick={skipTour} type="button">{t("card.skip")}</Button>
+      <Button onClick={nextStep} type="button">{t("card.next")}</Button>
+    </div>
+  </section>;
 }
 
 export function OnboardingTours() {
   const t = useTranslations("onboarding");
   const { currentTour } = useNextStep();
-  const firstEntry = currentTour === "first-entry";
+  const reducedMotion = useReducedMotion();
+  const firstEntry = currentTour === "first-entry" || currentTour === "first-entry-handwritten";
+  const returnFocus = useRef<HTMLElement | null>(null);
   const profile = currentTour === "profile-desktop" || currentTour === "profile-mobile";
   const startTour = useCallback((tourName: string | null) => {
-    if (tourName === "first-entry") scrollFirstEntryTourTarget(0);
+    returnFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    if (tourName === "first-entry" || tourName === "first-entry-handwritten") scrollFirstEntryTourTarget(0, tourName === "first-entry" ? "text" : "handwritten");
     if (tourName === "profile-desktop" || tourName === "profile-mobile") scrollProfileTourTarget(0, tourName === "profile-desktop");
     recordSeen(tourName);
   }, []);
   const steps = useMemo<Tour[]>(() => [
-    {
-      tour: "first-entry",
-      steps: [
-        {
-          content: t("firstEntry.gratitude.content"),
-          pointerPadding: 12,
-          pointerRadius: 16,
-          scrollOffset: 112,
-          selector: firstEntryTourSelectors[0],
-          selectorRetryAttempts: 20,
-          selectorRetryDelay: 100,
-          side: "bottom",
-          title: t("firstEntry.gratitude.title"),
-        },
-        {
-          content: t("firstEntry.visibility.content"),
-          pointerPadding: 12,
-          pointerRadius: 16,
-          scrollOffset: 112,
-          selector: firstEntryTourSelectors[1],
-          selectorRetryAttempts: 20,
-          selectorRetryDelay: 100,
-          side: "top",
-          title: t("firstEntry.visibility.title"),
-        },
-        {
-          content: t("firstEntry.save.content"),
-          pointerPadding: 12,
-          pointerRadius: 16,
-          scrollOffset: 112,
-          selector: firstEntryTourSelectors[2],
-          selectorRetryAttempts: 20,
-          selectorRetryDelay: 100,
-          side: "bottom",
-          title: t("firstEntry.save.title"),
-        },
-      ],
-    },
+    ...(["text", "handwritten"] as const).map((method): Tour => ({
+      tour: firstEntryTourName(method),
+      steps: ([0, 1, 2] as const).map((index) => ({
+        content: t(`writing.${method}.${(["step1", "step2", "step3"] as const)[index]}.content`),
+        title: t(`writing.${method}.${(["step1", "step2", "step3"] as const)[index]}.title`),
+        selector: writingTourSelectors(method)[index],
+        pointerPadding: 8, pointerRadius: 16, selectorRetryAttempts: 20, selectorRetryDelay: 100,
+        side: index === 0 ? "bottom" : "top",
+      })),
+    })),
     {
       tour: "calendar-desktop",
       steps: [
@@ -150,19 +90,27 @@ export function OnboardingTours() {
     })),
   ], [t]);
 
+  function finishTour(tourName: string | null) {
+    recordSeen(tourName);
+    requestAnimationFrame(() => {
+      const fallback = document.querySelector<HTMLElement>('[data-write-method="text"] [data-tour="gratitude-input"], [data-write-method="handwritten"] [data-tour="ink-paper"] [tabindex]');
+      (returnFocus.current?.isConnected ? returnFocus.current : fallback)?.focus({ preventScroll: true });
+    });
+  }
   return (
       <NextStep
-        cardComponent={FirstEntryTourCard}
+        cardComponent={WriteTourCard}
+        cardTransition={{ duration: reducedMotion ? 0 : motionDuration.enter, ease: [...motionEaseOut] }}
         clickThroughOverlay={false}
         disableConsoleLogs
         noInViewScroll={firstEntry || profile}
-        onComplete={recordSeen}
+        onComplete={finishTour}
         onStart={startTour}
         onStepChange={(step, tourName) => {
-          if (tourName === "first-entry") scrollFirstEntryTourTarget(step);
+          if (tourName === "first-entry" || tourName === "first-entry-handwritten") scrollFirstEntryTourTarget(step, tourName === "first-entry" ? "text" : "handwritten");
           if (tourName === "profile-desktop" || tourName === "profile-mobile") scrollProfileTourTarget(step, tourName === "profile-desktop");
         }}
-        onSkip={(_, tourName) => recordSeen(tourName)}
+        onSkip={(_, tourName) => finishTour(tourName)}
         overlayZIndex={2000}
         scrollToTop={!firstEntry && !profile}
         shadowOpacity="0.48"
@@ -174,6 +122,6 @@ export function OnboardingTours() {
 }
 
 function recordSeen(tourName: string | null) {
-  if (tourName === "first-entry") void markOnboardingTourSeen();
+  if (tourName === "first-entry" || tourName === "first-entry-handwritten") void markOnboardingTourSeen();
   if (tourName === "calendar-desktop" || tourName === "calendar-mobile") void markCalendarTourSeen();
 }

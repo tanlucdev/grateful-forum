@@ -3,7 +3,9 @@
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useRef, useState } from "react";
 import "./composer.css";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { MethodButton, Visibility } from "../composer-primitives";
+import { Button } from "@/components/ui/button";
+import { useLeavePage } from "../leave-page-dialog";
 import { useLocale, useTranslations } from "next-intl";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
 import { ApiClientError } from "@/lib/api/fetch-json";
@@ -18,6 +20,9 @@ import { validComposerEntry, canSubmitEntry } from "@/lib/entries/composer";
 import { validateEntryMediaFile } from "@/lib/entry-media/validation";
 import { JournalBookContent } from "@/components/entries/journal-book";
 import { HandwritingViewer } from "@/components/entries/handwriting-viewer";
+import { useRouter } from "@/i18n/navigation";
+import { useWriteBottomBar } from "@/components/app-shell/write-bottom-bar-context";
+import { OnboardingTourReplayButton } from "@/components/onboarding-tour-replay-button";
 import { Link } from "@/i18n/navigation";
 import { JournalEditor } from "../journal-editor";
 import type { EntryVisibility, InkDocument } from "@/lib/entries/types";
@@ -31,11 +36,15 @@ const HandwritingComposer = dynamic(() => import("../handwriting-composer").then
 export function EntryComposerClient() {
   const t = useTranslations("write");
   const locale = useLocale();
+  const router = useRouter();
+  const setWriteBar = useWriteBottomBar();
+  const mainRef = useRef<HTMLElement>(null);
+  const finishRef = useRef<HTMLElement>(null);
   const submitting = useRef(false);
   const handwritingRef = useRef<HandwritingComposerHandle>(null);
   const [method, setMethod] = useState<"text" | "handwritten">("text");
   const [visibility, setVisibility] = useState<EntryVisibility>("private");
-  const [gratitudes, setGratitudes] = useState([{ id: 0, text: "" }]);
+  const [gratitudes, setGratitudes] = useState(() => Array.from({ length: 3 }, (_, id) => ({ id, text: "" })));
   const [reflection, setReflection] = useState("");
   const [mood, setMood] = useState<string | null>(null);
   const [space, setSpace] = useState("");
@@ -176,12 +185,43 @@ export function EntryComposerClient() {
     }
   }
 
+  const textMode = method === "text";
+  const composing = !saved;
+  const dirty = !saved && (gratitudes.some((item) => item.text.length > 0) || !!reflection || !!mood || !!space || !!washi || !!quote || !!sticker || !!photo || inkDocument.strokes.length > 0);
+  useEffect(() => {
+    setWriteBar(composing);
+    return () => setWriteBar(false);
+  }, [composing, setWriteBar]);
+  const { requestLeave, dialog } = useLeavePage(dirty, saving);
+  useEffect(() => {
+    if (!composing || !finishRef.current) return;
+    const observer = new ResizeObserver(([entry]) => mainRef.current?.style.setProperty("--write-bar-height", `${entry.borderBoxSize[0]?.blockSize ?? entry.contentRect.height}px`));
+    observer.observe(finishRef.current);
+    return () => observer.disconnect();
+  }, [composing]);
+  useEffect(() => {
+    const viewport = window.visualViewport;
+    const main = mainRef.current;
+    if (!composing || !viewport || !main) return;
+    const update = () => main.style.setProperty("--write-keyboard-offset", `${Math.max(0, window.innerHeight - viewport.height - viewport.offsetTop)}px`);
+    update();
+    viewport.addEventListener("resize", update);
+    viewport.addEventListener("scroll", update);
+    return () => {
+      viewport.removeEventListener("resize", update);
+      viewport.removeEventListener("scroll", update);
+      main.style.removeProperty("--write-keyboard-offset");
+    };
+  }, [composing]);
+  function goBack() {
+    requestLeave(() => { if (window.history.length > 1) router.back(); else router.replace("/feed"); });
+  }
   const submit = method === "text" ? saveText : saveHandwriting;
   const canSubmit = method === "text" ? canSaveText : canSaveInk;
 
   function newPage() {
     setSaved(null); setStatus(null); setVisibility("private"); setMethod("text");
-    setGratitudes([{ id: 0, text: "" }]); setReflection(""); setMood(null); setSpace("");
+    setGratitudes(Array.from({ length: 3 }, (_, id) => ({ id, text: "" }))); setReflection(""); setMood(null); setSpace("");
     setWashi(null); setQuote(""); setSticker(null); setImage(null); setPendingId(null);
     setInkDocument((current) => ({ ...current, strokes: [] }));
   }
@@ -191,54 +231,41 @@ export function EntryComposerClient() {
   const quotaHint = quotaError ? t("quota.unavailableHint") : !quota ? t("quota.loadingHint") : t(quota.remaining === 0 ? "quota.exhaustedHint" : "quota.resetHint", { time: quotaResetTime! });
   const saveHint = !quotaAvailable ? quotaMessage : method === "text" && filled.length === 0 ? <><span className="lg:hidden">{t("book.gratitudeRequiredShort")}</span><span className="hidden lg:inline">{t("book.gratitudeRequired")}</span></> : method === "handwritten" && inkDocument.strokes.length === 0 ? t("book.handwritingRequired") : t("book.unsaved");
   const metadata = { entryKind: "text" as const, gratitudes: filled, reflection, mood, space, washi, quote, sticker, imageUrl: photo?.url ?? null, handwritingPreviewUrl: null };
-  return <main className="journal-controls mx-auto min-h-dvh max-w-5xl px-3 pb-8 pt-6 sm:px-6">
-    <div className={`mb-5 flex min-w-0 flex-wrap items-center gap-3 rounded-2xl p-4 ${quotaError ? "bg-[var(--fire-soft)]/40" : quota && quota.remaining > 0 ? "bg-accent/50" : "bg-muted"}`}>
-      <div className="flex min-w-0 flex-1 basis-52 items-start gap-3" role="status" aria-atomic="true">
-        <span aria-hidden="true" className={`flex size-10 shrink-0 items-center justify-center rounded-xl bg-card/80 ${quotaError ? "text-[var(--fire)]" : "text-primary"}`}><MaterialSymbol className="text-xl" name={quotaError ? "info" : !quota || quota.remaining === 0 ? "schedule" : "nest_eco_leaf"} /></span>
+  return <main data-write-method={method} ref={mainRef} className={`journal-controls write-composer mx-auto min-h-dvh max-w-4xl px-3 pb-8 pt-3 sm:px-6 sm:pt-5 ${composing ? "write-composer-editing" : ""}`}>
+    <header className="write-header mb-2 flex min-w-0 items-center justify-between gap-1">
+      <Button aria-label={t("navigation.back")} disabled={saving} variant="ghost" size="icon" onClick={goBack} type="button"><MaterialSymbol name="arrow_back" /></Button>
+      <div className="write-method-switch flex min-w-0" role="group" aria-label={t("method.label")}>
+        <MethodButton disabled={saving || saved !== null} active={textMode} icon="edit_note" label={t("method.text")} onClick={() => setMethod("text")} />
+        <MethodButton disabled={saving || saved !== null} active={!textMode} icon="edit" label={t("method.handwritten")} onClick={() => setMethod("handwritten")} />
+      </div>
+      <OnboardingTourReplayButton disabled={saving || saved !== null} inline tour="first-entry" writeMethod={method} />
+    </header>
+
+    <div className={`write-quota ${quota && quota.remaining > 0 && !quotaError ? "write-quota-normal" : ""} mb-3 flex min-w-0 flex-wrap items-center gap-2 rounded-xl px-3 py-2 ${quotaError ? "bg-[var(--fire-soft)]/40" : quota && quota.remaining > 0 ? "bg-accent/50" : "bg-muted"}`}>
+      <div className="flex min-w-0 flex-1 basis-52 items-center gap-2" role="status" aria-atomic="true">
+        <span aria-hidden="true" className={`flex size-6 shrink-0 items-center justify-center rounded-xl bg-card/80 ${quotaError ? "text-[var(--fire)]" : "text-primary"}`}><MaterialSymbol className="text-xl" name={quotaError ? "info" : !quota || quota.remaining === 0 ? "schedule" : "nest_eco_leaf"} /></span>
         <div className="min-w-0 [overflow-wrap:anywhere]">
           <p className="text-sm font-bold leading-6 text-foreground tabular-nums">{quotaMessage}</p>
-          <p className="mt-1 text-xs leading-5 text-muted-foreground">{quotaHint}</p>
+          {quotaError || !quota || quota.remaining === 0 ? <p className="mt-1 text-xs leading-5 text-muted-foreground">{quotaHint}</p> : null}
         </div>
       </div>
       {quotaError ? <button className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-card px-4 text-sm font-semibold text-primary" onClick={() => void refreshQuota()} type="button"><MaterialSymbol name="history" />{t("quota.retry")}</button> : null}
     </div>
     <fieldset className="min-w-0" disabled={saving || saved !== null}>
-      <header className="mb-5 flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm font-semibold text-muted-foreground"><MaterialSymbol className="mr-2 text-primary" name="calendar_today" />{date}</p>
-        <div className="flex rounded-full bg-muted p-1" role="group" aria-label={t("method.label")}>
-          <MethodButton active={method === "text"} icon="edit_note" label={t("method.text")} onClick={() => setMethod("text")} />
-          <MethodButton active={method === "handwritten"} icon="edit" label={t("method.handwritten")} onClick={() => setMethod("handwritten")} />
-        </div>
-      </header>
-      {method === "text" && !saved ? <JournalDecoration image={image} imageError={imageError} quote={quote} setImage={setImage} setQuote={setQuote} setSticker={setSticker} setWashi={setWashi} sticker={sticker} washi={washi} /> : null}
-      {method === "text" ? saved ? <JournalBookContent date={savedDate ?? date} metadata={metadata} /> : <JournalEditor date={date} gratitudes={gratitudes} imageUrl={photo?.url ?? null} mood={mood} quote={quote} recentSpaces={recentSpaces} reflection={reflection} setGratitudes={setGratitudes} setMood={setMood} setReflection={setReflection} setSpace={setSpace} space={space} sticker={sticker} washi={washi} /> : saved ? <HandwritingViewer document={inkDocument} label={t("handwriting.canvasLabel")} /> : <section className="rounded-3xl bg-card p-4 sm:p-6"><h1 className="mb-4 text-xl font-bold">{t("handwriting.title")}</h1><div inert={saving}><HandwritingComposer document={inkDocument} onChange={setInkDocument} ref={handwritingRef} /></div></section>}
-    </fieldset>
-    <section className="mt-5 grid grid-cols-1 items-center gap-3 rounded-2xl bg-card p-3 shadow-card sm:p-4 lg:sticky lg:bottom-4 lg:z-30 lg:grid-cols-[auto_1fr]" aria-label={t("book.finish")}>
-      <fieldset className="min-w-0" disabled={saving || saved !== null}><Visibility disabled={saving || saved !== null} value={visibility} onChange={setVisibility} t={t as unknown as (key: string) => string} /></fieldset>
-      <div className="grid min-w-0 grid-cols-1 gap-3 lg:flex lg:flex-wrap lg:items-center lg:justify-end">
-        <p aria-live="polite" className="min-w-0 text-sm text-muted-foreground [overflow-wrap:anywhere]" id="entry-save-status">{saved ? t("book.savedAt", { time: savedDate! }) : saving ? t("save.saving") : status ? t(status) : saveHint}</p>
-        {!saved ? <button aria-describedby="entry-save-status" className="min-h-11 shrink-0 rounded-xl bg-primary px-5 font-bold text-white disabled:opacity-50" data-tour="save" disabled={!canSubmit} onClick={submit} type="button">{saving ? t("save.saving") : status ? t("save.retry") : t("save.action")}</button> : <><Link className="inline-flex min-h-11 items-center rounded-xl px-3 font-semibold text-primary" href={`/profile?entry=${saved.id}`}>{t("book.viewProfile")}</Link><button className="min-h-11 rounded-xl bg-primary px-4 font-semibold text-white" onClick={newPage} type="button">{t("book.newPage")}</button></>}
+      <div hidden={!textMode}>
+        {saved ? <JournalBookContent date={savedDate ?? date} metadata={metadata} /> : <JournalEditor decoration={<JournalDecoration image={image} imageError={imageError} quote={quote} setImage={setImage} setQuote={setQuote} setSticker={setSticker} setWashi={setWashi} sticker={sticker} washi={washi} />} date={date} gratitudes={gratitudes} imageUrl={photo?.url ?? null} mood={mood} quote={quote} recentSpaces={recentSpaces} reflection={reflection} setGratitudes={setGratitudes} setMood={setMood} setReflection={setReflection} setSpace={setSpace} space={space} sticker={sticker} washi={washi} />}
       </div>
-      {method === "text" && filled.length > 0 && !validText && !saved ? <p className="text-sm text-destructive lg:col-span-2" role="alert">{t("book.invalidContent")}</p> : null}
-      {status === "errors.authRequired" ? <div className="min-w-0 lg:col-span-2" role="alert"><a className="inline-flex min-h-11 items-center rounded-xl px-3 font-semibold text-primary underline" href={localizedLoginHref("/write", locale)} target="_blank" rel="noopener noreferrer">{t("save.signInNewTab")}</a></div> : null}
+      <div hidden={textMode}>{saved ? <HandwritingViewer document={inkDocument} label={t("handwriting.canvasLabel")} /> : <section className="rounded-2xl bg-card p-2 sm:p-4"><h1 className="mb-2 text-sm font-bold">{t("handwriting.title")}</h1><div inert={saving}><HandwritingComposer document={inkDocument} onChange={setInkDocument} ref={handwritingRef} /></div></section>}</div>
+    </fieldset>
+    <section data-tour="write-finish" ref={finishRef} className="write-finish mt-5 grid grid-cols-1 items-center gap-3 rounded-2xl bg-card p-3 shadow-card sm:p-4 lg:sticky lg:bottom-4 lg:z-30 lg:grid-cols-[auto_1fr]" aria-label={t("book.finish")}>
+      <fieldset className="min-w-0" disabled={saving || saved !== null}><Visibility disabled={saving || saved !== null} value={visibility} onChange={setVisibility} t={t as unknown as (key: string) => string} /></fieldset>
+      <div className="write-finish-actions grid min-w-0 grid-cols-1 gap-3 lg:flex lg:flex-wrap lg:items-center lg:justify-end">
+        <p aria-live="polite" className={`${!saved && !saving && !status ? "write-save-hint " : ""}write-save-status min-w-0 text-sm text-muted-foreground [overflow-wrap:anywhere]`} id="entry-save-status">{saved ? t("book.savedAt", { time: savedDate! }) : saving ? t("save.saving") : status ? t(status) : saveHint}</p>
+        {!saved ? <Button aria-describedby="entry-save-status" className="write-save-button min-h-11 shrink-0 rounded-xl border border-transparent bg-primary px-4 text-sm font-bold text-white disabled:opacity-50" data-tour="save" disabled={!canSubmit} onClick={submit} type="button">{saving ? t("save.saving") : status ? t("save.retry") : t("save.action")}</Button> : <><Link className="inline-flex min-h-11 items-center rounded-xl px-3 font-semibold text-primary" href={`/profile?entry=${saved.id}`}>{t("book.viewProfile")}</Link><Button onClick={newPage} type="button">{t("book.newPage")}</Button></>}
+      </div>
+      {method === "text" && filled.length > 0 && !validText && !saved ? <p className="write-finish-error text-sm text-destructive lg:col-span-2" role="alert">{t("book.invalidContent")}</p> : null}
+      {status === "errors.authRequired" ? <div className="write-finish-error min-w-0 lg:col-span-2" role="alert"><a className="inline-flex min-h-11 items-center rounded-xl px-3 font-semibold text-primary underline" href={localizedLoginHref("/write", locale)} target="_blank" rel="noopener noreferrer">{t("save.signInNewTab")}</a></div> : null}
     </section>
+    {dialog}
   </main>;
-}
-
-function MethodButton({ active, icon, label, onClick }: Readonly<{ active: boolean; icon?: string; label: string; onClick: () => void }>) {
-  return <button aria-pressed={active} className={`min-h-11 rounded-full px-3 text-sm font-semibold outline-offset-2 focus-visible:outline-2 focus-visible:outline-ring sm:px-4 ${active ? "bg-card text-primary shadow-sm" : "text-muted-foreground"}`} onClick={onClick} type="button">{icon ? <MaterialSymbol className="mr-1" name={icon} /> : null}{label}</button>;
-}
-
-function Visibility({ disabled, onChange, t, value }: Readonly<{ disabled: boolean; value: EntryVisibility; onChange: (value: EntryVisibility) => void; t: (key: string) => string }>) {
-  return <div className="flex min-w-0 flex-wrap items-center gap-3 text-sm font-semibold" data-tour="visibility">
-    <label htmlFor="entry-visibility">{t("visibility.label")}</label>
-    <Select disabled={disabled} onValueChange={(next) => {
-      if (next === "private" || next === "public" || next === "anonymous") onChange(next);
-    }} value={value}>
-      <SelectTrigger className="min-h-11 min-w-0 flex-1 rounded-xl bg-muted px-3 sm:min-w-44 sm:flex-none" id="entry-visibility"><SelectValue /></SelectTrigger>
-      <SelectContent align="start" className="max-w-[calc(100vw-2rem)] rounded-xl p-1" position="popper" sideOffset={4}>
-        {(["private", "public", "anonymous"] as const).map((item) => <SelectItem className="min-h-11 rounded-lg px-3 pr-9" key={item} value={item}>{t(`visibility.${item}`)}</SelectItem>)}
-      </SelectContent>
-    </Select>
-  </div>;
 }

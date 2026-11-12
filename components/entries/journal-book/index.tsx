@@ -8,11 +8,11 @@ import { StickerIcon } from "@/components/entries/sticker-icons";
 import { getSticker } from "@/lib/entries/stickers";
 import type { EntryMetadata } from "@/lib/entries/types";
 
-export function JournalBook({ date, washi, left, right }: Readonly<{ date: string; washi?: string | null; left: ReactNode; right: ReactNode }>) {
+export function JournalBook({ date, washi, left, right }: Readonly<{ date: string; washi?: string | null; left: ReactNode; right?: ReactNode }>) {
   const t = useTranslations("write");
-  return <JournalBookFrame label={t("creative.diaryTitle")} washi={washi}>
-    <JournalBookPage><div><header className="mb-4 border-b border-[#ebdcca] pb-3"><h1 className="text-[10px] font-bold uppercase tracking-widest text-primary">{t("creative.diaryTitle")}</h1><p className="mt-1 flex items-center gap-2 text-sm font-semibold"><MaterialSymbol className="text-base text-muted-foreground" name="calendar_today" />{date}</p></header>{left}</div></JournalBookPage>
-    <JournalBookPage index={1}><div><h2 className="mb-4 text-sm font-bold text-primary">{t("creative.memories")}</h2>{right}</div></JournalBookPage>
+  return <JournalBookFrame label={t("creative.diaryTitle")} washi={washi} single={!right}>
+    <JournalBookPage single={!right}><div><header className="mb-4 border-b border-[#ebdcca] pb-3"><h1 className="text-[10px] font-bold uppercase tracking-widest text-primary">{t("creative.diaryTitle")}</h1><p className="mt-1 flex items-center gap-2 text-sm font-semibold"><MaterialSymbol className="text-base text-muted-foreground" name="calendar_today" />{date}</p></header>{left}</div></JournalBookPage>
+    {right ? <JournalBookPage index={1}><div><h2 className="mb-4 text-sm font-bold text-primary">{t("creative.memories")}</h2>{right}</div></JournalBookPage> : null}
   </JournalBookFrame>;
 }
 
@@ -27,7 +27,7 @@ export function JournalMemories({ imageUrl, sticker, reflection }: Readonly<Pick
   </div>;
 }
 
-export function JournalBookContent({ date, metadata, content = "" }: Readonly<{ date: string; metadata: EntryMetadata; content?: string }>) {
+export function JournalBookContent({ date, metadata, content = "", paragraph = false }: Readonly<{ date: string; metadata: EntryMetadata; content?: string; paragraph?: boolean }>) {
   const t = useTranslations("write");
   const locale = useLocale();
   const number = new Intl.NumberFormat(locale);
@@ -38,7 +38,7 @@ export function JournalBookContent({ date, metadata, content = "" }: Readonly<{ 
       {metadata.quote ? <blockquote className="mt-2 text-sm italic leading-relaxed text-muted-foreground">{metadata.quote}</blockquote> : null}
     </div> : null}
     <h2 className="flex items-center gap-2 text-sm font-bold text-primary"><MaterialSymbol name="favorite" />{t("gratitudes.title")}</h2>
-    {metadata.gratitudes.length ? <ol className="space-y-2">{metadata.gratitudes.map((item, index) => <li className="journal-gratitude" key={index}><span aria-hidden="true" className="journal-number">{number.format(index + 1)}</span><p className="min-w-0 text-sm leading-relaxed">{item}</p></li>)}</ol> : <p className="text-sm leading-relaxed">{content}</p>}
+    {paragraph && metadata.gratitudes.length === 1 ? <p className="journal-gratitude text-base leading-8">{metadata.gratitudes[0]}</p> : metadata.gratitudes.length ? <ol className="space-y-2">{metadata.gratitudes.map((item, index) => <li className="journal-gratitude" key={index}><span aria-hidden="true" className="journal-number">{number.format(index + 1)}</span><p className="min-w-0 text-sm leading-relaxed">{item}</p></li>)}</ol> : <p className="text-sm leading-relaxed">{content}</p>}
     {metadata.space ? <p className="flex items-start gap-1 border-t border-[#ebdcca] pt-3 text-xs text-muted-foreground"><MaterialSymbol className="shrink-0 text-base text-primary" name="pin_drop" /><span className="min-w-0">{metadata.space}</span></p> : null}
-  </div>} right={<JournalMemories {...metadata} />} />;
+  </div>} right={metadata.imageUrl || metadata.reflection || getSticker(metadata.sticker) ? <JournalMemories {...metadata} /> : null} />;
 }

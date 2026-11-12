@@ -6,7 +6,6 @@ import { OnboardingTourStarterClient } from "./_components/onboarding-tour-start
 import { shouldStartFirstEntryTour } from "@/lib/onboarding/eligibility";
 import { loadFirstEntryTourState } from "@/lib/onboarding/load-first-entry-tour-state";
 import { firstEntryTourSearchSchema } from "@/lib/onboarding/schema";
-import { OnboardingTourReplayButton } from "@/components/onboarding-tour-replay-button";
 
 export default async function WritePage({
   searchParams,
@@ -22,5 +21,5 @@ export default async function WritePage({
     replay,
   });
 
-  return <><OnboardingTourStarterClient replay={replay} shouldStart={shouldStart} /><EntryComposerClient /><OnboardingTourReplayButton tour="first-entry" /></>;
+  return <><OnboardingTourStarterClient replay={replay} shouldStart={shouldStart} /><EntryComposerClient /></>;
 }

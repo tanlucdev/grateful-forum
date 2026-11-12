@@ -3,6 +3,7 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { ScrollArea } from "radix-ui";
+import { Ban, Flower2, Heart, Moon, Sprout, Star, Sun } from "lucide-react";
 import { eraseInkStrokes, INK_COLORS, INK_SIZE } from "@/lib/entries/ink";
 import { INK_PAPER_COLOR, renderInkDocument } from "@/lib/entries/ink-renderer";
 import type { InkDocument, InkPaperStyle, InkPoint, InkStamp, InkStroke, InkTool } from "@/lib/entries/types";
@@ -131,7 +132,7 @@ export const HandwritingComposer = forwardRef<HandwritingComposerHandle, Props>(
 
   return <section className="space-y-3" aria-label={t("handwriting.canvasLabel")}>
     <HandwritingToolbar canClear={!!document.strokes.length} canRedo={!!redo.length} canUndo={!!undo.length} color={color} onClear={clear} onColorChange={setColor} onOpacityChange={setOpacity} onRedo={() => redo.at(-1) && restore(redo.at(-1)!, "redo")} onToolChange={(next) => { setTool(next); if (next === "pen") setOpacity(1); if (next === "highlighter") setOpacity(0.3); }} onUndo={() => undo.at(-1) && restore(undo.at(-1)!, "undo")} onWidthChange={setWidth} onZoomChange={setZoom} opacity={opacity} tool={tool} width={width} zoom={zoom} />
-    <ScrollArea.Root className="overflow-hidden rounded-2xl border border-border bg-muted" type="auto">
+    <ScrollArea.Root data-tour="ink-paper" className="overflow-hidden rounded-2xl border border-border bg-muted" type="auto">
       <ScrollArea.Viewport aria-label={t("handwriting.pageNavigation")} className="max-h-[70dvh] min-h-60 w-full rounded-[inherit] outline-offset-2 focus-visible:outline-2 focus-visible:outline-ring [&>div]:block!" ref={viewportRef} tabIndex={0}>
         <div className="w-full p-3"><div className="mx-auto" style={{ width: `${zoom}%` }}><canvas aria-label={t("handwriting.canvasLabel")} className={`block touch-none w-full rounded-xl shadow-sm ${tool === "pan" ? "cursor-grab active:cursor-grabbing" : "cursor-crosshair"} ${document.orientation === "landscape" ? "aspect-[16/10]" : "aspect-[3/4]"}`} onLostPointerCapture={finish} onPointerCancel={finish} onPointerDown={start} onPointerMove={move} onPointerUp={finish} ref={canvasRef} style={{ backgroundColor: INK_PAPER_COLOR }} /></div></div>
       </ScrollArea.Viewport>
@@ -140,12 +141,39 @@ export const HandwritingComposer = forwardRef<HandwritingComposerHandle, Props>(
     </ScrollArea.Root>
     <p className="text-xs text-muted-foreground">{t("handwriting.help")}</p>
     <button aria-expanded={decorateOpen} className="min-h-11 rounded-xl px-3 text-sm font-semibold text-primary" onClick={() => setDecorateOpen(!decorateOpen)} type="button">{t("handwriting.decorate")}</button>
-    {decorateOpen ? <div className="grid gap-3 rounded-2xl bg-muted p-3 sm:grid-cols-2"><Choice label={t("handwriting.paperStyleLabel")} name="paper" options={["blank", "ruled", "dot", "grid"] as InkPaperStyle[]} value={document.paperStyle} onChange={(paperStyle) => commit({ ...document, paperStyle })} t={t as unknown as (key: string) => string} /><Choice label={t("handwriting.stampLabel")} name="stamp" options={["none", "sprout", "heart", "star", "sun", "moon", "flower"] as InkStamp[]} value={document.stamp} onChange={(stamp) => commit({ ...document, stamp })} t={t as unknown as (key: string) => string} /></div> : null}
+    {decorateOpen ? <div className="grid gap-5 rounded-2xl bg-muted p-3 lg:grid-cols-2"><Choice label={t("handwriting.paperStyleLabel")} name="paper" options={["blank", "ruled", "dot", "grid"] as InkPaperStyle[]} value={document.paperStyle} onChange={(paperStyle) => commit({ ...document, paperStyle })} t={t as unknown as (key: string) => string} /><Choice label={t("handwriting.stampLabel")} name="stamp" options={["none", "sprout", "heart", "star", "sun", "moon", "flower"] as InkStamp[]} value={document.stamp} onChange={(stamp) => commit({ ...document, stamp })} t={t as unknown as (key: string) => string} /></div> : null}
   </section>;
 });
 
-function Choice<T extends string>({ label, name, onChange, options, t, value }: Readonly<{ label: string; name: string; options: readonly T[]; value: T; onChange: (value: T) => void; t: (key: string) => string }>) {
-  return <fieldset><legend className="mb-2 text-xs font-semibold">{label}</legend><div className="flex flex-wrap gap-2">{options.map((item) => <label className="flex min-h-11 cursor-pointer items-center rounded-xl bg-card px-3 text-xs font-semibold has-checked:bg-accent has-checked:text-accent-foreground has-[input:focus-visible]:ring-2 has-[input:focus-visible]:ring-primary" key={item}><input checked={value === item} className="sr-only" name={name} onChange={() => onChange(item)} type="radio" />{t(name === "stamp" ? `handwriting.stamp.${item}` : `handwriting.${item}`)}</label>)}</div></fieldset>;
+function Choice<T extends InkPaperStyle | InkStamp>({ label, name, onChange, options, t, value }: Readonly<{ label: string; name: "paper" | "stamp"; options: readonly T[]; value: T; onChange: (value: T) => void; t: (key: string) => string }>) {
+  return (
+    <fieldset className="min-w-0">
+      <legend className="mb-2 text-xs font-semibold">{label}</legend>
+      <div className="grid grid-cols-4 gap-2">
+        {options.map((item) => {
+          const Icon = { none: Ban, sprout: Sprout, heart: Heart, star: Star, sun: Sun, moon: Moon, flower: Flower2 }[item as InkStamp];
+          return (
+            <label className="flex min-h-11 min-w-0 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl bg-card px-1 py-3 text-center text-xs font-semibold transition-colors hover:bg-accent/50 has-checked:bg-accent has-checked:text-accent-foreground has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-offset-[-2px] has-[input:focus-visible]:outline-primary" key={item}>
+              <input checked={value === item} className="sr-only" name={name} onChange={() => onChange(item)} type="radio" />
+              {name === "paper" ? <PaperPreview paperStyle={item as InkPaperStyle} /> : <Icon aria-hidden="true" className="h-8 w-8 text-primary" strokeWidth={1.5} />}
+              <span className="max-w-full [overflow-wrap:anywhere]">{t(name === "stamp" ? `handwriting.stamp.${item}` : `handwriting.${item}`)}</span>
+            </label>
+          );
+        })}
+      </div>
+    </fieldset>
+  );
+}
+
+function PaperPreview({ paperStyle }: Readonly<{ paperStyle: InkPaperStyle }>) {
+  return (
+    <svg aria-hidden="true" className="h-10 w-14 max-w-full rounded-md border border-primary/20 text-primary" viewBox="0 0 56 40">
+      <rect fill={INK_PAPER_COLOR} height="40" width="56" />
+      {paperStyle === "ruled" || paperStyle === "grid" ? <path d="M0 8H56M0 16H56M0 24H56M0 32H56" opacity="0.3" stroke="currentColor" /> : null}
+      {paperStyle === "grid" ? <path d="M8 0V40M16 0V40M24 0V40M32 0V40M40 0V40M48 0V40" opacity="0.3" stroke="currentColor" /> : null}
+      {paperStyle === "dot" ? [8, 16, 24, 32].flatMap((y) => [8, 16, 24, 32, 40, 48].map((x) => <circle cx={x} cy={y} fill="currentColor" key={`${x}-${y}`} opacity="0.4" r="1" />)) : null}
+    </svg>
+  );
 }
 
 function exportCanvas(document: InkDocument) {
