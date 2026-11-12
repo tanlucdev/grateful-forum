@@ -1,4 +1,6 @@
-type ApiError = { code?: string; error?: string };
+import { z } from "zod";
+
+const apiErrorSchema = z.object({ code: z.string().optional(), error: z.string().optional() });
 
 export class ApiClientError extends Error {
   readonly code: string;
@@ -12,11 +14,10 @@ export class ApiClientError extends Error {
 
 export async function fetchJson<T>(input: RequestInfo | URL, init: RequestInit, fallback: string) {
   const response = await fetch(input, init);
-  const data = (await response.json()) as T & ApiError;
-
   if (!response.ok) {
-    throw new ApiClientError(data.code ?? "unknown", data.error ?? fallback);
+    const result = apiErrorSchema.safeParse(await response.json().catch(() => null));
+    throw new ApiClientError(result.data?.code ?? "unknown", result.data?.error ?? fallback);
   }
 
-  return data;
+  return (await response.json()) as T;
 }
