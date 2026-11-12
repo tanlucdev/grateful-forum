@@ -23,8 +23,8 @@ export function FeedPreviewClient({ initialPage }: Readonly<{ initialPage: FeedP
   return <div className="journal-write-theme app-garden-bg min-h-svh text-foreground">
     <header className="border-b border-border bg-card px-4 py-3 sm:px-6">
       <div className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)_auto] items-center gap-3 sm:flex sm:justify-between">
-        <Link className={`${action} text-primary`} href="/"><Image alt="" className="mr-2 rounded-xl" height={32} src="/stitch/landing/mascot.png" width={32} />{t("preview.brand")}</Link>
-        <LocaleSwitcher className="sm:ml-auto [&_a]:min-h-11 [&_a]:min-w-11" />
+        <Link className={`${action} hidden text-primary lg:inline-flex`} href="/"><Image alt="" className="mr-2 rounded-xl" height={32} src="/stitch/landing/mascot.png" width={32} />{t("preview.brand")}</Link>
+        <LocaleSwitcher className="hidden lg:grid sm:ml-auto [&_a]:min-h-11 [&_a]:min-w-11" />
         <div className="col-span-2 flex flex-wrap items-center gap-2">
           <Link className={`${action} text-primary`} href={loginHref("/feed", locale)}>{common("navigation.signIn")}</Link>
           <Link className={`${action} bg-primary text-primary-foreground`} href={loginHref("/write", locale)}>{t("preview.write")}</Link>

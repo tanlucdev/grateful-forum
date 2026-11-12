@@ -35,9 +35,7 @@ export function AppShell({
         showHeader ? "journal-write-theme app-garden-bg" : ""
       }`}
     >
-      {showHeader ? (
-        <NavigationHeader key={pathname} locale={locale} pathname={pathname} profile={profile} onSignedOut={onSignedOut} />
-      ) : null}
+      <NavigationHeader desktopVisible={showHeader} key={pathname} locale={locale} pathname={pathname} profile={profile} onSignedOut={onSignedOut} />
       <div
         className={
           showHeader

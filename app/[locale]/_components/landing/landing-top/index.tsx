@@ -93,7 +93,7 @@ export function LandingHeader() {
   }, [localizedNavItems]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-card/60 bg-background/85 px-4 py-3 shadow-sm backdrop-blur-xl lg:fixed lg:left-0 lg:right-0 lg:w-full lg:px-0 lg:py-0">
+    <header className="hidden lg:block sticky top-0 z-50 border-b border-card/60 bg-background/85 px-4 py-3 shadow-sm backdrop-blur-xl lg:fixed lg:left-0 lg:right-0 lg:w-full lg:px-0 lg:py-0">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 lg:h-20 lg:px-margin-desktop">
         <Link className="flex shrink-0 items-center gap-3" href="#home">
           <Image alt="" className="h-9 w-9 object-cover lg:h-10 lg:w-10 " height={40} src="/stitch/landing/mascot.png" width={40} />
