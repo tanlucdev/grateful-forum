@@ -2,6 +2,6 @@
   "locale": { "vi": "Tiếng Việt", "en": "English" },
   "actions": { "cancel": "Cancel", "close": "Close", "delete": "Delete", "edit": "Edit", "save": "Save", "send": "Send", "share": "Share", "retry": "Try again" },
   "navigation": { "feed": "Feed", "write": "Write", "writeMobile": "Write", "calendar": "Calendar", "history": "History", "profile": "Profile", "reward": "Discover", "signIn": "Sign in", "signOut": "Sign out", "account": "Account", "main": "Primary navigation", "streak": "day streak", "garden": "Sprout Garden", "milestones": "Badges and milestones", "myProfile": "My profile", "settings": "Settings and privacy" },
-  "a11y": { "accountMenu": "Account menu", "showPassword": "Show password", "hidePassword": "Hide password" },
+  "a11y": { "language": "Change language", "accountMenu": "Account menu", "showPassword": "Show password", "hidePassword": "Hide password" },
   "errors": { "generic": "Something went wrong. Please try again.", "network": "Could not connect. Please try again." }
 }
