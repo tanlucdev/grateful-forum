@@ -18,7 +18,7 @@
   "pagination": {
     "label": "Chuyển trang nhật ký", "previous": "Trang trước", "next": "Trang kế", "page": "Trang 24 / {total} trang", "spread": "Trang 24 - 25 / {total} trang ghi chép" },
   "milestone": { "badge": "Cột mốc {count} ngày", "title": "Bé Mầm đang lớn dần cùng bạn!", "description": "Mầm đang lớn lên từng ngày nhờ những suy nghĩ tích cực của bạn! Hãy duy trì thói quen viết ít nhất một điều biết ơn mỗi ngày để mở khóa cấp độ Mầm Xanh nhé.", "write": "Viết thêm hôm nay" },
-  "share": { "button": "Chia sẻ", "title": "Chia sẻ khoảnh khắc biết ơn", "close": "Đóng", "badge": "Đồng hành {count} ngày", "mascotAlt": "Linh vật Bé Mầm", "quote": "“Mầm đang lớn lên từng ngày nhờ những suy nghĩ tích cực của bạn! 🌱”", "entries": "{count} điều biết ơn đã ghi", "copyLink": "Sao chép liên kết", "copy": "Chép", "copied": "Đã chép", "feed": "Chia sẻ lên Feed", "download": "Tải ảnh kỷ niệm" },
+  "share": { "button": "Chia sẻ", "title": "Chia sẻ khoảnh khắc biết ơn", "close": "Đóng", "badge": "Đồng hành {count} ngày", "mascotAlt": "Linh vật Bé Mầm", "quote": "“Mầm đang lớn lên từng ngày nhờ những suy nghĩ tích cực của bạn! 🌱”", "entries": "{count} điều biết ơn đã ghi", "copyFailed": "Không thể sao chép liên kết. Vui lòng thử lại.", "copyLink": "Sao chép liên kết", "copy": "Chép", "copied": "Đã chép", "feed": "Chia sẻ lên Feed", "download": "Tải ảnh kỷ niệm" },
   "footer": { "tagline": "Nuôi dưỡng tâm hồn an yên", "copyright": "© 2026 Grateful Forum. Lan tỏa lòng biết ơn mỗi ngày." },
   "editPrivacy": { "title": "Quyền riêng tư của nhật ký", "description": "Bài viết mới mặc định là “Chỉ mình tôi”. Bạn có thể chọn quyền xem cho từng bài tại trang viết. Chỉnh sửa hồ sơ không thay đổi quyền xem của các bài đã lưu." },
   "commonCancel": "Hủy",

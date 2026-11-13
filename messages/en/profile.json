@@ -18,7 +18,7 @@
   "pagination": {
     "label": "Journal pagination", "previous": "Previous page", "next": "Next page", "page": "Page 24 / {total} pages", "spread": "Pages 24 - 25 / {total} journal pages" },
   "milestone": { "badge": "{count}-day milestone", "title": "Sprout is growing with you!", "description": "Sprout grows each day with your positive thoughts. Keep writing at least one grateful note each day to unlock the Green Sprout level.", "write": "Write more today" },
-  "share": { "button": "Share", "title": "Share a grateful moment", "close": "Close", "badge": "Together for {count} days", "mascotAlt": "Sprout mascot", "quote": "“Sprout grows each day with your positive thoughts! 🌱”", "entries": "{count} grateful notes recorded", "copyLink": "Copy link", "copy": "Copy", "copied": "Copied", "feed": "Share to Feed", "download": "Download keepsake image" },
+  "share": { "button": "Share", "title": "Share a grateful moment", "close": "Close", "badge": "Together for {count} days", "mascotAlt": "Sprout mascot", "quote": "“Sprout grows each day with your positive thoughts! 🌱”", "entries": "{count} grateful notes recorded", "copyFailed": "Could not copy the link. Please try again.", "copyLink": "Copy link", "copy": "Copy", "copied": "Copied", "feed": "Share to Feed", "download": "Download keepsake image" },
   "footer": { "tagline": "Nurturing a peaceful mind", "copyright": "© 2026 Grateful Forum. Sharing gratitude every day." },
   "editPrivacy": { "title": "Journal privacy", "description": "New entries start as “Private”. You can choose who can see each entry on the writing page. Editing your profile does not change the visibility of saved entries." },
   "commonCancel": "Cancel",

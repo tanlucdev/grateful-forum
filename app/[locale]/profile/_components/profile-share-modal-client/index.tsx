@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
 import type { ProfileView } from "../profile-view";
 
@@ -10,18 +11,26 @@ export function ProfileShareModalButton({ view }: Readonly<{ view: ProfileView }
   const t = useTranslations("profile.share");
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [shareUrl, setShareUrl] = useState(view.shareUrl);
 
   async function copyLink() {
-    await navigator.clipboard.writeText(view.shareUrl);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1400);
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1400);
+    } catch {
+      toast.error(t("copyFailed"));
+    }
   }
 
   return (
     <>
       <button
         className="inline-flex min-w-0 w-full items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-card px-4 py-3 text-xs font-semibold leading-4 text-foreground transition-colors hover:bg-muted"
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          setShareUrl(new URL(view.shareUrl, window.location.origin).href);
+          setOpen(true);
+        }}
         type="button"
       >
         <MaterialSymbol className="text-base" name="share" />
@@ -38,7 +47,7 @@ export function ProfileShareModalButton({ view }: Readonly<{ view: ProfileView }
               </div>
               <button
                 aria-label={t("close")}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:bg-input hover:text-foreground"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:bg-input hover:text-foreground"
                 onClick={() => setOpen(false)}
                 title={t("close")}
                 type="button"
@@ -51,7 +60,7 @@ export function ProfileShareModalButton({ view }: Readonly<{ view: ProfileView }
                 <div className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-primary/10 blur-xl" />
                 <div className="pointer-events-none absolute -bottom-8 -left-8 h-32 w-32 rounded-full bg-accent/30 blur-xl" />
                 <div className="relative z-10 flex flex-col items-center">
-                  <span className="mb-3 inline-flex items-center gap-1 rounded-full bg-card/80 px-3 py-1 text-[10px] font-semibold leading-[14px] text-primary shadow-sm backdrop-blur-sm">
+                  <span className="mb-3 inline-flex items-center gap-1 rounded-full bg-card/80 px-3 py-1 text-xs font-semibold leading-4 text-primary shadow-sm backdrop-blur-sm">
                     <MaterialSymbol className="text-sm" fill name="nest_eco_leaf" />
                     {t("badge", { count: 14 })}
                   </span>
@@ -61,8 +70,8 @@ export function ProfileShareModalButton({ view }: Readonly<{ view: ProfileView }
                   <p className="mt-2 max-w-xs text-sm font-semibold leading-5 text-foreground">
                     {t("quote")}
                   </p>
-                  <div className="mt-4 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 border-t border-primary/10 pt-3 text-[10px] leading-[14px] text-muted-foreground">
-                    <span className="font-semibold text-foreground">{view.displayName}</span>
+                  <div className="mt-4 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 border-t border-primary/10 pt-3 text-xs leading-4 text-muted-foreground">
+                    <span className="min-w-0 break-all font-semibold text-foreground">{view.displayName}</span>
                     <span>•</span>
                     <span className="inline-flex items-center gap-1">
                       <MaterialSymbol className="text-xs text-primary" fill name="spa" />
@@ -73,14 +82,14 @@ export function ProfileShareModalButton({ view }: Readonly<{ view: ProfileView }
               </div>
 
               <div className="space-y-3">
-                <label className="block text-[10px] font-semibold leading-[14px] text-muted-foreground">{t("copyLink")}</label>
+                <label className="block text-xs font-semibold leading-4 text-muted-foreground">{t("copyLink")}</label>
                 <div className="flex items-center gap-2 rounded-xl border border-border/50 bg-muted p-1.5">
-                  <div className="flex min-w-0 flex-1 items-center gap-2 px-2 text-[10px] font-mono leading-[14px] text-muted-foreground">
+                  <div className="flex min-w-0 flex-1 items-center gap-2 px-2 text-xs font-mono leading-4 text-muted-foreground">
                     <MaterialSymbol className="text-sm text-muted-foreground" name="link" />
-                    <span className="truncate">{view.shareUrl}</span>
+                    <span className="truncate">{shareUrl}</span>
                   </div>
                   <button
-                    className="inline-flex items-center gap-1 rounded-lg bg-card px-4 py-2 text-[10px] font-semibold leading-[14px] text-foreground shadow-sm transition-colors hover:bg-input"
+                    className="inline-flex min-h-11 shrink-0 items-center gap-1 rounded-lg bg-card px-4 py-2 text-xs font-semibold leading-4 text-foreground shadow-sm transition-colors hover:bg-input"
                     onClick={copyLink}
                     type="button"
                   >
@@ -118,7 +127,7 @@ export function ProfileShareModalButton({ view }: Readonly<{ view: ProfileView }
 function CircleShareButton({ icon, title }: Readonly<{ icon: string; title: string }>) {
   return (
     <button
-      className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-muted-foreground shadow-sm transition-colors hover:bg-input"
+      className="flex h-11 w-11 items-center justify-center rounded-full bg-muted text-muted-foreground shadow-sm transition-colors hover:bg-input"
       title={title}
       type="button"
     >

@@ -21,7 +21,7 @@ export default async function ProfilePage({
     redirect(localizedLoginHref("/profile", locale));
   }
 
-  const view = toProfileView(dashboard);
+  const view = toProfileView(dashboard, locale);
   const requestedTab = resolvedSearchParams?.tab;
   const entry = z.uuid().safeParse(resolvedSearchParams?.entry);
   view.requestedEntry = entry.success ? entry.data : undefined;
