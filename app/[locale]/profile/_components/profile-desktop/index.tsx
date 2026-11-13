@@ -9,7 +9,7 @@ import type { ProfileView } from "../profile-view";
 export function DesktopProfile({
   initialTab,
   view,
-}: Readonly<{ initialTab: "all" | "public" | "moments"; view: ProfileView }>) {
+}: Readonly<{ initialTab: "all" | "public" | "moments" | "saved"; view: ProfileView }>) {
   return (
     <div className="hidden min-h-svh flex-col md:flex">
       <main className="mx-auto w-full max-w-[1200px] flex-1 px-6">

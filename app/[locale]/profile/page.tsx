@@ -1,3 +1,5 @@
+import { querySavedEntries, savedPageSchema } from "@/lib/profile/saved-queries";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { z } from "zod";
 import { redirect } from "next/navigation";
 import { localizedLoginHref } from "@/lib/auth/redirects";
@@ -12,7 +14,7 @@ export default async function ProfilePage({
   searchParams,
 }: Readonly<{
   params: Promise<{ locale: string }>;
-  searchParams?: Promise<{ tab?: string; entry?: string }>;
+  searchParams?: Promise<{ tab?: string; entry?: string; savedPage?: string }>;
 }>) {
   const { locale } = await params;
   const resolvedSearchParams = await searchParams;
@@ -26,7 +28,16 @@ export default async function ProfilePage({
   const entry = z.uuid().safeParse(resolvedSearchParams?.entry);
   view.requestedEntry = entry.success ? entry.data : undefined;
   const initialTab =
-    requestedTab === "public" || requestedTab === "moments" ? requestedTab : "all";
+    requestedTab === "public" || requestedTab === "moments" || requestedTab === "saved" ? requestedTab : "all";
+
+  if (initialTab === "saved") {
+    const page = savedPageSchema.parse(resolvedSearchParams?.savedPage ?? 1);
+    try {
+      view.saved = await querySavedEntries(await createSupabaseServerClient(), dashboard.profile.id, page);
+    } catch {
+      view.savedError = true;
+    }
+  }
 
   return <><ProfileTourStarterClient userId={dashboard.profile.id} /><ProfileScreen initialTab={initialTab} view={view} /><OnboardingTourReplayButton tour="profile" /></>;
 }

@@ -24,5 +24,6 @@
   "commonCancel": "Cancel",
   "onboarding": { "replay": "View guide" },
   "public": { "back": "Back", "entries": "Public entries", "streak": "Streak", "streakValue": "{count} days", "journal": "Public journal", "empty": "This profile has no public entries yet." },
-  "report": { "action": "Report", "reason": "Reason", "placeholder": "Spam, unsafe content, private information...", "send": "Send", "sending": "Sending...", "cancel": "Cancel", "success": "Report sent.", "error": "Could not send report." }
+  "report": { "action": "Report", "reason": "Reason", "placeholder": "Spam, unsafe content, private information...", "send": "Send", "sending": "Sending...", "cancel": "Cancel", "success": "Report sent.", "error": "Could not send report." },
+  "saved": {"title": "Saved", "description": "Posts to revisit, most recently saved first. Only you can see this list.", "open": "Read post", "handwritten": "Handwritten post", "remove": "Remove saved post", "removing": "Removing…", "removed": "Post removed from saved.", "removeError": "Could not remove saved post. Please try again.", "loadError": "Could not load saved posts. Please try again.", "retry": "Try again", "emptyTitle": "No saved posts yet", "emptyDescription": "Save inspiring posts from the feed to revisit them here. Posts that are no longer public will not appear.", "explore": "Explore the feed", "pagination": "Saved posts pagination", "previous": "Previous", "next": "Next", "page": "Page {number}"}
 }

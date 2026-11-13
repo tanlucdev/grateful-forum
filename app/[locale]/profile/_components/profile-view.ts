@@ -1,3 +1,4 @@
+import type { SavedEntriesPage } from "@/lib/profile/saved-queries";
 import type { JournalEntry, ProfileDashboard } from "@/lib/profile/types";
 import { makeWeeklyRhythm, type WeeklyRhythmDay } from "@/lib/profile/weekly-rhythm";
 import { makeMonthlyRhythm } from "@/lib/profile/monthly-rhythm";
@@ -13,6 +14,8 @@ export const profileAssets = {
 };
 
 export type ProfileView = {
+  saved?: SavedEntriesPage;
+  savedError?: boolean;
   requestedEntry?: string;
   avatarDesktop: string;
   avatarMobile: string;

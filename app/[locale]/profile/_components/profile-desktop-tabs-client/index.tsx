@@ -5,12 +5,13 @@ import { usePathname, useRouter } from "@/i18n/navigation";
 import { useFormatter, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
+import { ProfileSavedPostsClient } from "../profile-saved-posts-client";
 import { ProfileJournalBook } from "../profile-journal-book";
 import { MomentsTab } from "../profile-moments-tab";
 import { AllTab, PublicTab } from "../profile-public-tab";
 import type { ProfileView } from "../profile-view";
 
-type Tab = "all" | "public" | "moments";
+type Tab = "all" | "public" | "moments" | "saved";
 type LayoutMode = "grid" | "journal" | "list";
 
 export function ProfileDesktopTabs({
@@ -25,7 +26,7 @@ export function ProfileDesktopTabs({
   const tab = initialTab;
   function setTab(value: Tab) {
     const next = new URLSearchParams(search.toString());
-    next.set("tab", value); next.delete("cursor"); next.delete("entry"); next.delete("edge");
+    next.set("tab", value); next.delete("cursor"); next.delete("entry"); next.delete("edge"); next.delete("savedPage");
     router.push(`${pathname}?${next}`);
   }
   const requestedLayout = search.get("layout");
@@ -38,15 +39,18 @@ export function ProfileDesktopTabs({
 
   return (
     <section className="@container flex flex-col space-y-4">
-      <div data-tour={mobile ? "profile-mobile-entries" : "profile-desktop-entries"} className="flex min-w-0 flex-col gap-1 @min-[36rem]:flex-row @min-[36rem]:items-center @min-[36rem]:justify-between @min-[36rem]:gap-4">
-        <div className="grid min-w-0 grid-cols-[auto_auto_auto] border-b border-primary/10 @min-[36rem]:flex">
+      <div data-tour={mobile ? "profile-mobile-entries" : "profile-desktop-entries"} className="flex min-w-0 flex-col gap-1">
+        <div className="grid min-w-0 grid-cols-2 @min-[28rem]:grid-cols-4 border-b border-primary/10 @min-[36rem]:flex">
           <DesktopTab active={tab === "all"} count={view.entryCount} label={t("desktopTabs.all")} onClick={() => setTab("all")} />
           <DesktopTab active={tab === "public"} count={view.publicCount} label={t("desktopTabs.public")} onClick={() => setTab("public")} />
+          <DesktopTab active={tab === "saved"} label={t("saved.title")} onClick={() => setTab("saved")} />
           <DesktopTab active={tab === "moments"} label={t("desktopTabs.moments")} onClick={() => setTab("moments")} />
         </div>
-        {tab !== "moments" ? <ListControls layout={layout} onChange={setLayout} /> : null}
+        {tab !== "moments" && tab !== "saved" ? <ListControls layout={layout} onChange={setLayout} /> : null}
       </div>
-      {tab === "moments" ? (
+      {tab === "saved" ? (
+        <ProfileSavedPostsClient data={view.saved} error={view.savedError} key={search.toString()} />
+      ) : tab === "moments" ? (
         <MomentsTab layout={layout === "journal" ? "list" : layout} />
       ) : layout === "journal" ? (
         <ProfileJournalBook mobile={mobile} key={`${view.requestedEntry}-${tab}`} view={{ ...view, entries }} />

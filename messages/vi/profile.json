@@ -24,5 +24,6 @@
   "commonCancel": "Hủy",
   "onboarding": { "replay": "Xem hướng dẫn" },
   "public": { "back": "Quay lại", "entries": "Bài viết công khai", "streak": "Chuỗi ngày", "streakValue": "{count} ngày", "journal": "Nhật ký công khai", "empty": "Hồ sơ này chưa có bài viết công khai." },
-  "report": { "action": "Báo cáo", "reason": "Lý do", "placeholder": "Spam, nội dung không an toàn, thông tin riêng tư...", "send": "Gửi", "sending": "Đang gửi...", "cancel": "Hủy", "success": "Đã gửi báo cáo.", "error": "Không thể gửi báo cáo." }
+  "report": { "action": "Báo cáo", "reason": "Lý do", "placeholder": "Spam, nội dung không an toàn, thông tin riêng tư...", "send": "Gửi", "sending": "Đang gửi...", "cancel": "Hủy", "success": "Đã gửi báo cáo.", "error": "Không thể gửi báo cáo." },
+  "saved": {"title": "Đã lưu", "description": "Những bài viết bạn muốn đọc lại, theo thứ tự lưu gần nhất. Chỉ bạn xem được danh sách này.", "open": "Đọc bài viết", "handwritten": "Bài viết tay", "remove": "Bỏ lưu", "removing": "Đang bỏ lưu…", "removed": "Đã bỏ lưu bài viết.", "removeError": "Chưa thể bỏ lưu. Vui lòng thử lại.", "loadError": "Chưa tải được bài đã lưu. Vui lòng thử lại.", "retry": "Thử lại", "emptyTitle": "Chưa có bài viết đã lưu", "emptyDescription": "Lưu những bài truyền cảm hứng trên bảng tin để đọc lại tại đây. Bài không còn công khai sẽ không hiển thị.", "explore": "Khám phá bảng tin", "pagination": "Phân trang bài đã lưu", "previous": "Trang trước", "next": "Trang sau", "page": "Trang {number}"}
 }
