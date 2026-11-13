@@ -26,8 +26,15 @@ const quicksand = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ||
+      (process.env.VERCEL_PROJECT_PRODUCTION_URL
+        ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+        : "http://localhost:3000"),
+  ),
   title: "Grateful Forum",
   description: "A mobile-first gratitude journal.",
+  twitter: { card: "summary_large_image" },
 };
 
 export default async function RootLayout({

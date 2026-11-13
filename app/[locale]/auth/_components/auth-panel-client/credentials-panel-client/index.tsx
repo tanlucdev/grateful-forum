@@ -1,6 +1,7 @@
 "use client";
 
-import { ArrowRight, Eye, EyeOff, Info, Leaf, Loader2, X } from "lucide-react";
+import { ArrowRight, Eye, EyeOff, Info, Loader2, X } from "lucide-react";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -56,7 +57,7 @@ export function CredentialsPanelClient({
   return (
     <section className="w-full max-w-[400px] font-[family-name:var(--font-quicksand)]">
       <div className="mb-8 flex flex-col items-center text-center">
-        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary"><Leaf className="h-7 w-7" fill="currentColor" strokeWidth={1.5} /></div>
+        <Image alt="" className="mb-4 size-12 rounded-full object-cover" height={48} src="/stitch/landing/mascot.png" width={48} />
         <h1 className="mb-2 text-[28px] leading-9 font-bold text-foreground">{t("productName")}</h1>
         <p className="text-base leading-6 text-muted-foreground">{t("title")}</p>
       </div>
