@@ -16,6 +16,8 @@ export function CredentialsPanelClient({
   email,
   fieldErrors,
   loading,
+  googleLoading,
+  onGoogleSignIn,
   onChangeView,
   onClearFieldError,
   onDismissBanner,
@@ -34,6 +36,8 @@ export function CredentialsPanelClient({
   email: string;
   fieldErrors: AuthFieldErrors;
   loading: boolean;
+  googleLoading: boolean;
+  onGoogleSignIn: () => void;
   onChangeView: (view: AuthView) => void;
   onClearFieldError: (field: keyof AuthFieldErrors) => void;
   onDismissBanner: () => void;
@@ -112,6 +116,17 @@ export function CredentialsPanelClient({
           </div>
           <Button className="mt-1 w-full shadow-sm hover:shadow-sm disabled:shadow-none" disabled={!configured || loading} size="lg" type="submit"><span>{loading ? t("loading.credentials") : t(isSignup ? "signUp" : "signIn")}</span>{loading ? <Loader2 className="h-[18px] w-[18px] animate-spin" /> : <ArrowRight className="h-[18px] w-[18px]" />}</Button>
         </form>
+        <Button className="mt-5 w-full whitespace-normal" variant="outline" size="lg" type="button" disabled={!configured || loading} aria-busy={googleLoading} onClick={onGoogleSignIn}>
+          {googleLoading ? <Loader2 className="size-5 animate-spin motion-reduce:animate-none" aria-hidden="true" /> : (
+            <svg className="size-5" viewBox="0 0 48 48" aria-hidden="true">
+              <path fill="#4285F4" d="M43.61 24.46c0-1.36-.12-2.67-.35-3.92H24.4v7.42h10.77a9.21 9.21 0 0 1-3.99 6.05v5.03h6.46c3.78-3.48 5.97-8.61 5.97-14.58Z" />
+              <path fill="#34A853" d="M24.4 44c5.4 0 9.92-1.79 13.23-4.86l-6.46-5.03c-1.79 1.2-4.07 1.93-6.77 1.93-5.21 0-9.63-3.52-11.21-8.26H6.52v5.18A19.99 19.99 0 0 0 24.4 44Z" />
+              <path fill="#FBBC05" d="M13.19 27.78a12 12 0 0 1 0-7.56v-5.18H6.52a20 20 0 0 0 0 17.92l6.67-5.18Z" />
+              <path fill="#EA4335" d="M24.4 11.96c2.95 0 5.59 1.02 7.67 3.02l5.75-5.75A19.26 19.26 0 0 0 24.4 4 19.99 19.99 0 0 0 6.52 15.04l6.67 5.18c1.58-4.74 6-8.26 11.21-8.26Z" />
+            </svg>
+          )}
+          {t(googleLoading ? "google.loading" : "google.continue")}
+        </Button>
         <button className="mx-auto mt-8 flex min-h-11 items-center justify-center gap-1 text-base leading-6 text-muted-foreground hover:text-primary" onClick={() => onChangeView(isSignup ? "signin" : "signup")} type="button">{t(isSignup ? "switch.hasAccount" : "switch.noAccount")}<span className="font-semibold text-primary underline-offset-4 hover:underline">{t(isSignup ? "signIn" : "signUp")}</span></button>
       </div>
     </section>
