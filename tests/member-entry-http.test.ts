@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
-import { randomUUID, createHash } from "node:crypto";
+import { randomUUID } from "node:crypto";
+import { AwsClient } from "aws4fetch";
+import { getR2Env } from "../lib/entry-media/mutations.ts";
 import { createClient } from "@supabase/supabase-js";
 import { createServerClient } from "@supabase/ssr";
 
@@ -9,6 +11,8 @@ const base = process.env.ENTRY_TEST_BASE_URL ?? "http://localhost:4317";
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const admin = createClient(url, process.env.SUPABASE_SERVICE_ROLE_KEY!, { auth: { persistSession: false } });
+const r2 = getR2Env();
+const storage = new AwsClient({ accessKeyId: r2.R2_ACCESS_KEY_ID, secretAccessKey: r2.R2_SECRET_ACCESS_KEY, service: "s3", region: "auto" });
 const email = `entry-check-${randomUUID()}@example.com`;
 const password = randomUUID();
 const { data: fixture, error } = await admin.auth.admin.createUser({ email, password, email_confirm: true });
@@ -27,6 +31,15 @@ try {
   const media = await mediaResponse.json();
   assert.equal(mediaResponse.status, 200, JSON.stringify(media));
   assets.add(media.path);
+  const largeImage = new Uint8Array(5 * 1024 * 1024);
+  largeImage.set(Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aN1cAAAAASUVORK5CYII=", "base64"));
+  const largeUpload = new FormData();
+  largeUpload.set("file", new File([largeImage], "limit.png", { type: "image/png" }));
+  const largeResponse = await fetch(`${base}/api/entry-media`, { method: "POST", headers: { cookie }, body: largeUpload });
+  const largeMedia = await largeResponse.json();
+  assert.equal(largeResponse.status, 200, JSON.stringify(largeMedia));
+  assert.equal(largeMedia.uploaded, true);
+  assets.add(largeMedia.path);
   for (const visibility of ["private", "public", "anonymous"]) {
     if (visibility === "public") {
       const response = await fetch(`${base}/api/entries`, { method: "POST", headers: { cookie, "Content-Type": "application/json" }, body: JSON.stringify({ visibility, gratitudes: ["Temporary access verification"], imageUrl: media.url }) });
@@ -67,15 +80,13 @@ try {
 } finally {
   const { data } = await admin.from("entries").select("handwriting_preview_url").eq("user_id", userId);
   for (const row of data ?? []) {
-    const match = row.handwriting_preview_url?.match(/\/upload\/(?:v\d+\/)?(.+)\.\w+$/);
-    if (match) assets.add(match[1]);
+    const prefix = `${r2.R2_PUBLIC_URL.replace(/\/$/, "")}/`;
+    if (row.handwriting_preview_url?.startsWith(prefix)) assets.add(row.handwriting_preview_url.slice(prefix.length));
   }
   const deletion = await admin.auth.admin.deleteUser(userId); assert.ifError(deletion.error);
-  for (const publicId of assets) {
-    const timestamp = Math.floor(Date.now() / 1000);
-    const signature = createHash("sha1").update(`public_id=${publicId}&timestamp=${timestamp}${process.env.CLOUDINARY_API_SECRET}`).digest("hex");
-    const response = await fetch(`https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/image/destroy`, { method: "POST", body: new URLSearchParams({ public_id: publicId, timestamp: String(timestamp), signature, api_key: process.env.CLOUDINARY_API_KEY! }) });
-    assert.equal(response.status, 200, "Fixture image cleanup failed");
+  for (const path of assets) {
+    const response = await fetch(await storage.sign(`${r2.R2_ENDPOINT.replace(/\/$/, "")}/${r2.R2_BUCKET_NAME}/${path}`, { method: "DELETE", signal: AbortSignal.timeout(20_000) }), { redirect: "error" });
+    assert.equal(response.status, 204, "Fixture image cleanup failed");
   }
   console.log("temporary account, entries and uploaded images removed");
 }

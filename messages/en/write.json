@@ -145,7 +145,7 @@
     "help": "Your strokes stay intact until sync succeeds.",
     "saved": "Handwritten page saved.",
     "pending": "Kept on this device; not synced.",
-    "mediaUnavailable": "Kept on this device; media_unavailable.",
+    "mediaUnavailable": "Your writing is kept on this device. Image uploads are not configured. Choose Private to save, or try again later.",
     "previewUploadFailed": "Kept on this device; media_upload_failed.",
     "previewUnavailable": "Kept on this device; preview unavailable.",
     "type": "Type",
