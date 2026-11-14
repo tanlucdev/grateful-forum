@@ -1,67 +1,74 @@
-import { createHash, randomUUID } from "node:crypto";
+import { randomUUID } from "node:crypto";
+import { AwsClient } from "aws4fetch";
+import { z } from "zod";
 import { MediaError } from "./errors.ts";
 import { validateEntryMediaFile } from "./validation.ts";
 
-type SignatureParams = Record<string, string | number>;
+const r2EnvSchema = z.object({
+  R2_ENDPOINT: z.string().trim().regex(/^https:\/\/[a-f0-9]{32}(?:\.(?:eu|us|fedramp))?\.r2\.cloudflarestorage\.com\/?$/),
+  R2_ACCESS_KEY_ID: z.string().trim().min(1),
+  R2_SECRET_ACCESS_KEY: z.string().trim().min(1),
+  R2_BUCKET_NAME: z.string().trim().min(3).max(63).regex(/^[a-z0-9][a-z0-9-]*[a-z0-9]$/),
+  R2_PUBLIC_URL: z.string().trim().url().refine((value) => {
+    if (!URL.canParse(value)) return false;
+    const url = new URL(value);
+    return url.protocol === "https:" && !url.username && !url.password && !url.search && !url.hash
+      && url.pathname === "/" && !url.hostname.endsWith(".r2.cloudflarestorage.com");
+  }),
+});
 
-type CloudinaryEnv = {
-  CLOUDINARY_CLOUD_NAME?: string;
-  CLOUDINARY_API_KEY?: string;
-  CLOUDINARY_API_SECRET?: string;
-};
+type R2Env = Partial<Record<keyof z.infer<typeof r2EnvSchema>, string>>;
 
-export function getCloudinaryEnv(env: CloudinaryEnv = {
-  CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
-  CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
-  CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
+export function getR2Env(env: R2Env = {
+  R2_ENDPOINT: process.env.R2_ENDPOINT,
+  R2_ACCESS_KEY_ID: process.env.R2_ACCESS_KEY_ID,
+  R2_SECRET_ACCESS_KEY: process.env.R2_SECRET_ACCESS_KEY,
+  R2_BUCKET_NAME: process.env.R2_BUCKET_NAME,
+  R2_PUBLIC_URL: process.env.R2_PUBLIC_URL,
 }) {
-  const cloudName = env.CLOUDINARY_CLOUD_NAME;
-  const apiKey = env.CLOUDINARY_API_KEY;
-  const apiSecret = env.CLOUDINARY_API_SECRET;
-
-  if (!cloudName || !apiKey || !apiSecret) {
+  const result = r2EnvSchema.safeParse(env);
+  if (!result.success) {
+    console.error("Entry media uploads unavailable; missing or invalid environment variables:",
+      [...new Set(result.error.issues.map((issue) => issue.path[0]))].join(", "));
     throw new MediaError("media_unavailable");
   }
-
-  return { apiKey, apiSecret, cloudName };
+  return result.data;
 }
 
-export function buildCloudinarySignature(params: SignatureParams, apiSecret: string) {
-  const payload = Object.entries(params)
-    .sort(([left], [right]) => left.localeCompare(right))
-    .map(([key, value]) => `${key}=${value}`)
-    .join("&");
-
-  return createHash("sha1").update(`${payload}${apiSecret}`).digest("hex");
-}
+const extensions: Record<string, string> = {
+  "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/gif": "gif", "image/avif": "avif",
+};
 
 export async function uploadEntryMedia(file: File) {
   validateEntryMediaFile(file);
   try {
-    const { apiKey, apiSecret, cloudName } = getCloudinaryEnv();
-    const params = {
-      folder: `entries/${new Date().getFullYear()}`,
-      public_id: randomUUID(),
-      timestamp: Math.floor(Date.now() / 1000),
-    };
-    const formData = new FormData();
-    formData.set("file", file);
-    formData.set("api_key", apiKey);
-    for (const [key, value] of Object.entries(params)) {
-      formData.set(key, String(value));
-    }
-    formData.set("signature", buildCloudinarySignature(params, apiSecret));
-
-    const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-      method: "POST",
-      body: formData,
+    const env = getR2Env();
+    const path = `entries/${new Date().getUTCFullYear()}/${randomUUID()}.${extensions[file.type]}`;
+    const client = new AwsClient({
+      accessKeyId: env.R2_ACCESS_KEY_ID,
+      secretAccessKey: env.R2_SECRET_ACCESS_KEY,
+      service: "s3",
+      region: "auto",
     });
-    const data = (await response.json()) as { public_id?: string; secure_url?: string };
-
-    if (!response.ok || !data.public_id || !data.secure_url) throw new MediaError("media_upload_failed");
-    return { path: data.public_id, url: data.secure_url };
+    const request = await client.sign(`${env.R2_ENDPOINT.replace(/\/$/, "")}/${env.R2_BUCKET_NAME}/${path}`, {
+      method: "PUT",
+      headers: { "Content-Type": file.type, "Content-Length": String(file.size), "Cache-Control": "public, max-age=31536000, immutable" },
+      body: await file.arrayBuffer(),
+      signal: AbortSignal.timeout(20_000),
+      aws: { allHeaders: true },
+    });
+    const response = await fetch(request, { redirect: "error" });
+    if (!response.ok) {
+      const body = await response.text();
+      const code = body.match(/<Code>([A-Za-z0-9]+)<\/Code>/)?.[1] ?? "unknown";
+      console.error("R2 upload rejected:", response.status, code);
+      throw new MediaError("media_upload_failed");
+    }
+    await response.body?.cancel();
+    return { path, url: `${env.R2_PUBLIC_URL.replace(/\/$/, "")}/${path}` };
   } catch (error) {
     if (error instanceof MediaError) throw error;
+    console.error("R2 upload failed:", error instanceof Error ? error.name : "UnknownError");
     throw new MediaError("media_upload_failed");
   }
 }

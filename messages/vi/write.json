@@ -145,7 +145,7 @@
     "help": "Nét viết được giữ nguyên khi chưa đồng bộ.",
     "saved": "Đã lưu trang viết tay.",
     "pending": "Đã giữ trên thiết bị, chưa đồng bộ.",
-    "mediaUnavailable": "Đã giữ trên thiết bị, media_unavailable.",
+    "mediaUnavailable": "Bản viết đã giữ trên thiết bị. Dịch vụ tải ảnh chưa được cấu hình. Bạn có thể chọn Riêng tư để lưu hoặc thử lại sau.",
     "previewUploadFailed": "Đã giữ trên thiết bị, media_upload_failed.",
     "previewUnavailable": "Đã giữ trên thiết bị, chưa tạo được ảnh xem trước.",
     "type": "Gõ chữ",
