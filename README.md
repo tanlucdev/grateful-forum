@@ -35,6 +35,22 @@ Uploads retain the 5 MB limit and supported image types; object names use genera
 
 After deploying, save a public handwritten entry and a photo entry. Confirm their image URLs use your media domain and load without login, then confirm private handwriting still saves without uploading a preview.
 
+### Move existing Cloudinary media
+
+Configure the five R2 variables plus `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` for the database to migrate. Run locally from the repository root; do not expose the service role key to the browser. Cloudinary credentials are not needed for publicly readable images.
+
+```bash
+# Read-only inventory; reports entries and image references without uploading.
+npm run migrate:media
+
+# Copy and verify images, then update stored URLs.
+npm run migrate:media -- --apply
+```
+
+The migration handles `entries.image_url` and `entries.handwriting_preview_url` pointing at `https://res.cloudinary.com/`, including deleted/hidden entries. It uses keyset pages, copies each shared URL once per run, verifies the public R2 download against the original SHA-256, and updates only if the old URL is still unchanged. External image hosts and private handwriting data are untouched. A failure stops the run; original URLs remain for unfinished references, completed updates stay valid, and rerunning processes remaining Cloudinary URLs. An upload whose verification or database update fails can leave an unused R2 object; no source object is deleted.
+
+After migration, rerun the inventory and confirm zero references, then check old photo/handwritten entries in the deployed app. Keep Cloudinary assets until that verification is complete. This migrates referenced journal assets, not unreferenced files in the Cloudinary account or assets served through custom Cloudinary domains.
+
 ## Scripts
 
 ```bash
