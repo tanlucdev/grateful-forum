@@ -1,6 +1,6 @@
 "use client";
-/* eslint-disable @next/next/no-img-element */
 
+import { EntryImage } from "@/components/entries/entry-image";
 import { useState } from "react";
 import { useFormatter, useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
@@ -52,12 +52,12 @@ export function ProfileSavedPostsClient({ data, error }: Readonly<{ data?: Saved
               <time className="text-xs text-muted-foreground" dateTime={entry.createdAt}>
                 {format.dateTime(new Date(entry.createdAt), { day: "numeric", month: "long", year: "numeric" })}
               </time>
+              {entry.entryKind !== "handwritten" && entry.metadata.imageUrl ? <EntryImage src={entry.metadata.imageUrl} thumbnail sizes="(min-width: 768px) 40vw, 90vw" /> : null}
               <Link aria-label={t("open")} className="flex min-w-0 flex-1 flex-col gap-3 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary" href={`/entries/${entry.id}`}>
                 {entry.entryKind === "handwritten" ? (
-                  entry.metadata.handwritingPreviewUrl ? <img alt={t("handwritten")} className="max-h-64 w-full rounded-lg object-contain" src={entry.metadata.handwritingPreviewUrl} /> : <p className="text-sm font-semibold text-primary">{t("handwritten")}</p>
+                  entry.metadata.handwritingPreviewUrl ? <EntryImage alt={t("handwritten")} src={entry.metadata.handwritingPreviewUrl} sizes="(min-width: 1280px) 360px, (min-width: 768px) 44vw, 90vw" thumbnail interactive={false} /> : <p className="text-sm font-semibold text-primary">{t("handwritten")}</p>
                 ) : (
                   <>
-                    {entry.metadata.imageUrl ? <img alt="" className="max-h-64 w-full rounded-lg object-cover" src={entry.metadata.imageUrl} /> : null}
                     {entry.metadata.quote ? <p className="whitespace-pre-wrap text-sm italic leading-6 text-muted-foreground">{entry.metadata.quote}</p> : null}
                     <p className="line-clamp-6 whitespace-pre-wrap text-base leading-6">{entry.content}</p>
                   </>

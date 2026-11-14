@@ -1,3 +1,4 @@
+import { EntryImage } from "@/components/entries/entry-image";
 import { z } from "zod";
 import { Link } from "@/i18n/navigation";
 /* eslint-disable @next/next/no-img-element */
@@ -78,12 +79,12 @@ export default async function PublicProfilePage({
                 <span className="text-xs text-muted-foreground">{formatDate(entry.createdAt, locale)}</span>
               </div>
               {entry.entryKind === "handwritten" ? (
-                <Link aria-label={t("actions.viewEntry")} className="mt-3 block overflow-hidden rounded-xl border border-border bg-[#fffdf8] p-2" href={`/entries/${entry.id}`}>{entry.handwritingPreviewUrl ? <img alt="" className="h-44 w-full rounded-lg object-cover" src={entry.handwritingPreviewUrl} /> : <span className="flex h-32 items-center justify-center text-sm font-semibold text-primary">{t("actions.viewEntry")}</span>}</Link>
+                <Link aria-label={t("actions.viewEntry")} className="mt-3 block overflow-hidden rounded-xl border border-border bg-[#fffdf8] p-2" href={`/entries/${entry.id}`}>{entry.handwritingPreviewUrl ? <EntryImage alt="" src={entry.handwritingPreviewUrl} sizes="(min-width: 768px) 686px, 90vw" thumbnail interactive={false} /> : <span className="flex h-32 items-center justify-center text-sm font-semibold text-primary">{t("actions.viewEntry")}</span>}</Link>
               ) : entry.metadata.gratitudes.length || entry.metadata.reflection || entry.metadata.quote || entry.metadata.imageUrl ? (
                 <>
                   {entry.metadata.quote ? <p className="mt-3 whitespace-pre-wrap text-sm italic leading-6 text-muted-foreground">“{entry.metadata.quote}”</p> : null}
                   {entry.metadata.imageUrl ? (
-                    <img alt="" className="mt-3 h-44 w-full rounded-lg object-cover" src={entry.metadata.imageUrl} />
+                    <div className="mt-3"><EntryImage src={entry.metadata.imageUrl} sizes="(min-width: 768px) 686px, 90vw" thumbnail /></div>
                   ) : null}
                   {entry.metadata.gratitudes.length ? (
                     <ul className="mt-3 space-y-1 text-sm leading-6 text-foreground">

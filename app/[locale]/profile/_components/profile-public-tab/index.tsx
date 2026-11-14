@@ -1,6 +1,6 @@
 "use client";
-/* eslint-disable @next/next/no-img-element */
 
+import { EntryImage } from "@/components/entries/entry-image";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
 import { Link } from "@/i18n/navigation";
 import { useLocale, useTranslations } from "next-intl";
@@ -41,6 +41,7 @@ function LiveJournalEntries({
 function LiveEntryCard({ entry, grid }: Readonly<{ entry: JournalEntry; grid: boolean }>) {
   const t = useTranslations("profile");
   const locale = useLocale();
+  const sizes = grid ? "(min-width: 1280px) 330px, (min-width: 768px) 44vw, 90vw" : "(min-width: 1200px) 1112px, 90vw";
   const hasMetadata = entry.metadata.gratitudes.length || entry.metadata.reflection || entry.metadata.quote || entry.metadata.imageUrl;
 
   return (
@@ -55,12 +56,12 @@ function LiveEntryCard({ entry, grid }: Readonly<{ entry: JournalEntry; grid: bo
         </div>
       </div>
       {entry.entryKind === "handwritten" ? (
-        <Link aria-label={t("actions.viewEntry")} className="overflow-hidden rounded-xl border border-border bg-[#fffdf8] p-2" href={`/entries/${entry.id}`}>{entry.handwritingPreviewUrl ? <img alt="" className="h-40 w-full rounded-lg object-cover" src={entry.handwritingPreviewUrl} /> : <span className="flex min-h-28 items-center justify-center gap-2 text-sm font-semibold text-primary"><MaterialSymbol name="edit" />{t("actions.viewEntry")}</span>}</Link>
+        <Link aria-label={t("actions.viewEntry")} className="overflow-hidden rounded-xl border border-border bg-[#fffdf8] p-2" href={`/entries/${entry.id}`}>{entry.handwritingPreviewUrl ? <EntryImage alt="" src={entry.handwritingPreviewUrl} sizes={sizes} thumbnail interactive={false} /> : <span className="flex min-h-28 items-center justify-center gap-2 text-sm font-semibold text-primary"><MaterialSymbol name="edit" />{t("actions.viewEntry")}</span>}</Link>
       ) : hasMetadata ? (
         <div className="flex flex-col gap-3">
           {entry.metadata.quote ? <p className="whitespace-pre-wrap text-sm italic leading-5 text-muted-foreground">{"“"}{entry.metadata.quote}{"”"}</p> : null}
           {entry.metadata.imageUrl ? (
-            <img alt="" className="h-40 w-full rounded-xl object-cover" src={entry.metadata.imageUrl} />
+            <EntryImage src={entry.metadata.imageUrl} sizes={sizes} thumbnail />
           ) : null}
           {entry.metadata.gratitudes.length ? (
             <ul className="space-y-1 text-base leading-6 text-foreground">

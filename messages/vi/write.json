@@ -193,5 +193,12 @@
   },
   "extras": {
     "title": "Thêm chút hôm nay"
+  },
+  "media": {
+    "alt": "Ảnh kỷ niệm",
+    "open": "Mở ảnh lớn",
+    "close": "Đóng ảnh",
+    "title": "Ảnh kỷ niệm",
+    "error": "Không tải được ảnh."
   }
 }
