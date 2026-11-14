@@ -193,5 +193,12 @@
   },
   "extras": {
     "title": "A little more about today"
+  },
+  "media": {
+    "alt": "Memory photo",
+    "open": "Open full image",
+    "close": "Close image",
+    "title": "Memory photo",
+    "error": "Unable to load image."
   }
 }
