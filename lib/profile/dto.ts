@@ -1,3 +1,4 @@
+import type { SoulTitle } from "./soul-titles";
 import type { JournalStatistics } from "./queries";
 import type { JournalPagination } from "./pagination";
 import type { EntryKind, EntryMetadata, EntryVisibility, InkDocument } from "@/lib/entries/types";
@@ -8,6 +9,7 @@ export type ProfileRecord = {
   username: string | null;
   avatarUrl: string | null;
   bio: string | null;
+  soulTitle?: SoulTitle;
   email?: string | null;
 };
 
@@ -41,6 +43,7 @@ export type PublicProfile = {
 };
 
 export type UpdateProfileRequest = {
+  soulTitle?: SoulTitle;
   avatarUrl: string;
   bio: string;
   displayName: string;

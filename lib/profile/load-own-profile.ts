@@ -1,3 +1,4 @@
+import { toSoulTitle } from "./soul-titles";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { queryJournalPage } from "./queries";
@@ -38,6 +39,7 @@ export async function loadOwnProfileDashboard(query: ProfileQuery = { tab: "all"
       username: profile.username,
       avatarUrl: profile.avatar_url,
       bio: profile.bio,
+      soulTitle: toSoulTitle(profileRow?.soul_title),
       email: user.email ?? null,
     },
     entryCount: statistics.total,

@@ -24,5 +24,7 @@
   "commonCancel": "Cancel",
   "onboarding": { "replay": "View guide" },
   "public": { "back": "Back", "entries": "Public entries", "streak": "Streak", "streakValue": "{count} days", "journal": "Public journal", "empty": "This profile has no public entries yet." },
-  "report": { "action": "Report", "reason": "Reason", "placeholder": "Spam, unsafe content, private information...", "send": "Send", "sending": "Sending...", "cancel": "Cancel", "success": "Report sent.", "error": "Could not send report." }
+  "report": { "action": "Report", "reason": "Reason", "placeholder": "Spam, unsafe content, private information...", "send": "Send", "sending": "Sending...", "cancel": "Cancel", "success": "Report sent.", "error": "Could not send report." },
+  "soulTitles": {"tam-hon-an-yen": "Peaceful Soul", "nguoi-gieo-hat": "Seed Sower", "trai-tim-tinh-lang": "Quiet Heart", "mam-xanh-kien-tri": "Steadfast Sprout"},
+  "edit": {"title": "Edit your profile", "description": "Update the information shown in your gratitude garden", "close": "Close", "name": "Full name", "soulTitle": "Soul title", "suggestions": "Suggestions:", "bio": "Bio", "saving": "Saving…", "save": "Save changes", "saveError": "Could not save your profile. Please try again.", "invalidUsername": "Username must contain 3–24 lowercase letters, numbers or underscores."}
 }

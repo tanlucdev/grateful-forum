@@ -34,7 +34,7 @@ function ProfileBrief({ view }: Readonly<{ view: ProfileView }>) {
             <h1 className="min-w-0 [overflow-wrap:anywhere] text-xl font-semibold leading-7 text-foreground">{view.displayName}</h1>
             <span className="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-accent/60 px-2 py-0.5 text-[10px] font-semibold text-primary">
               <MaterialSymbol className="text-xs" fill name="eco" />
-              {t("rank")}
+              {t(`soulTitles.${view.soulTitle}`)}
             </span>
           </div>
           <p className="mt-0.5 [overflow-wrap:anywhere] text-xs leading-4 text-muted-foreground">{view.bio || t("defaultBio")}</p>

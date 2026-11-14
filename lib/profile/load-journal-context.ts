@@ -9,7 +9,7 @@ type JournalContext = {
   userId: string;
   profile: {
     id: string; display_name: string; username: string | null; avatar_url: string | null;
-    bio: string | null; timezone: string | null; onboarding_tour_seen_at: string | null;
+    soul_title?: string; bio: string | null; timezone: string | null; onboarding_tour_seen_at: string | null;
     onboarding_completed_at: string | null; calendar_tour_seen_at: string | null;
   } | null;
   statistics: JournalStatistics | null;

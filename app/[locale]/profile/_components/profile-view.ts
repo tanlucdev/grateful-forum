@@ -1,3 +1,4 @@
+import { toSoulTitle, type SoulTitle } from "@/lib/profile/soul-titles";
 import type { JournalEntry, ProfileDashboard } from "@/lib/profile/types";
 import { makeWeeklyRhythm, type WeeklyRhythmDay } from "@/lib/profile/weekly-rhythm";
 import { makeMonthlyRhythm } from "@/lib/profile/monthly-rhythm";
@@ -17,6 +18,7 @@ export type ProfileView = {
   avatarDesktop: string;
   avatarMobile: string;
   bio: string;
+  soulTitle: SoulTitle;
   displayName: string;
   email: string;
   entries: JournalEntry[];
@@ -37,12 +39,13 @@ export function toProfileView(dashboard: ProfileDashboard): ProfileView {
     dashboard.profile.email?.split("@")[0] ||
     "";
   const shareSlug = slugify(displayName) || dashboard.profile.id;
-  const username = dashboard.profile.username || shareSlug.replace(/-/g, "_");
+  const username = dashboard.profile.username || "";
 
   return {
     avatarDesktop: dashboard.profile.avatarUrl || profileAssets.avatarDesktop,
     avatarMobile: dashboard.profile.avatarUrl || profileAssets.avatarMobile,
     bio: dashboard.profile.bio || "",
+    soulTitle: toSoulTitle(dashboard.profile.soulTitle),
     displayName,
     email: dashboard.profile.email || "",
     entries,

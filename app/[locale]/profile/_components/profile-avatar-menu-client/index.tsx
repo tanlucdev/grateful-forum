@@ -1,10 +1,12 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
 import type { ProfileView } from "../profile-view";
 
 export function ProfileAvatarMenu({ view }: Readonly<{ view: ProfileView }>) {
+  const t = useTranslations("profile");
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -53,7 +55,7 @@ export function ProfileAvatarMenu({ view }: Readonly<{ view: ProfileView }>) {
               <div className="flex items-center gap-1.5">
                 <span className="truncate text-sm font-bold leading-5">{view.displayName}</span>
                 <span className="rounded-full bg-accent px-1.5 py-0.5 text-[10px] font-medium leading-none text-primary">
-                  Tâm Hồn An Yên
+                  {t(`soulTitles.${view.soulTitle}`)}
                 </span>
               </div>
               <p className="mt-0.5 truncate text-xs text-muted-foreground">{view.email}</p>

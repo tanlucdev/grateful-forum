@@ -24,5 +24,7 @@
   "commonCancel": "Hủy",
   "onboarding": { "replay": "Xem hướng dẫn" },
   "public": { "back": "Quay lại", "entries": "Bài viết công khai", "streak": "Chuỗi ngày", "streakValue": "{count} ngày", "journal": "Nhật ký công khai", "empty": "Hồ sơ này chưa có bài viết công khai." },
-  "report": { "action": "Báo cáo", "reason": "Lý do", "placeholder": "Spam, nội dung không an toàn, thông tin riêng tư...", "send": "Gửi", "sending": "Đang gửi...", "cancel": "Hủy", "success": "Đã gửi báo cáo.", "error": "Không thể gửi báo cáo." }
+  "report": { "action": "Báo cáo", "reason": "Lý do", "placeholder": "Spam, nội dung không an toàn, thông tin riêng tư...", "send": "Gửi", "sending": "Đang gửi...", "cancel": "Hủy", "success": "Đã gửi báo cáo.", "error": "Không thể gửi báo cáo." },
+  "soulTitles": {"tam-hon-an-yen": "Tâm Hồn An Yên", "nguoi-gieo-hat": "Người gieo hạt", "trai-tim-tinh-lang": "Trái tim tĩnh lặng", "mam-xanh-kien-tri": "Mầm xanh kiên trì"},
+  "edit": {"title": "Chỉnh sửa hồ sơ cá nhân", "description": "Cập nhật thông tin hiển thị khu vườn biết ơn của bạn", "close": "Đóng", "name": "Họ và tên", "soulTitle": "Danh hiệu tâm hồn", "suggestions": "Gợi ý:", "bio": "Lời giới thiệu", "saving": "Đang lưu…", "save": "Lưu thay đổi", "saveError": "Không thể lưu hồ sơ. Vui lòng thử lại.", "invalidUsername": "Tên người dùng cần 3–24 ký tự: chữ thường, số hoặc dấu gạch dưới."}
 }

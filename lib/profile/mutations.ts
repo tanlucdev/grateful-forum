@@ -12,6 +12,7 @@ export async function updateOwnProfile(
     username: input.username.trim().toLowerCase() || null,
     avatar_url: input.avatarUrl.trim() || null,
     bio: input.bio.trim() || null,
+    ...(input.soulTitle ? { soul_title: input.soulTitle } : {}),
   });
 
   if (error) {

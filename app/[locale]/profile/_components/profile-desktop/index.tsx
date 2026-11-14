@@ -49,7 +49,7 @@ function DesktopHero({ view }: Readonly<{ view: ProfileView }>) {
                   {view.displayName}
                 </h1>
                 <span className="rounded-full bg-accent px-2.5 py-0.5 text-[11px] font-medium leading-[14px] text-primary">
-                  {t("rank")}
+                  {t(`soulTitles.${view.soulTitle}`)}
                 </span>
               </div>
               {view.bio ? <p className="max-w-md [overflow-wrap:anywhere] text-sm leading-6 text-muted-foreground">{view.bio}</p> : null}

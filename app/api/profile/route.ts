@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { updateProfileSchema } from "@/lib/profile/validation";
 import { updateOwnProfile } from "@/lib/profile/mutations";
 
 export async function PUT(request: Request) {
@@ -10,27 +11,14 @@ export async function PUT(request: Request) {
     return NextResponse.json({ code: "profile_failed", error: "Not signed in." }, { status: 401 });
   }
 
-  const body = (await request.json()) as {
-    displayName?: string;
-    username?: string;
-    avatarUrl?: string;
-    bio?: string;
-  };
-
-  const displayName = body.displayName?.trim() || "Grateful human";
-  const username = body.username?.trim().toLowerCase() || null;
-  const avatarUrl = body.avatarUrl?.trim() || null;
-  const bio = body.bio?.trim() || null;
-
-  if (username && !/^[a-z0-9_]{3,24}$/.test(username)) {
-    return NextResponse.json(
-      { code: "invalid_username", error: "Username must be 3-24 chars: lowercase letters, numbers, underscore." },
-      { status: 400 },
-    );
+  const parsed = updateProfileSchema.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) {
+    const code = parsed.error.issues.some((issue) => issue.path[0] === "username") ? "invalid_username" : "invalid_profile";
+    return NextResponse.json({ code, error: "Invalid profile." }, { status: 400 });
   }
 
   try {
-    await updateOwnProfile(supabase, auth.user.id, { displayName, username: username ?? "", avatarUrl: avatarUrl ?? "", bio: bio ?? "" });
+    await updateOwnProfile(supabase, auth.user.id, parsed.data);
   } catch (error) {
     return NextResponse.json({ code: "profile_failed", error: error instanceof Error ? error.message : "Could not save profile." }, { status: 500 });
   }
