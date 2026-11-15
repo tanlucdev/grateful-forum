@@ -34,7 +34,7 @@ supabase db query --linked --file tests/sql/member-entry-access.sql
 
 The SQL check creates an isolated member fixture inside its transaction. It checks guest and anonymous-account rejection, all three member visibility modes, wrong-owner rejection and legacy transfer, then rolls back the fixture and all writes. Run with SQL errors treated as failures; never select a real account as a fixture.
 
-The following explicitly creates a disposable account, saves images and text/handwriting in all visibility modes against the real configured services, checks member feed access, then deletes its account, entries and Cloudinary assets:
+The following explicitly creates a disposable account, saves images and text/handwriting in all visibility modes against the real configured services, checks member feed access, then deletes its account, entries and R2 assets:
 
 ```bash
 ENTRY_TEST_LIVE=1 ENTRY_TEST_BASE_URL=http://localhost:4317 node --env-file=.env --experimental-strip-types tests/member-entry-http.test.ts
