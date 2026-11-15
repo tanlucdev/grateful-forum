@@ -1,8 +1,7 @@
 "use client";
 
-import Image from "next/image";
+import { EntryImage } from "@/components/entries/entry-image";
 import { useLocale, useTranslations } from "next-intl";
-/* eslint-disable @next/next/no-img-element */
 import { Link } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
@@ -37,7 +36,7 @@ const feedCardCopy = {
   },
 } as const;
 
-export function MobileFeedCard({ item, locale, priorityImage = false, readOnly = false }: Readonly<{ item: DisplayItem; locale: AppLocale; priorityImage?: boolean; readOnly?: boolean }>) {
+export function MobileFeedCard({ item, locale, readOnly = false }: Readonly<{ item: DisplayItem; locale: AppLocale; readOnly?: boolean }>) {
   return (
     <article className="relative w-full min-w-0 [overflow-wrap:anywhere] rounded-3xl border border-border bg-card p-4 pb-2 shadow-card">
       <Tape locale={locale} tone={item.tone} />
@@ -52,7 +51,7 @@ export function MobileFeedCard({ item, locale, priorityImage = false, readOnly =
           </div>
         </div>
       </div>
-      <EntryBody item={item} locale={locale} mobile priorityImage={priorityImage} />
+      <EntryBody item={item} locale={locale} mobile />
       <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
         <Tags item={item} locale={locale} />
         {readOnly ? <FeedReactionSummary item={item} /> : <MindfulActionsClient item={item} compact floatingMenu />}
@@ -61,7 +60,7 @@ export function MobileFeedCard({ item, locale, priorityImage = false, readOnly =
   );
 }
 
-export function DesktopFeedCard({ item, locale, priorityImage = false, readOnly = false }: Readonly<{ item: DisplayItem; locale: AppLocale; priorityImage?: boolean; readOnly?: boolean }>) {
+export function DesktopFeedCard({ item, locale, readOnly = false }: Readonly<{ item: DisplayItem; locale: AppLocale; readOnly?: boolean }>) {
   const tone = toneClasses(item.tone);
   const copy = feedCardCopy[locale];
 
@@ -84,7 +83,7 @@ export function DesktopFeedCard({ item, locale, priorityImage = false, readOnly 
           </div>
         </div>
       </div>
-      <EntryBody item={item} locale={locale} priorityImage={priorityImage} />
+      <EntryBody item={item} locale={locale} />
       <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
         <Tags item={item} locale={locale} />
         {readOnly ? <FeedReactionSummary item={item} /> : <MindfulActionsClient item={item} floatingMenu />}
@@ -93,9 +92,9 @@ export function DesktopFeedCard({ item, locale, priorityImage = false, readOnly 
   );
 }
 
-function EntryBody({ item, locale, mobile = false, priorityImage = false }: Readonly<{ item: DisplayItem; locale: AppLocale; mobile?: boolean; priorityImage?: boolean }>) {
+function EntryBody({ item, locale, mobile = false }: Readonly<{ item: DisplayItem; locale: AppLocale; mobile?: boolean }>) {
   if (item.entryKind === "handwritten" && item.handwritingPreviewUrl) {
-    return <Link aria-label={item.detail} className="mt-4 block overflow-hidden rounded-2xl border border-border bg-[#fffdf8] p-2 shadow-sm" href={`/entries/${item.id}`}><img alt="" className="aspect-[4/3] w-full rounded-xl object-cover" src={item.handwritingPreviewUrl} /></Link>;
+    return <Link aria-label={item.detail} className="mt-4 block overflow-hidden rounded-2xl border border-border bg-[#fffdf8] p-2 shadow-sm" href={`/entries/${item.id}`}><EntryImage alt="" src={item.handwritingPreviewUrl} sizes="(min-width: 1024px) 700px, 90vw" thumbnail interactive={false} /></Link>;
   }
   const hasMetadata = item.metadata.gratitudes.length || item.metadata.reflection || item.metadata.quote || item.metadata.imageUrl;
 
@@ -136,12 +135,12 @@ function EntryBody({ item, locale, mobile = false, priorityImage = false }: Read
   return (
     <>
       {mobile ? <FeedEntryPreviewClient key={item.id}>{content}</FeedEntryPreviewClient> : <div className="mt-4">{content}</div>}
-      {item.metadata.imageUrl || !item.metadata.gratitudes.length ? <div className="mt-3"><Polaroid item={item} locale={locale} mobile={mobile} priorityImage={priorityImage} /></div> : null}
+      {item.metadata.imageUrl || !item.metadata.gratitudes.length ? <div className="mt-3"><Polaroid item={item} locale={locale} mobile={mobile} /></div> : null}
     </>
   );
 }
 
-function Polaroid({ item, locale, mobile, priorityImage }: Readonly<{ item: DisplayItem; locale: AppLocale; mobile: boolean; priorityImage: boolean }>) {
+function Polaroid({ item, locale, mobile }: Readonly<{ item: DisplayItem; locale: AppLocale; mobile: boolean }>) {
   const imageUrl = item.metadata.imageUrl;
   const fallback = item.tone === "tertiary" ? "/stitch/feed/succulent.jpg" : "/stitch/feed/breakfast.jpg";
   const copy = feedCardCopy[locale];
@@ -151,13 +150,10 @@ function Polaroid({ item, locale, mobile, priorityImage }: Readonly<{ item: Disp
     <div className="flex justify-center sm:justify-start">
       <div className={`${mobile ? "max-w-[260px]" : "max-w-sm"} w-full rounded-xl border border-border bg-card p-[10px] pb-6 shadow-card`}>
         <div
-          className={`${mobile ? "h-40" : "aspect-[4/3]"} relative overflow-hidden rounded-lg bg-muted bg-cover bg-center`}
-          style={imageUrl ? { backgroundImage: `url(${imageUrl})` } : undefined}
+          className="relative"
         >
-          {imageUrl ? null : (
-            <Image alt="" className="object-cover" fill loading={priorityImage ? "eager" : undefined} sizes={mobile ? "260px" : "384px"} src={fallback} />
-          )}
-          <span className="absolute bottom-2 left-2 rounded bg-black/40 px-2 py-0.5 text-[11px] font-medium text-white backdrop-blur-sm">
+          <EntryImage src={imageUrl ?? fallback} thumbnail sizes={mobile ? "(max-width: 319px) 80vw, 240px" : "(max-width: 440px) 80vw, 364px"} interactive={Boolean(imageUrl)} />
+          <span className="pointer-events-none absolute bottom-2 left-2 rounded bg-black/40 px-2 py-0.5 text-[11px] font-medium text-white backdrop-blur-sm">
             📷 {caption}
           </span>
         </div>

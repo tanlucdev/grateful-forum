@@ -10,7 +10,48 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Set the Supabase and Cloudinary values in `.env.local` before using auth, database-backed flows, or image uploads. Configure the same three `CLOUDINARY_*` variables separately for Preview and Production in the deployment provider; never commit real values.
+Set the Supabase and Cloudflare R2 values in `.env.local` and separately in each deployment environment (Preview / Production). Restart the local server or redeploy after changing environment variables. Local `.env` files do not configure the deployed server. Never commit credentials or prefix R2 keys with `NEXT_PUBLIC_`.
+
+## Cloudflare R2 media
+
+New photo uploads and public/anonymous handwriting previews use R2's S3-compatible API. The Next.js app can stay on its current host; no Worker or database migration is required. Existing Cloudinary URLs remain readable and continue using Cloudinary bandwidth until those assets are copied and their stored URLs updated.
+
+1. Create an R2 bucket with the default jurisdiction (or copy the matching jurisdiction endpoint).
+2. In R2 **Manage API Tokens**, create an **Account API token** with **Object Read & Write**, scoped to that bucket. Save its **Access Key ID** and **Secret Access Key**; these are S3 credentials, not a Cloudflare bearer token.
+3. Under bucket **Settings → Custom Domains**, connect a media domain such as `media.example.com`. Wait for **Active**. This exposes objects publicly, as with the previous Cloudinary delivery URLs. Keep private files outside this bucket. The `r2.dev` Public Development URL is rate-limited and intended for development only.
+4. Configure the five server environment variables below, then redeploy. No bucket CORS rule is required: uploads go through the authenticated Next.js server.
+
+| Variable | Value |
+| --- | --- |
+| `R2_ENDPOINT` | S3 API endpoint from R2, e.g. `https://<ACCOUNT_ID>.r2.cloudflarestorage.com`; jurisdiction suffix if applicable |
+| `R2_ACCESS_KEY_ID` | Access Key ID from the R2 token |
+| `R2_SECRET_ACCESS_KEY` | Secret Access Key from the R2 token |
+| `R2_BUCKET_NAME` | Exact bucket name, e.g. `grateful-media` |
+| `R2_PUBLIC_URL` | HTTPS bucket Custom Domain, e.g. `https://media.example.com`; no bucket name or object path |
+
+`CLOUDINARY_*` variables are no longer used for new uploads. Keep the old Cloudinary account/assets available for existing entry URLs. R2 has storage and request charges, with no egress bandwidth charge; see [R2 pricing](https://developers.cloudflare.com/r2/pricing/).
+
+Uploads retain the 5 MB limit and supported image types; object names use generated UUIDs and MIME-derived extensions. Uploads time out after 20 seconds. `media_unavailable` (HTTP 503) means missing/invalid R2 configuration; server logs list only the affected variable names. `media_upload_failed` (HTTP 502) covers storage/network failures. Private handwritten entries do not upload a preview; failed public saves retain the writing on the device.
+
+After deploying, save a public handwritten entry and a photo entry. Confirm their image URLs use your media domain and load without login, then confirm private handwriting still saves without uploading a preview.
+
+Journal photos use `next/image` at quality 75 with layout-specific sizes and lazy loading. The exact `R2_PUBLIC_URL` HTTPS hostname and `res.cloudinary.com` are allowed; changing the R2 origin requires a rebuild. Only that public origin is exposed to the client, never S3 credentials. Local `blob:` previews and legacy hosts outside this list use native images. Optimizer failures try the original once, then show a localized error. The full-image dialog loads the original only while open; native fallbacks and animated GIF delivery can also fetch original bytes for the preview. R2 objects remain byte-for-byte originals; resized display images are cached by Next.js outside the bucket.
+
+### Move existing Cloudinary media
+
+Configure the five R2 variables plus `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` for the database to migrate. Run locally from the repository root; do not expose the service role key to the browser. Cloudinary credentials are not needed for publicly readable images.
+
+```bash
+# Read-only inventory; reports entries and image references without uploading.
+npm run migrate:media
+
+# Copy and verify images, then update stored URLs.
+npm run migrate:media -- --apply
+```
+
+The migration handles `entries.image_url` and `entries.handwriting_preview_url` pointing at `https://res.cloudinary.com/`, including deleted/hidden entries. It uses keyset pages, copies each shared URL once per run, verifies the public R2 download against the original SHA-256, and updates only if the old URL is still unchanged. External image hosts and private handwriting data are untouched. A failure stops the run; original URLs remain for unfinished references, completed updates stay valid, and rerunning processes remaining Cloudinary URLs. An upload whose verification or database update fails can leave an unused R2 object; no source object is deleted.
+
+After migration, rerun the inventory and confirm zero references, then check old photo/handwritten entries in the deployed app. Keep Cloudinary assets until that verification is complete. This migrates referenced journal assets, not unreferenced files in the Cloudinary account or assets served through custom Cloudinary domains.
 
 ## Scripts
 

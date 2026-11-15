@@ -21,7 +21,7 @@ function WriteTourCard({ arrow, currentStep, nextStep, prevStep, skipTour, step,
   if (!step) return null;
   return <section aria-label={t("card.label")} className="relative w-[min(21rem,calc(100vw-1.5rem))] rounded-xl border border-primary/15 bg-card p-4 text-sm text-foreground shadow-xl">
     {arrow}
-    <div className="flex items-center gap-2"><Image alt="" src="/stitch/profile/mascot.jpg" width={32} height={32} className="h-auto w-8 shrink-0 rounded-full" /><p className="font-bold text-primary">{t("card.progress", { current: currentStep + 1, total: totalSteps })}</p></div>
+    <div className="flex items-center gap-2"><Image alt="" src="/stitch/profile/mascot.jpg" width={32} height={32} className="size-8 shrink-0 rounded-full object-cover" /><p className="font-bold text-primary">{t("card.progress", { current: currentStep + 1, total: totalSteps })}</p></div>
     <h2 className="mt-2 text-base font-bold">{step.title}</h2>
     <div className="mt-2 leading-5 text-muted-foreground">{step.content}</div>
     <div className="mt-3 flex flex-wrap items-center justify-between gap-1">

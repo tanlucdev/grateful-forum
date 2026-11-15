@@ -36,7 +36,7 @@ export function FeedPreviewClient({ initialPage }: Readonly<{ initialPage: FeedP
         <h1 className="text-2xl font-bold">{t("preview.label")}</h1>
         <p className="text-muted-foreground">{t("preview.description")}</p>
       </section>
-      {items.length ? <><div className="space-y-6 md:hidden">{items.map((item, index) => <MobileFeedCard item={item} key={item.id} locale={locale} priorityImage={index === 0} readOnly />)}</div><div className="hidden space-y-6 md:block">{items.map((item, index) => <DesktopFeedCard item={item} key={item.id} locale={locale} priorityImage={index === 0} readOnly />)}</div></> : <FeedEmptyState locale={locale} />}
+      {items.length ? <><div className="space-y-6 md:hidden">{items.map((item) => <MobileFeedCard item={item} key={item.id} locale={locale} readOnly />)}</div><div className="hidden space-y-6 md:block">{items.map((item) => <DesktopFeedCard item={item} key={item.id} locale={locale} readOnly />)}</div></> : <FeedEmptyState locale={locale} />}
       <section className="space-y-3 border-t border-border py-6 text-center">
         <h2 className="text-lg font-bold">{t("preview.title")}</h2>
         <p className="text-sm text-muted-foreground">{t("preview.invitation")}</p>

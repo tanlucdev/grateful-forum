@@ -1,0 +1,12 @@
+import assert from "node:assert/strict";
+import { canOptimizeImage, imageRemotePatterns, nextImageLoadState } from "../lib/entry-media/image-sources.ts";
+const origin = "https://media.example.com";
+assert.equal(imageRemotePatterns(origin).length, 2);
+for (const src of ["/stitch/photo.jpg", `${origin}/entries/a.png`, "https://res.cloudinary.com/old/image/upload/a.gif"]) assert.equal(canOptimizeImage(src, origin), true, src);
+for (const src of ["blob:https://local.test/id", "https://legacy.example.org/a.jpg", "//media.example.com/a.jpg", "https://media.example.com.evil.test/a.jpg", "https://user:pass@media.example.com/a.jpg", "http://media.example.com/a.jpg", "https://media.example.com:444/a.jpg", "invalid"]) assert.equal(canOptimizeImage(src, origin), false, src);
+assert.equal(canOptimizeImage(`${origin}/a.png`, ""), false);
+for (const invalid of ["http://media.example.com", "https://media.example.com/sub", "https://media.example.com/?token=x", "https://user:secret@media.example.com"]) assert.throws(() => imageRemotePatterns(invalid));
+assert.equal(nextImageLoadState("optimized"), "original");
+assert.equal(nextImageLoadState("original"), "failed");
+assert.equal(nextImageLoadState("failed"), "failed");
+console.log("entry image checks passed: exact origins, local/legacy sources and bounded fallback");

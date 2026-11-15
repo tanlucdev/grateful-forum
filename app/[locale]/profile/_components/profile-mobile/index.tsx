@@ -4,7 +4,7 @@ import { ProfileEditModalButton } from "../profile-modals-client";
 import { ProfileDesktopTabs } from "../profile-desktop-tabs-client";
 import type { ProfileView } from "../profile-view";
 
-export function MobileProfile({ view, initialTab }: Readonly<{ view: ProfileView; initialTab: "all" | "public" | "moments" }>) {
+export function MobileProfile({ view, initialTab }: Readonly<{ view: ProfileView; initialTab: "all" | "public" | "moments" | "saved" }>) {
   return (
     <div className="min-h-svh md:hidden">
       <main className="relative w-full min-w-0 px-4 pb-8 pt-6">

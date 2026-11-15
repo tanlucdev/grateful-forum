@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { createEntryRequestSchema } from "../lib/entries/schema.ts";
 import { getStickerLabel, STICKER_GROUPS, stickers } from "../lib/entries/stickers.ts";
 import { MediaError, mediaFailure } from "../lib/entry-media/errors.ts";
-import { buildCloudinarySignature, getCloudinaryEnv, uploadEntryMedia } from "../lib/entry-media/mutations.ts";
+import { getR2Env, uploadEntryMedia } from "../lib/entry-media/mutations.ts";
 import { parseHandwritingPreview, validateEntryMediaFile } from "../lib/entry-media/validation.ts";
 import { eraseInkStrokes, inkDocumentSchema } from "../lib/entries/ink.ts";
 import { renderInkDocument } from "../lib/entries/ink-renderer.ts";
@@ -25,10 +25,35 @@ assert.throws(() =>
   }),
 );
 
-assert.throws(
-  () => getCloudinaryEnv({}),
-  (error: unknown) => error instanceof MediaError && error.code === "media_unavailable" && error.status === 503,
-);
+const configuredR2 = {
+  R2_ENDPOINT: "https://0123456789abcdef0123456789abcdef.r2.cloudflarestorage.com",
+  R2_ACCESS_KEY_ID: "test-key",
+  R2_SECRET_ACCESS_KEY: "test-secret",
+  R2_BUCKET_NAME: "grateful-media",
+  R2_PUBLIC_URL: "https://media.example.com",
+};
+assert.deepEqual(getR2Env(configuredR2), configuredR2);
+const originalConsoleError = console.error;
+const configurationLogs: unknown[][] = [];
+console.error = (...args: unknown[]) => { configurationLogs.push(args); };
+try {
+  for (const key of Object.keys(configuredR2)) {
+    assert.throws(
+      () => getR2Env({ ...configuredR2, [key]: "" }),
+      (error: unknown) => error instanceof MediaError && error.code === "media_unavailable" && error.status === 503,
+    );
+    assert.equal(configurationLogs.at(-1)?.[1], key);
+  }
+  for (const publicUrl of ["http://media.example.com", "https://user:secret@media.example.com", "https://media.example.com/?token=secret", "https://media.example.com/#fragment", configuredR2.R2_ENDPOINT]) {
+    assert.throws(() => getR2Env({ ...configuredR2, R2_PUBLIC_URL: publicUrl }), MediaError);
+  }
+  assert.throws(() => getR2Env({ ...configuredR2, R2_ENDPOINT: "https://untrusted.example.com" }), MediaError);
+  assert.throws(() => getR2Env({}), (error: unknown) => mediaFailure(error)?.status === 503);
+  assert.ok(!JSON.stringify(configurationLogs).includes("test-secret"));
+  assert.ok(!JSON.stringify(configurationLogs).includes("test-key"));
+} finally {
+  console.error = originalConsoleError;
+}
 
 const webpPreview = new File([new Uint8Array([1])], "preview.webp", { type: "image/webp" });
 assert.equal(parseHandwritingPreview("public", webpPreview), webpPreview);
@@ -49,23 +74,55 @@ assert.equal(handwritingSaveErrorKey(new ApiClientError("media_unavailable", "un
 assert.equal(handwritingSaveErrorKey(new ApiClientError("media_upload_failed", "failed")), "handwriting.previewUploadFailed");
 
 const originalFetch = globalThis.fetch;
-const cloudinaryEnv = {
-  CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
-  CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
-  CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
-};
-process.env.CLOUDINARY_CLOUD_NAME = "test-cloud";
-process.env.CLOUDINARY_API_KEY = "test-key";
-process.env.CLOUDINARY_API_SECRET = "test-secret";
-globalThis.fetch = (async () => new Response("{}", { status: 500 })) as typeof fetch;
-await assert.rejects(
-  () => uploadEntryMedia(webpPreview),
-  (error: unknown) => error instanceof MediaError && error.code === "media_upload_failed" && error.status === 502,
-);
-globalThis.fetch = originalFetch;
-for (const [key, value] of Object.entries(cloudinaryEnv)) {
-  if (value === undefined) delete process.env[key];
-  else process.env[key] = value;
+const previousR2Env = Object.fromEntries(Object.keys(configuredR2).map((key) => [key, process.env[key]]));
+Object.assign(process.env, configuredR2);
+let uploadedRequest: Request | null = null;
+const uploadLogs: unknown[][] = [];
+console.error = (...args: unknown[]) => { uploadLogs.push(args); };
+try {
+  globalThis.fetch = (async (input, init) => {
+    const request = input as Request;
+    uploadedRequest = request;
+    assert.equal(request.method, "PUT");
+    assert.equal(init?.redirect, "error");
+    assert.ok(request.url.startsWith(`${configuredR2.R2_ENDPOINT}/${configuredR2.R2_BUCKET_NAME}/entries/`));
+    assert.ok(request.headers.get("Authorization")?.startsWith("AWS4-HMAC-SHA256 Credential=test-key/"));
+    assert.ok(request.headers.get("Authorization")?.includes("/auto/s3/aws4_request"));
+    assert.ok(request.headers.get("Authorization")?.includes("content-type"));
+    assert.equal(request.headers.get("Cache-Control"), "public, max-age=31536000, immutable");
+    assert.equal(request.headers.get("Content-Length"), "1");
+    assert.deepEqual(new Uint8Array(await request.arrayBuffer()), new Uint8Array([1]));
+    return new Response(null, { status: 200 });
+  }) as typeof fetch;
+  for (const [type, extension] of [["image/webp", "webp"], ["image/png", "png"], ["image/jpeg", "jpg"], ["image/gif", "gif"], ["image/avif", "avif"]]) {
+    const result = await uploadEntryMedia(new File([new Uint8Array([1])], "../../unsafe.svg", { type }));
+    assert.match(result.path, new RegExp(`^entries/\\d{4}/[a-f0-9-]{36}\\.${extension}$`));
+    assert.equal(result.url, `${configuredR2.R2_PUBLIC_URL}/${result.path}`);
+    assert.equal((uploadedRequest as Request | null)?.headers.get("Content-Type"), type);
+  }
+  process.env.R2_ENDPOINT += "/";
+  process.env.R2_PUBLIC_URL += "/";
+  const normalized = await uploadEntryMedia(webpPreview);
+  assert.equal(normalized.url, `${configuredR2.R2_PUBLIC_URL}/${normalized.path}`);
+  for (const status of [403, 429, 500]) {
+    globalThis.fetch = (async () => new Response("<Error><Code>AccessDenied</Code><Message>test-secret</Message></Error>", { status })) as typeof fetch;
+    await assert.rejects(
+      () => uploadEntryMedia(webpPreview),
+      (error: unknown) => error instanceof MediaError && error.code === "media_upload_failed" && error.status === 502,
+    );
+    assert.deepEqual(uploadLogs.at(-1), ["R2 upload rejected:", status, "AccessDenied"]);
+  }
+  globalThis.fetch = async () => { throw new DOMException("Timeout", "TimeoutError"); };
+  await assert.rejects(() => uploadEntryMedia(webpPreview), (error: unknown) => mediaFailure(error)?.code === "media_upload_failed");
+  assert.deepEqual(uploadLogs.at(-1), ["R2 upload failed:", "TimeoutError"]);
+  assert.ok(!JSON.stringify(uploadLogs).includes("test-secret"));
+} finally {
+  console.error = originalConsoleError;
+  globalThis.fetch = originalFetch;
+  for (const [key, value] of Object.entries(previousR2Env)) {
+    if (value === undefined) delete process.env[key];
+    else process.env[key] = value;
+  }
 }
 
 assert.throws(() => createEntryRequestSchema.parse({ visibility: "private", gratitudes: [] }));
@@ -199,14 +256,6 @@ assert.throws(() =>
   validateEntryMediaFile(
     new File([new Uint8Array(5 * 1024 * 1024 + 1)], "large.png", { type: "image/png" }),
   ),
-);
-
-assert.equal(
-  buildCloudinarySignature(
-    { timestamp: 1800000000, public_id: "abc-123", folder: "entries/2026" },
-    "secret",
-  ),
-  "1f4d2488242647133eab5e7b5014b1361d212bb8",
 );
 
 console.log("entry write checks passed");

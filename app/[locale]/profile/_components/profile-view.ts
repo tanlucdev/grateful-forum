@@ -1,3 +1,4 @@
+import type { SavedEntriesPage } from "@/lib/profile/saved-queries";
 import type { JournalEntry, ProfileDashboard } from "@/lib/profile/types";
 import { makeWeeklyRhythm, type WeeklyRhythmDay } from "@/lib/profile/weekly-rhythm";
 import { makeMonthlyRhythm } from "@/lib/profile/monthly-rhythm";
@@ -13,6 +14,8 @@ export const profileAssets = {
 };
 
 export type ProfileView = {
+  saved?: SavedEntriesPage;
+  savedError?: boolean;
   requestedEntry?: string;
   avatarDesktop: string;
   avatarMobile: string;
@@ -29,7 +32,7 @@ export type ProfileView = {
   username: string;
 };
 
-export function toProfileView(dashboard: ProfileDashboard): ProfileView {
+export function toProfileView(dashboard: ProfileDashboard, locale: string): ProfileView {
   const entries = dashboard.entries;
   const now = new Date();
   const displayName =
@@ -48,7 +51,7 @@ export function toProfileView(dashboard: ProfileDashboard): ProfileView {
     entries,
     entryCount: dashboard.entryCount,
     publicCount: entries.filter((entry) => entry.visibility === "public" || entry.visibility === "anonymous").length,
-    shareUrl: `begrateful.app/share/${shareSlug}`,
+    shareUrl: `/${locale}/profile/${dashboard.profile.id}`,
     streak: dashboard.streak,
     weeklyRhythm: makeWeeklyRhythm(entries, dashboard.timezone, now),
     monthlyRhythm: makeMonthlyRhythm(entries, dashboard.timezone, now),

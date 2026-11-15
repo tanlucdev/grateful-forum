@@ -4,7 +4,6 @@ import { ZodError } from "zod";
 import { saveHandwrittenEntry } from "@/lib/entries/handwriting-service";
 import { createHandwrittenEntryRequestSchema } from "@/lib/entries/schema";
 import { MediaError, mediaFailure } from "@/lib/entry-media/errors";
-import { getCloudinaryEnv } from "@/lib/entry-media/mutations";
 import { parseHandwritingPreview } from "@/lib/entry-media/validation";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -24,7 +23,6 @@ export async function POST(request: Request) {
       visibility,
     });
     const preview = parseHandwritingPreview(input.visibility, formData.get("preview"));
-    if (input.visibility !== "private") getCloudinaryEnv();
     if (!hasSupabaseEnv()) return NextResponse.json({ saved: false, reason: "supabase-unconfigured" });
 
     const supabase = await createSupabaseServerClient();
