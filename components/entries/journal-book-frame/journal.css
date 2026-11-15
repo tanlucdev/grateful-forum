@@ -33,14 +33,6 @@
   box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
 }
 
-.journal-photo {
-  border: 1px solid #ede5d8;
-  border-radius: 0.75rem;
-  background: var(--card);
-  padding: 0.5rem;
-  box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
-}
-
 .journal-reflection {
   display: flex;
   min-width: 0;

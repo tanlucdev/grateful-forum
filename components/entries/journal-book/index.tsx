@@ -1,5 +1,5 @@
 "use client";
-/* eslint-disable @next/next/no-img-element */
+import { EntryImage } from "@/components/entries/entry-image";
 import type { ReactNode } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { JournalBookFrame, JournalBookPage } from "@/components/entries/journal-book-frame";
@@ -17,9 +17,8 @@ export function JournalBook({ date, washi, left, right }: Readonly<{ date: strin
 }
 
 export function JournalMemories({ imageUrl, sticker, reflection }: Readonly<Pick<EntryMetadata, "imageUrl" | "sticker" | "reflection">>) {
-  const t = useTranslations("write");
   return <div className="space-y-4 whitespace-pre-wrap [overflow-wrap:anywhere]">
-    {imageUrl ? <div className="journal-photo"><img alt={t("creative.image")} className="h-auto w-full rounded-lg" src={imageUrl} /></div> : null}
+    {imageUrl ? <EntryImage src={imageUrl} sizes="(min-width: 1024px) 480px, (min-width: 768px) 45vw, 90vw" /> : null}
     {reflection || (sticker && getSticker(sticker)) ? <div className="journal-reflection">
       {sticker && getSticker(sticker) ? <StickerIcon className="h-12 w-12 shrink-0" id={sticker} /> : null}
       {reflection ? <p className="min-w-0 text-sm leading-relaxed text-muted-foreground">{reflection}</p> : null}

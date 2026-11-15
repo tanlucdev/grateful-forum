@@ -243,8 +243,8 @@ export function PublicFeedClient({
           {dailyPractice}
           {filterControls}
           <div className="flex flex-col gap-4">
-            {feedItems.length ? feedItems.map((item, index) => (
-              <MobileFeedCard item={item} key={item.id} locale={locale} priorityImage={index === 0} />
+            {feedItems.length ? feedItems.map((item) => (
+              <MobileFeedCard item={item} key={item.id} locale={locale} />
             )) : emptyState}
           </div>
           {showMobileEnd ? <MobileFeedEnd status={items.length ? "" : copy.noPublic} /> : null}
@@ -272,8 +272,8 @@ export function PublicFeedClient({
                 {filterControls}
               </div>
               <div className="flex flex-col gap-5">
-                {feedItems.length ? feedItems.map((item, index) => (
-                  <DesktopFeedCard item={item} key={item.id} locale={locale} priorityImage={index === 0} />
+                {feedItems.length ? feedItems.map((item) => (
+                  <DesktopFeedCard item={item} key={item.id} locale={locale} />
                 )) : emptyState}
               </div>
             </div>

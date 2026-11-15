@@ -35,6 +35,8 @@ Uploads retain the 5 MB limit and supported image types; object names use genera
 
 After deploying, save a public handwritten entry and a photo entry. Confirm their image URLs use your media domain and load without login, then confirm private handwriting still saves without uploading a preview.
 
+Journal photos use `next/image` at quality 75 with layout-specific sizes and lazy loading. The exact `R2_PUBLIC_URL` HTTPS hostname and `res.cloudinary.com` are allowed; changing the R2 origin requires a rebuild. Only that public origin is exposed to the client, never S3 credentials. Local `blob:` previews and legacy hosts outside this list use native images. Optimizer failures try the original once, then show a localized error. The full-image dialog loads the original only while open; native fallbacks and animated GIF delivery can also fetch original bytes for the preview. R2 objects remain byte-for-byte originals; resized display images are cached by Next.js outside the bucket.
+
 ### Move existing Cloudinary media
 
 Configure the five R2 variables plus `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` for the database to migrate. Run locally from the repository root; do not expose the service role key to the browser. Cloudinary credentials are not needed for publicly readable images.

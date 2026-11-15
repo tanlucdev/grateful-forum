@@ -1,8 +1,8 @@
 "use client";
+import { EntryImage } from "@/components/entries/entry-image";
 import { useLayoutEffect, useRef, useState, type ReactNode, type ComponentProps } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { JournalBook } from "@/components/entries/journal-book";
-/* eslint-disable @next/next/no-img-element */
 import { StickerIcon } from "@/components/entries/sticker-icons";
 import { MaterialSymbol } from "@/components/ui/material-symbol";
 import type { StickerId } from "@/lib/entries/stickers";
@@ -61,7 +61,7 @@ export function JournalEditor(props: Readonly<Props>) {
     </div>
     <div className="journal-keepsakes min-w-0 space-y-4">
     {props.quote ? <blockquote className="whitespace-pre-wrap text-sm italic leading-relaxed text-muted-foreground [overflow-wrap:anywhere]">{props.quote}</blockquote> : null}
-    {props.imageUrl ? <div className="journal-photo"><img alt={t("creative.image")} className="h-auto w-full rounded-lg" src={props.imageUrl} /></div> : null}
+    {props.imageUrl ? <EntryImage src={props.imageUrl} sizes="(min-width: 1024px) 480px, (min-width: 768px) 45vw, 90vw" /> : null}
     {props.sticker ? <StickerIcon className="h-12 w-12" id={props.sticker} /> : null}
     {props.decoration}
     </div>

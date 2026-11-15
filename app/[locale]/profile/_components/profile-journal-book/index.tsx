@@ -1,6 +1,6 @@
 "use client";
-/* eslint-disable @next/next/no-img-element */
 
+import { EntryImage } from "@/components/entries/entry-image";
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { JournalBookFrame, JournalBookPage } from "@/components/entries/journal-book-frame";
@@ -78,7 +78,7 @@ function NotebookPage({ entry, index, page }: Readonly<{ entry: JournalEntry; in
         </div>
         {handwritten ? (
           <Link aria-label={t("actions.viewEntry")} className="block rounded-xl bg-[#fffdf8] p-2 text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href={`/entries/${entry.id}`}>
-            {entry.handwritingPreviewUrl ? <img alt={t("actions.viewEntry")} className="h-auto w-full rounded-lg" src={entry.handwritingPreviewUrl} /> : <span className="inline-flex min-h-11 items-center">{t("actions.viewEntry")}</span>}
+            {entry.handwritingPreviewUrl ? <EntryImage alt={t("actions.viewEntry")} src={entry.handwritingPreviewUrl} sizes="(min-width: 768px) 45vw, 90vw" interactive={false} /> : <span className="inline-flex min-h-11 items-center">{t("actions.viewEntry")}</span>}
           </Link>
         ) : gratitudes.length ? (
           <div>
@@ -93,7 +93,7 @@ function NotebookPage({ entry, index, page }: Readonly<{ entry: JournalEntry; in
             </ol>
           </div>
         ) : <p className="whitespace-pre-wrap text-sm leading-relaxed">{entry.content}</p>}
-        {metadata.imageUrl ? <div className="journal-photo"><img alt={w("creative.image")} className="h-auto w-full rounded-lg" loading="lazy" src={metadata.imageUrl} /></div> : null}
+        {metadata.imageUrl ? <EntryImage src={metadata.imageUrl} sizes="(min-width: 1024px) 480px, (min-width: 768px) 45vw, 90vw" /> : null}
         {metadata.reflection || (metadata.sticker && getSticker(metadata.sticker)) ? (
           <div className="journal-reflection">
             {metadata.sticker && getSticker(metadata.sticker) ? <StickerIcon className="h-12 w-12 shrink-0" id={metadata.sticker} /> : null}
